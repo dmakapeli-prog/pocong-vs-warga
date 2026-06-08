@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pocong vs Warga</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --bg-dark: #0a0f0d;
+            --blood-red: #8a0303;
+            --moss-green: #2b4215;
+            --shroud-white: #e0e0e0;
+            --text-color: #f0f0f0;
+            --tombstone: #4a544c;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark); color: var(--text-color);
+            font-family: 'Nunito', sans-serif; overflow: hidden;
+            touch-action: none; /* Prevent browser scrolling */
+        }
+
+        h1, h2, h3, .horror-font {
+            font-family: 'Creepster', cursive;
+            color: var(--blood-red);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+            margin-bottom: 10px;
+        }
+
+        h1 { font-size: 3rem; text-align: center; line-height: 1.1; }
+
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #1a2a1f 0%, var(--bg-dark) 100%);
+            transition: opacity 0.5s ease; z-index: 10;
+        }
+        
+        .hidden { opacity: 0; pointer-events: none; z-index: -1 !important; }
+
+        button {
+            background-color: var(--moss-green); color: var(--shroud-white);
+            border: 2px solid var(--blood-red); padding: 15px 30px;
+            font-size: 1.5rem; font-family: 'Creepster', cursive;
+            cursor: pointer; border-radius: 8px; margin: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.1); background-color: #3d5c1e;
+            box-shadow: 0 0 15px var(--blood-red);
+        }
+
+        button:active { transform: scale(0.95); }
+
+        /* CSS Animations */
+        @keyframes jumpCSS {
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            50% { transform: translateY(-30px) scaleY(1.1); }
+        }
+
+        @keyframes shakeCSS {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-3px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shake { animation: shakeCSS 0.5s; }
+
+        /* Menu Pocong Character */
+        .pocong-menu {
+            width: 80px; height: 130px; background: var(--shroud-white);
+            border-radius: 40px 40px 10px 10px; position: relative;
+            animation: jumpCSS 1s infinite; box-shadow: 0 10px 15px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+        }
+        .pocong-menu::before {
+            content: ''; position: absolute; top: 30px; left: 20px;
+            width: 12px; height: 12px; background: #000; border-radius: 50%;
+            box-shadow: 28px 0 0 #000; /* Eyes */
+        }
+        .pocong-menu::after {
+            content: ''; position: absolute; top: -15px; left: 30px;
+            width: 20px; height: 25px; background: var(--shroud-white);
+            border-radius: 5px; transform: rotate(15deg);
+        }
+
+        /* Particles */
+        #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+
+        /* Role Selection */
+        .role-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+        .role-card {
+            background: rgba(0,0,0,0.8); border: 2px solid var(--moss-green);
+            padding: 20px; border-radius: 10px; cursor: pointer;
+            text-align: center; transition: all 0.3s; width: 160px;
+        }
+        .role-card:hover { border-color: var(--blood-red); transform: scale(1.05); background: rgba(30,0,0,0.8); }
+        
+        .preview-box { width: 60px; height: 80px; margin: 0 auto 15px; position: relative; }
+        
+        /* Warga Menu Preview */
+        .warga-menu {
+            width: 50px; height: 50px; background: #f39c12; border-radius: 50%;
+            position: absolute; bottom: 0; left: 5px;
+        }
+        .warga-menu::before {
+            content: ''; position: absolute; top: 15px; left: 12px;
+            width: 6px; height: 6px; background: #000; border-radius: 50%;
+            box-shadow: 20px 0 0 #000; /* Scared Eyes */
+        }
+        .warga-menu::after {
+            content: ''; position: absolute; top: 30px; left: 20px;
+            width: 10px; height: 15px; background: #000; border-radius: 10px; /* Scared mouth */
+        }
+
+        /* Game UI */
+        #game-ui { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 20; pointer-events: none; }
+        .ui-box { background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 8px; border: 2px solid var(--moss-green); font-size: 1.2rem; font-weight: bold; }
+        .text-red { color: var(--blood-red); }
+        
+        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 5; }
+        canvas { display: block; width: 100%; height: 100%; }
+        
+        /* Unmask Button / Hint */
+        #interaction-hint {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(138, 3, 3, 0.9); padding: 10px 20px; border-radius: 20px;
+            font-weight: bold; z-index: 20; display: none; text-align: center;
+            pointer-events: none; font-size: 0.9rem;
+        }
+
+        /* Leaderboard */
+        .leaderboard { margin: 15px 0; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; min-width: 250px; max-height: 150px; overflow-y: auto;}
+        .leaderboard h3 { margin-top: 0; font-size: 1.5rem; text-align: center; }
+        .leaderboard ol { padding-left: 25px; margin: 0; }
+        .leaderboard li { margin-bottom: 5px; font-size: 1.1rem; }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            button { font-size: 1.2rem; padding: 12px 24px; }
+            .ui-box { padding: 5px 10px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CSS Particles Background -->
+    <div id="particles"></div>
+
+    <!-- MAIN MENU -->
+    <div id="screen-menu" class="screen">
+        <div class="pocong-menu"></div>
+        <h1>POCONG<br><span style="color:var(--text-color); font-size:2rem; font-family:'Nunito',sans-serif;">VS</span><br>WARGA</h1>
+        <p style="text-align: center; max-width: 400px; padding: 0 20px;">Game Horror-Comedy Viral!<br>Pilih jalan hidupmu, tangkap warga atau kabur dari kejaran setan lokal!</p>
+        <button onclick="showScreen('screen-role')">MAIN SEKARANG</button>
+    </div>
+
+    <!-- ROLE SELECTION -->
+    <div id="screen-role" class="screen hidden">
+        <h2>PILIH PERANMU</h2>
+        <div class="role-cards">
+            <div class="role-card" onclick="startGame('pocong')">
+                <div class="preview-box">
+                    <div class="pocong-menu" style="transform: scale(0.6); transform-origin: top center;"></div>
+                </div>
+                <h3 class="horror-font">POCONG</h3>
+                <p style="font-size: 0.9rem;">Tugas: Takuti warga sebanyak mungkin! Melompatlah!</p>
+            </div>
+            <div class="role-card" onclick="startGame('warga')">
+                <div class="preview-box">
+                    <div class="warga-menu" style="left: 50%; transform: translateX(-50%);"></div>
+                </div>
+                <h3 class="horror-font" style="color: #f39c12;">WARGA</h3>
+                <p style="font-size: 0.9rem;">Tugas: Kabur! Klik pocong jika dekat untuk bongkar kostumnya!</p>
+            </div>
+        </div>
+        <button onclick="showScreen('screen-menu')" style="margin-top: 30px; font-size: 1rem; padding: 10px 20px; background: transparent;">KEMBALI</button>
+    </div>
+
+    <!-- GAMEPLAY -->
+    <div id="screen-game" class="screen hidden" style="background: transparent;">
+        <div id="game-ui">
+            <div class="ui-box">Skor: <span id="ui-score" class="text-red">0</span></div>
+            <div class="ui-box">Waktu: <span id="ui-time">60</span>s</div>
+        </div>
+        <div id="interaction-hint">Klik Pocong<br>BONGKAR KOSTUM!</div>
+        <div id="canvas-container">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="screen-gameover" class="screen hidden">
+        <h1>GAME OVER</h1>
+        <h2 style="color: var(--text-color); font-family: 'Nunito', sans-serif;">Skor Akhir: <span id="final-score" class="horror-font" style="font-size:2.5rem;">0</span></h2>
+        
+        <div class="leaderboard">
+            <h3>Leaderboard</h3>
+            <ol id="leaderboard-list">
+                <!-- Injected via JS -->
+            </ol>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+            <button onclick="showScreen('screen-role')">MAIN LAGI</button>
+            <button id="btn-share" style="background-color: #25D366; border-color: #128C7E;">SHARE WA</button>
+        </div>
+    </div>
+
+    <script>
+        // --- AUDIO SYNTHESIS (Web Audio API) ---
+        // Generates retro procedural sound effects without external files
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        const SoundFX = {
+            jump: () => {
+                if(!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            },
+            scream: () => { // Used when caught or unmasked
+                if(!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.4);
+                
+                // Add some vibrato
+                const lfo = audioCtx.createOscillator();
+                lfo.type = 'square';
+                lfo.frequency.value = 10;
+                const lfoGain = audioCtx.createGain();
+                lfoGain.gain.value = 50;
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                lfo.start(); lfo.stop(audioCtx.currentTime + 0.5);
+
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            },
+            laugh: () => { // Kuntilanak like sound
+                if(!audioCtx) return;
+                let time = audioCtx.currentTime;
+                for(let i=0; i<5; i++) {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(600 - (i*50), time);
+                    osc.frequency.exponentialRampToValueAtTime(300, time + 0.2);
+                    gain.gain.setValueAtTime(0.2, time);
+                    gain.gain.linearRampToValueAtTime(0, time + 0.2);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(time); osc.stop(time + 0.2);
+                    time += 0.25;
+                }
+            }
+        };
+
+        // --- GAME LOGIC ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameLoopReq;
+        let gameState = {
+            role: 'pocong', // 'pocong' or 'warga'
+            score: 0,
+            time: 60,
+            isPlaying: false,
+            lastTime: 0,
+            timerInterval: null
+        };
+
+        // Entities
+        let player;
+        let bots = [];
+        let tombstones = [];
+        let particles = [];
+        
+        let mouseX = -100;
+        let mouseY = -100;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Utility
+        const dist = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
+        const rand = (min, max) => Math.random() * (max - min) + min;
+
+        // Classes
+        class Entity {
+            constructor(x, y, radius, speed) {
+                this.x = x; this.y = y; this.radius = radius;
+                this.speed = speed; this.vx = 0; this.vy = 0;
+                this.targetX = x; this.targetY = y;
+                this.isPlayer = false;
+                this.scared = false;
+                this.jumpPhase = 0; // for pocong
+                this.stateTimer = 0;
+            }
+            moveTowardsTarget(dt) {
+                const d = dist(this.x, this.y, this.targetX, this.targetY);
+                if (d > this.speed * dt * 0.05) { // Threshold
+                    this.vx = ((this.targetX - this.x) / d) * this.speed;
+                    this.vy = ((this.targetY - this.y) / d) * this.speed;
+                } else {
+                    this.vx = 0; this.vy = 0;
+                    if(this.isPlayer) {
+                        this.targetX = this.x; this.targetY = this.y;
+                    }
+                }
+                
+                // Prevent going off screen
+                let nextX = this.x + this.vx * dt * 0.05;
+                let nextY = this.y + this.vy * dt * 0.05;
+                
+                // Simple collision with bounds
+                nextX = Math.max(this.radius, Math.min(canvas.width - this.radius, nextX));
+                nextY = Math.max(this.radius, Math.min(canvas.height - this.radius, nextY));
+
+                this.x = nextX;
+                this.y = nextY;
+            }
+        }
+
+        class Pocong extends Entity {
+            constructor(x, y, isPlayer=false) {
+                super(x, y, 20, isPlayer ? 180 : 120);
+                this.isPlayer = isPlayer;
+                this.type = 'pocong';
+                this.jumpHeight = 0;
+                this.jumpTimer = 0;
+            }
+            update(dt) {
+                if(!this.isPlayer) {
+                    // Bot logic: find nearest warga
+                    let nearest = null;
+                    let minDist = Infinity;
+                    bots.forEach(b => {
+                        if(b.type === 'warga' && !b.scared) {
+                            let d = dist(this.x, this.y, b.x, b.y);
+                            if(d < minDist) { minDist = d; nearest = b; }
+                        }
+                    });
+                    if(gameState.role === 'warga') { // Player is warga
+                        let d = dist(this.x, this.y, player.x, player.y);
+                        if(d < minDist) { minDist = d; nearest = player; }
+                    }
+
+                    if(nearest) {
+                        this.targetX = nearest.x; this.targetY = nearest.y;
+                    } else {
+                        // Wander
+                        this.stateTimer -= dt;
+                        if(this.stateTimer <= 0) {
+                            this.targetX = this.x + rand(-100, 100);
+                            this.targetY = this.y + rand(-100, 100);
+                            this.stateTimer = rand(1000, 3000);
+                        }
+                    }
+                }
+                
+                let isMoving = this.vx !== 0 || this.vy !== 0;
+
+                // Jumping logic
+                this.jumpTimer += dt;
+                if(isMoving) {
+                    if (this.jumpTimer > 400) { // jump duration
+                        this.jumpTimer = 0;
+                        if(this.isPlayer) SoundFX.jump();
+                    }
+                    // Sine wave for jump height
+                    this.jumpHeight = Math.abs(Math.sin((this.jumpTimer / 400) * Math.PI)) * 30;
+                    this.moveTowardsTarget(dt);
+                } else {
+                    this.jumpHeight = 0;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y - this.jumpHeight);
+                
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.beginPath();
+                ctx.ellipse(0, this.jumpHeight + 15, this.radius, this.radius/2, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                // Body
+                ctx.fillStyle = 'var(--shroud-white)';
+                ctx.beginPath();
+                ctx.roundRect(-15, -30, 30, 50, 10);
+                ctx.fill();
+                
+                // Head tie
+                ctx.beginPath();
+                ctx.moveTo(-5, -30); ctx.lineTo(0, -45); ctx.lineTo(5, -30);
+                ctx.fill();
+
+                // Eyes
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(-5, -15, 3, 0, Math.PI*2);
+                ctx.arc(5, -15, 3, 0, Math.PI*2);
+                ctx.fill();
+                
+                if(this.isPlayer) {
+                    // Marker
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.font = "12px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("Kamu", 0, -55);
+                }
+                ctx.restore();
+            }
+        }
+
+        class Warga extends Entity {
+            constructor(x, y, isPlayer=false) {
+                super(x, y, 15, isPlayer ? 220 : 160);
+                this.isPlayer = isPlayer;
+                this.type = 'warga';
+                this.color = ['#f39c12', '#3498db', '#e74c3c', '#9b59b6'][Math.floor(Math.random()*4)];
+                this.legPhase = 0;
+            }
+            update(dt) {
+                if(this.scared) {
+                    this.stateTimer -= dt;
+                    if(this.stateTimer <= 0) {
+                        this.scared = false;
+                        // Respawn far away
+                        this.x = rand(50, canvas.width-50);
+                        this.y = rand(50, canvas.height-50);
+                    }
+                    return; // Don't move while scared
+                }
+
+                if(!this.isPlayer) {
+                    // Bot logic: run away from nearest pocong
+                    let nearest = null;
+                    let minDist = Infinity;
+                    bots.forEach(b => {
+                        if(b.type === 'pocong') {
+                            let d = dist(this.x, this.y, b.x, b.y);
+                            if(d < minDist) { minDist = d; nearest = b; }
+                        }
+                    });
+                    if(gameState.role === 'pocong') {
+                        let d = dist(this.x, this.y, player.x, player.y);
+                        if(d < minDist) { minDist = d; nearest = player; }
+                    }
+
+                    if(nearest && minDist < 300) {
+                        // Run away
+                        let dx = this.x - nearest.x;
+                        let dy = this.y - nearest.y;
+                        let angle = Math.atan2(dy, dx);
+                        this.targetX = this.x + Math.cos(angle) * 100;
+                        this.targetY = this.y + Math.sin(angle) * 100;
+                    } else {
+                        // Wander slowly
+                        this.speed = 100;
+                        this.stateTimer -= dt;
+                        if(this.stateTimer <= 0) {
+                            this.targetX = this.x + rand(-50, 50);
+                            this.targetY = this.y + rand(-50, 50);
+                            this.stateTimer = rand(1000, 3000);
+                        }
+                    }
+                }
+
+                this.moveTowardsTarget(dt);
+                if(this.vx !== 0 || this.vy !== 0) {
+                    this.legPhase += dt * 0.02;
+                } else {
+                    this.legPhase = 0;
+                }
+            }
+            draw() {
+                if(this.scared) {
+                    // Draw ghost moving up
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.font = "20px monospace";
+                    ctx.fillText("👻", this.x - 10, this.y - (2000 - this.stateTimer)/50);
+                    return;
+                }
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.beginPath();
+                ctx.ellipse(0, 15, this.radius, this.radius/2, 0, 0, Math.PI*2);
+                ctx.fill();
+
+                // Legs
+                ctx.strokeStyle = '#222'; ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(-5, 10); ctx.lineTo(-5 + Math.sin(this.legPhase)*10, 20);
+                ctx.moveTo(5, 10); ctx.lineTo(5 - Math.sin(this.legPhase)*10, 20);
+                ctx.stroke();
+
+                // Body
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI*2);
+                ctx.fill();
+
+                // Face
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(-5, -3, 2, 0, Math.PI*2);
+                ctx.arc(5, -3, 2, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Scared expression if pocong is near
+                let isScaredExp = false;
+                if(gameState.role === 'pocong') {
+                    if(dist(this.x, this.y, player.x, player.y) < 150) isScaredExp = true;
+                } else {
+                    bots.forEach(b => {
+                        if(b.type === 'pocong' && dist(this.x, this.y, b.x, b.y) < 150) isScaredExp = true;
+                    });
+                }
+
+                if(isScaredExp) {
+                    ctx.beginPath();
+                    ctx.ellipse(0, 5, 3, 5, 0, 0, Math.PI*2);
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 5, 4, 0, Math.PI);
+                    ctx.stroke();
+                }
+
+                if(this.isPlayer) {
+                    // Marker
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.font = "12px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("Kamu", 0, -25);
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // Setup environment
+        function setupGame() {
+            bots = [];
+            tombstones = [];
+            particles = [];
+            
+            // Create tombstones
+            for(let i=0; i<15; i++) {
+                tombstones.push({
+                    x: rand(50, canvas.width-50),
+                    y: rand(50, canvas.height-50),
+                    w: rand(30, 50),
+                    h: rand(40, 70)
+                });
+            }
+
+            // Create Player
+            if(gameState.role === 'pocong') {
+                player = new Pocong(canvas.width/2, canvas.height/2, true);
+                // Create Warga bots
+                for(let i=0; i<8; i++) {
+                    bots.push(new Warga(rand(50, canvas.width-50), rand(50, canvas.height-50)));
+                }
+            } else {
+                player = new Warga(canvas.width/2, canvas.height/2, true);
+                // Create Pocong bots
+                for(let i=0; i<4; i++) {
+                    bots.push(new Pocong(rand(50, canvas.width-50), rand(50, canvas.height-50)));
+                }
+            }
+        }
+
+        // Input handling
+        function handleInput(e) {
+            if(!gameState.isPlaying) return;
+            let rect = canvas.getBoundingClientRect();
+            
+            if(e.type.includes('touch')) {
+                mouseX = e.touches[0].clientX - rect.left;
+                mouseY = e.touches[0].clientY - rect.top;
+            } else {
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+            }
+
+            // Unmask logic for Warga
+            if(gameState.role === 'warga') {
+                let unmasked = false;
+                for(let i=bots.length-1; i>=0; i--) {
+                    let b = bots[i];
+                    if(b.type === 'pocong' && dist(mouseX, mouseY, b.x, b.y) < 40) {
+                        if(dist(player.x, player.y, b.x, b.y) < 100) {
+                            // Unmask success!
+                            SoundFX.scream();
+                            createParticles(b.x, b.y, 'var(--shroud-white)');
+                            bots.splice(i, 1); // remove pocong
+                            addScore(20);
+                            triggerScreenShake();
+                            unmasked = true;
+                            // Add new pocong after delay
+                            setTimeout(() => {
+                                if(gameState.isPlaying) {
+                                    bots.push(new Pocong(rand(50, canvas.width-50), rand(50, canvas.height-50)));
+                                }
+                            }, 2000);
+                            break;
+                        }
+                    }
+                }
+                if(!unmasked) {
+                    player.targetX = mouseX;
+                    player.targetY = mouseY;
+                }
+            } else {
+                player.targetX = mouseX;
+                player.targetY = mouseY;
+            }
+        }
+
+        canvas.addEventListener('mousedown', handleInput);
+        canvas.addEventListener('touchstart', handleInput, {passive: false});
+        
+        // Also track movement for continuous moving if dragging
+        canvas.addEventListener('mousemove', (e) => {
+            if(e.buttons === 1) handleInput(e);
+            
+            // Check interaction hint
+            if(gameState.role === 'warga') {
+                let rect = canvas.getBoundingClientRect();
+                let mx = e.clientX - rect.left;
+                let my = e.clientY - rect.top;
+                let showHint = false;
+                bots.forEach(b => {
+                    if(b.type === 'pocong' && dist(player.x, player.y, b.x, b.y) < 100 && dist(mx, my, b.x, b.y) < 40) {
+                        showHint = true;
+                    }
+                });
+                document.getElementById('interaction-hint').style.display = showHint ? 'block' : 'none';
+            }
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            handleInput(e);
+        }, {passive: false});
+
+        // Screen Shake
+        function triggerScreenShake() {
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 500);
+        }
+
+        function createParticles(x, y, color) {
+            for(let i=0; i<15; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: rand(-3, 3), vy: rand(-3, 3),
+                    life: 1, color: color
+                });
+            }
+        }
+
+        function addScore(pts) {
+            gameState.score += pts;
+            document.getElementById('ui-score').innerText = gameState.score;
+            document.getElementById('ui-score').style.transform = 'scale(1.5)';
+            setTimeout(() => document.getElementById('ui-score').style.transform = 'scale(1)', 200);
+        }
+
+        // Main Loop
+        function update(time) {
+            if(!gameState.isPlaying) return;
+            const dt = time - gameState.lastTime;
+            gameState.lastTime = time;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Background environment
+            ctx.fillStyle = 'rgba(43, 66, 21, 0.1)'; // Grass texture illusion
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+            
+            tombstones.forEach(t => {
+                ctx.fillStyle = 'var(--tombstone)';
+                ctx.beginPath();
+                ctx.roundRect(t.x - t.w/2, t.y - t.h/2, t.w, t.h, [20, 20, 0, 0]);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.font = "10px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("RIP", t.x, t.y);
+            });
+
+            // Update & Draw Entities
+            player.update(dt);
+            
+            bots.forEach(b => {
+                b.update(dt);
+                
+                // Collisions
+                if(gameState.role === 'pocong') {
+                    if(!b.scared && dist(player.x, player.y, b.x, b.y) < player.radius + b.radius) {
+                        b.scared = true;
+                        b.stateTimer = 2000;
+                        addScore(10);
+                        SoundFX.scream();
+                        createParticles(b.x, b.y, 'var(--blood-red)');
+                    }
+                } else if(gameState.role === 'warga') {
+                    if(dist(player.x, player.y, b.x, b.y) < player.radius + b.radius) {
+                        // Caught by pocong
+                        if(!player.scared) { // prevent multi-hits
+                            player.scared = true; // Use scared property as invulnerability frame
+                            addScore(-10);
+                            triggerScreenShake();
+                            SoundFX.scream();
+                            // Push back
+                            player.x += rand(-50, 50);
+                            player.y += rand(-50, 50);
+                            setTimeout(() => { player.scared = false; }, 1000);
+                        }
+                    }
+                }
+            });
+
+            // Sort by Y for depth sorting (pseudo 3D)
+            let allEntities = [player, ...bots];
+            allEntities.sort((a,b) => a.y - b.y);
+            allEntities.forEach(e => e.draw());
+
+            // Particles
+            for(let i=particles.length-1; i>=0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+                if(p.life <= 0) {
+                    particles.splice(i, 1);
+                } else {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            gameLoopReq = requestAnimationFrame(update);
+        }
+
+        // Screens and Flow
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.add('hidden');
+            });
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function startGame(role) {
+            initAudio(); // Required to init context on user gesture
+            SoundFX.laugh();
+            
+            gameState.role = role;
+            gameState.score = 0;
+            gameState.time = 60;
+            gameState.isPlaying = true;
+            
+            document.getElementById('ui-score').innerText = '0';
+            document.getElementById('ui-time').innerText = '60';
+            document.getElementById('interaction-hint').style.display = 'none';
+            
+            setupGame();
+            showScreen('screen-game');
+            
+            gameState.lastTime = performance.now();
+            if(gameLoopReq) cancelAnimationFrame(gameLoopReq);
+            gameLoopReq = requestAnimationFrame(update);
+
+            // Timer
+            if(gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(() => {
+                gameState.time--;
+                document.getElementById('ui-time').innerText = gameState.time;
+                
+                // Passive score for Warga
+                if(gameState.role === 'warga' && gameState.time > 0) {
+                    addScore(1);
+                }
+
+                if(gameState.time <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameState.isPlaying = false;
+            clearInterval(gameState.timerInterval);
+            cancelAnimationFrame(gameLoopReq);
+            
+            document.getElementById('final-score').innerText = gameState.score;
+            SoundFX.laugh();
+            
+            // Save to Leaderboard
+            saveScore(gameState.score, gameState.role);
+            loadLeaderboard();
+
+            // Share text
+            const shareText = `Gila! Gua main POCONG VS WARGA jadi ${gameState.role.toUpperCase()} dan dapet skor ${gameState.score}! Coba kalahin skor gua kalo berani! 👻👻👻`;
+            document.getElementById('btn-share').onclick = () => {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+            };
+
+            showScreen('screen-gameover');
+        }
+
+        function saveScore(score, role) {
+            let lb = JSON.parse(localStorage.getItem('pvw_leaderboard') || '[]');
+            const d = new Date();
+            lb.push({
+                score: score,
+                role: role,
+                date: `${d.getDate()}/${d.getMonth()+1} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`
+            });
+            lb.sort((a,b) => b.score - a.score);
+            lb = lb.slice(0, 5); // Keep top 5
+            localStorage.setItem('pvw_leaderboard', JSON.stringify(lb));
+        }
+
+        function loadLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            let lb = JSON.parse(localStorage.getItem('pvw_leaderboard') || '[]');
+            if(lb.length === 0) {
+                list.innerHTML = '<li>Belum ada skor</li>';
+                return;
+            }
+            lb.forEach(entry => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${entry.score}</strong> (${entry.role}) - <span style="font-size:0.8rem">${entry.date}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        // Ambient particles for menu
+        function generateMenuParticles() {
+            const container = document.getElementById('particles');
+            for(let i=0; i<30; i++) {
+                const div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.width = Math.random() * 4 + 'px';
+                div.style.height = div.style.width;
+                div.style.backgroundColor = i % 2 === 0 ? 'rgba(138, 3, 3, 0.5)' : 'rgba(144, 238, 144, 0.5)'; // fireflies/blood
+                div.style.borderRadius = '50%';
+                div.style.left = Math.random() * 100 + 'vw';
+                div.style.top = Math.random() * 100 + 'vh';
+                div.style.animation = `jumpCSS ${Math.random()*3 + 2}s infinite alternate`;
+                container.appendChild(div);
+            }
+        }
+        generateMenuParticles();
+        loadLeaderboard();
+        showScreen('screen-menu');
+
+    </script>
+</body>
+</html>
