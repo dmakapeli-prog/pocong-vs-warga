@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocong vs Warga</title>
+    <title>Pocong vs Warga: Ultimate</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700;900&display=swap');
 
         :root {
-            --bg-dark: #0a0f0d;
-            --blood-red: #8a0303;
-            --moss-green: #2b4215;
-            --shroud-white: #e0e0e0;
-            --text-color: #f0f0f0;
-            --tombstone: #4a544c;
+            --bg-dark: #050a07;
+            --blood-red: #9a030e;
+            --moss-green: #2d4a22;
+            --ghost-white: #e8edea;
+            --text-color: #f4f4f4;
+            --gold: #f39c12;
+            --ui-bg: rgba(0, 0, 0, 0.7);
         }
 
         * {
@@ -26,432 +27,586 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-dark); color: var(--text-color);
             font-family: 'Nunito', sans-serif; overflow: hidden;
-            touch-action: none; /* Prevent browser scrolling */
+            touch-action: none;
         }
 
-        h1, h2, h3, .horror-font {
-            font-family: 'Creepster', cursive;
-            color: var(--blood-red);
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-            margin-bottom: 10px;
-        }
+        .horror-font { font-family: 'Creepster', cursive; color: var(--blood-red); text-shadow: 2px 2px 5px #000; }
+        
+        h1 { font-size: 3.5rem; text-align: center; margin: 10px 0; line-height: 1.1; letter-spacing: 2px; }
+        h2 { font-size: 2rem; margin-bottom: 20px; }
 
-        h1 { font-size: 3rem; text-align: center; line-height: 1.1; }
-
+        /* Screens */
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #1a2a1f 0%, var(--bg-dark) 100%);
+            background: radial-gradient(circle at center, #112015 0%, var(--bg-dark) 100%);
             transition: opacity 0.5s ease; z-index: 10;
         }
-        
-        .hidden { opacity: 0; pointer-events: none; z-index: -1 !important; }
+        .hidden { opacity: 0; pointer-events: none; z-index: -1 !important; display: none !important; }
 
+        /* Buttons */
         button {
-            background-color: var(--moss-green); color: var(--shroud-white);
-            border: 2px solid var(--blood-red); padding: 15px 30px;
+            background-color: var(--moss-green); color: var(--ghost-white);
+            border: 2px solid var(--blood-red); padding: 15px 40px;
             font-size: 1.5rem; font-family: 'Creepster', cursive;
-            cursor: pointer; border-radius: 8px; margin: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+            cursor: pointer; border-radius: 12px; margin: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+            transition: all 0.2s; letter-spacing: 1px;
+            text-transform: uppercase;
         }
-
         button:hover {
-            transform: scale(1.1); background-color: #3d5c1e;
-            box-shadow: 0 0 15px var(--blood-red);
+            transform: translateY(-3px) scale(1.05); background-color: #3d662e;
+            box-shadow: 0 0 20px var(--blood-red);
         }
+        button:active { transform: translateY(2px) scale(0.95); }
 
-        button:active { transform: scale(0.95); }
-
-        /* CSS Animations */
-        @keyframes jumpCSS {
-            0%, 100% { transform: translateY(0) scaleY(1); }
-            50% { transform: translateY(-30px) scaleY(1.1); }
+        /* Custom UI Elements */
+        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
+        .hud-top { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .hud-box {
+            background: var(--ui-bg); padding: 10px 20px; border-radius: 10px;
+            border: 2px solid var(--moss-green); font-size: 1.5rem; font-weight: 900;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px);
         }
-
-        @keyframes shakeCSS {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-3px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-
-        .shake { animation: shakeCSS 0.5s; }
-
-        /* Menu Pocong Character */
-        .pocong-menu {
-            width: 80px; height: 130px; background: var(--shroud-white);
-            border-radius: 40px 40px 10px 10px; position: relative;
-            animation: jumpCSS 1s infinite; box-shadow: 0 10px 15px rgba(0,0,0,0.6);
-            margin-bottom: 20px;
-        }
-        .pocong-menu::before {
-            content: ''; position: absolute; top: 30px; left: 20px;
-            width: 12px; height: 12px; background: #000; border-radius: 50%;
-            box-shadow: 28px 0 0 #000; /* Eyes */
-        }
-        .pocong-menu::after {
-            content: ''; position: absolute; top: -15px; left: 30px;
-            width: 20px; height: 25px; background: var(--shroud-white);
-            border-radius: 5px; transform: rotate(15deg);
-        }
-
-        /* Particles */
-        #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-
-        /* Role Selection */
-        .role-cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
-        .role-card {
-            background: rgba(0,0,0,0.8); border: 2px solid var(--moss-green);
-            padding: 20px; border-radius: 10px; cursor: pointer;
-            text-align: center; transition: all 0.3s; width: 160px;
-        }
-        .role-card:hover { border-color: var(--blood-red); transform: scale(1.05); background: rgba(30,0,0,0.8); }
         
-        .preview-box { width: 60px; height: 80px; margin: 0 auto 15px; position: relative; }
-        
-        /* Warga Menu Preview */
-        .warga-menu {
-            width: 50px; height: 50px; background: #f39c12; border-radius: 50%;
-            position: absolute; bottom: 0; left: 5px;
+        .stamina-container { width: 200px; height: 15px; background: #222; border-radius: 10px; margin-top: 10px; border: 1px solid #555; overflow: hidden; }
+        #stamina-bar { width: 100%; height: 100%; background: var(--gold); transition: width 0.1s; }
+
+        .controls-guide {
+            position: absolute; bottom: 15px; left: 15px; background: var(--ui-bg);
+            padding: 15px; border-radius: 10px; font-size: 0.9rem;
+            border: 1px solid #444; color: #ccc;
         }
-        .warga-menu::before {
-            content: ''; position: absolute; top: 15px; left: 12px;
-            width: 6px; height: 6px; background: #000; border-radius: 50%;
-            box-shadow: 20px 0 0 #000; /* Scared Eyes */
-        }
-        .warga-menu::after {
-            content: ''; position: absolute; top: 30px; left: 20px;
-            width: 10px; height: 15px; background: #000; border-radius: 10px; /* Scared mouth */
+        .key-btn {
+            display: inline-block; background: #333; color: #fff; padding: 3px 8px;
+            border-radius: 5px; border: 1px solid #555; font-family: monospace; font-weight: bold;
+            box-shadow: 0 2px 0 #111; margin: 0 2px;
         }
 
-        /* Game UI */
-        #game-ui { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 20; pointer-events: none; }
-        .ui-box { background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 8px; border: 2px solid var(--moss-green); font-size: 1.2rem; font-weight: bold; }
-        .text-red { color: var(--blood-red); }
-        
-        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 5; }
+        /* Mobile Controls */
+        #mobile-controls {
+            display: none; position: absolute; bottom: 20px; width: 100%;
+            height: 150px; z-index: 30; pointer-events: none;
+        }
+        .joystick-zone, .action-zone { pointer-events: auto; position: absolute; top: 0; height: 100%; width: 50%; }
+        .joystick-zone { left: 0; }
+        .action-zone { right: 0; display: flex; justify-content: center; align-items: center; }
+        .joystick-base {
+            position: absolute; bottom: 20px; left: 40px; width: 100px; height: 100px;
+            background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+        .joystick-stick {
+            position: absolute; top: 25px; left: 25px; width: 50px; height: 50px;
+            background: rgba(255,255,255,0.5); border-radius: 50%; pointer-events: none;
+        }
+        .btn-action-mobile {
+            width: 80px; height: 80px; background: rgba(154, 3, 14, 0.5);
+            border: 3px solid var(--blood-red); border-radius: 50%;
+            color: white; font-weight: bold; display: flex; justify-content: center;
+            align-items: center; font-size: 1.2rem; margin-right: 40px; margin-top: 40px;
+        }
+        .btn-action-mobile:active { background: rgba(154, 3, 14, 0.8); transform: scale(0.9); }
+
+        /* Buttons Top Right */
+        .top-right-btns { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; pointer-events: auto; }
+        .icon-btn {
+            background: var(--ui-bg); border: 2px solid #555; color: white;
+            width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+        }
+        .icon-btn:hover { border-color: var(--ghost-white); }
+
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
         canvas { display: block; width: 100%; height: 100%; }
+
+        /* Effects */
+        #flash-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--blood-red); opacity: 0; z-index: 25; pointer-events: none;
+            transition: opacity 0.1s;
+        }
+        .flash { opacity: 0.5 !important; }
         
-        /* Unmask Button / Hint */
-        #interaction-hint {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(138, 3, 3, 0.9); padding: 10px 20px; border-radius: 20px;
-            font-weight: bold; z-index: 20; display: none; text-align: center;
-            pointer-events: none; font-size: 0.9rem;
+        .shake { animation: shakeCSS 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shakeCSS {
+            10%, 90% { transform: translate3d(-2px, 2px, 0); }
+            20%, 80% { transform: translate3d(4px, -3px, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 4px, 0); }
+            40%, 60% { transform: translate3d(6px, -4px, 0); }
         }
 
-        /* Leaderboard */
-        .leaderboard { margin: 15px 0; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; min-width: 250px; max-height: 150px; overflow-y: auto;}
-        .leaderboard h3 { margin-top: 0; font-size: 1.5rem; text-align: center; }
-        .leaderboard ol { padding-left: 25px; margin: 0; }
-        .leaderboard li { margin-bottom: 5px; font-size: 1.1rem; }
+        /* Leaderboard & Cards */
+        .role-cards { display: flex; gap: 30px; margin: 30px 0; flex-wrap: wrap; justify-content: center; }
+        .role-card {
+            background: rgba(0,0,0,0.8); border: 2px solid #444; padding: 30px 20px;
+            border-radius: 15px; cursor: pointer; text-align: center; width: 220px;
+            transition: all 0.3s;
+        }
+        .role-card:hover { border-color: var(--blood-red); transform: translateY(-10px); box-shadow: 0 10px 20px rgba(154, 3, 14, 0.4); }
+        .role-icon { font-size: 4rem; margin-bottom: 15px; }
 
-        /* Media Queries */
-        @media (max-width: 600px) {
+        .leaderboard {
+            background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px;
+            border: 1px solid var(--moss-green); margin: 20px 0; width: 300px;
+        }
+        .leaderboard h3 { margin: 0 0 15px 0; text-align: center; color: var(--gold); }
+        .leaderboard ol { padding-left: 25px; margin: 0; font-size: 1.2rem; }
+        .leaderboard li { margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+
+        /* Decorative Menu UI */
+        .fog {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;
+            background: linear-gradient(to top, rgba(200,220,210,0.2), transparent);
+            pointer-events: none; z-index: 2;
+        }
+        .moon {
+            position: absolute; top: 50px; right: 100px; width: 100px; height: 100px;
+            background: #fff; border-radius: 50%; box-shadow: 0 0 50px #fff;
+            opacity: 0.8; z-index: 1; pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .controls-guide { display: none; } /* Hide PC controls on mobile */
             h1 { font-size: 2.5rem; }
-            button { font-size: 1.2rem; padding: 12px 24px; }
-            .ui-box { padding: 5px 10px; font-size: 1rem; }
+            .hud-box { font-size: 1.2rem; padding: 8px 15px; }
+            #mobile-controls { display: block; }
         }
     </style>
 </head>
 <body>
 
-    <!-- CSS Particles Background -->
-    <div id="particles"></div>
-
     <!-- MAIN MENU -->
     <div id="screen-menu" class="screen">
-        <div class="pocong-menu"></div>
-        <h1>POCONG<br><span style="color:var(--text-color); font-size:2rem; font-family:'Nunito',sans-serif;">VS</span><br>WARGA</h1>
-        <p style="text-align: center; max-width: 400px; padding: 0 20px;">Game Horror-Comedy Viral!<br>Pilih jalan hidupmu, tangkap warga atau kabur dari kejaran setan lokal!</p>
-        <button onclick="showScreen('screen-role')">MAIN SEKARANG</button>
+        <div class="moon"></div>
+        <div class="fog"></div>
+        <div style="font-size: 6rem; animation: shakeCSS 3s infinite; text-shadow: 0 0 20px #fff; margin-bottom: -20px;">👻</div>
+        <h1 class="horror-font">POCONG<br><span style="font-family:'Nunito',sans-serif; font-size: 2rem; color: #fff; text-shadow: none;">VS</span><br>WARGA</h1>
+        <p style="color: #ccc; max-width: 400px; text-align: center; margin-bottom: 30px; font-size: 1.1rem; z-index: 10;">
+            Bertahan hidup dari teror malam, atau jadilah sang teror itu sendiri.
+        </p>
+        <button onclick="showScreen('screen-role'); initAudio();">MULAI GAME</button>
     </div>
 
     <!-- ROLE SELECTION -->
     <div id="screen-role" class="screen hidden">
-        <h2>PILIH PERANMU</h2>
+        <h2 class="horror-font" style="font-size: 3rem;">PILIH PERANMU</h2>
         <div class="role-cards">
             <div class="role-card" onclick="startGame('pocong')">
-                <div class="preview-box">
-                    <div class="pocong-menu" style="transform: scale(0.6); transform-origin: top center;"></div>
-                </div>
-                <h3 class="horror-font">POCONG</h3>
-                <p style="font-size: 0.9rem;">Tugas: Takuti warga sebanyak mungkin! Melompatlah!</p>
+                <div class="role-icon">👻</div>
+                <h3 class="horror-font" style="font-size: 2rem; margin:0;">POCONG</h3>
+                <p style="color: #bbb; font-size: 0.95rem; margin-top: 10px;">
+                    Tangkap dan takuti warga sebanyak mungkin.<br><br>
+                    <span class="key-btn">WASD</span> Gerak<br>
+                    <span class="key-btn">SPACE</span> Takuti
+                </p>
             </div>
             <div class="role-card" onclick="startGame('warga')">
-                <div class="preview-box">
-                    <div class="warga-menu" style="left: 50%; transform: translateX(-50%);"></div>
-                </div>
-                <h3 class="horror-font" style="color: #f39c12;">WARGA</h3>
-                <p style="font-size: 0.9rem;">Tugas: Kabur! Klik pocong jika dekat untuk bongkar kostumnya!</p>
+                <div class="role-icon">🧍</div>
+                <h3 class="horror-font" style="font-size: 2rem; margin:0; color:var(--gold);">WARGA</h3>
+                <p style="color: #bbb; font-size: 0.95rem; margin-top: 10px;">
+                    Hindari pocong, cari <b style="color:cyan">🎭 Topeng</b>, lalu bongkar kostumnya!<br><br>
+                    <span class="key-btn">WASD</span> Gerak<br>
+                    <span class="key-btn">SPACE</span> Bongkar
+                </p>
             </div>
         </div>
-        <button onclick="showScreen('screen-menu')" style="margin-top: 30px; font-size: 1rem; padding: 10px 20px; background: transparent;">KEMBALI</button>
+        <button onclick="showScreen('screen-menu')" style="background: transparent; font-size: 1.2rem; padding: 10px 20px; border-color: #555;">KEMBALI</button>
     </div>
 
-    <!-- GAMEPLAY -->
+    <!-- GAME UI & CANVAS -->
     <div id="screen-game" class="screen hidden" style="background: transparent;">
-        <div id="game-ui">
-            <div class="ui-box">Skor: <span id="ui-score" class="text-red">0</span></div>
-            <div class="ui-box">Waktu: <span id="ui-time">60</span>s</div>
-        </div>
-        <div id="interaction-hint">Klik Pocong<br>BONGKAR KOSTUM!</div>
+        <div id="flash-overlay"></div>
         <div id="canvas-container">
             <canvas id="gameCanvas"></canvas>
         </div>
+        
+        <div id="game-ui">
+            <div class="hud-top">
+                <div>
+                    <div class="hud-box">🏆 SKOR: <span id="ui-score" style="color: var(--gold);">0</span></div>
+                    <div class="stamina-container" id="stamina-ui" style="display:none;">
+                        <div id="stamina-bar"></div>
+                    </div>
+                </div>
+                <div class="hud-box" style="border-color: var(--blood-red);">⏱️ <span id="ui-time">90</span>s</div>
+            </div>
+
+            <div class="top-right-btns" style="top: 80px;">
+                <button class="icon-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
+                <button class="icon-btn" onclick="pauseGame()">⏸️</button>
+            </div>
+
+            <div class="controls-guide" id="pc-controls">
+                <div style="margin-bottom: 5px;"><b>KONTROL PC</b></div>
+                <span class="key-btn">W</span><span class="key-btn">A</span><span class="key-btn">S</span><span class="key-btn">D</span> atau <span class="key-btn">↑↓←→</span> : Bergerak<br>
+                <span class="key-btn" style="width: 60px; text-align: center; margin-top: 5px;">SPACE</span> : Aksi (Takuti / Bongkar)
+            </div>
+
+            <!-- Mobile Controls -->
+            <div id="mobile-controls">
+                <div class="joystick-zone" id="joystick-zone">
+                    <div class="joystick-base" id="joystick-base">
+                        <div class="joystick-stick" id="joystick-stick"></div>
+                    </div>
+                </div>
+                <div class="action-zone">
+                    <div class="btn-action-mobile" id="btn-action">AKSI</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAUSE MENU -->
+    <div id="screen-pause" class="screen hidden" style="background: rgba(0,0,0,0.8); z-index: 50;">
+        <h1 class="horror-font">PAUSED</h1>
+        <button onclick="resumeGame()">LANJUTKAN</button>
+        <button onclick="quitGame()" style="background: var(--blood-red);">BERHENTI</button>
     </div>
 
     <!-- GAME OVER -->
     <div id="screen-gameover" class="screen hidden">
-        <h1>GAME OVER</h1>
-        <h2 style="color: var(--text-color); font-family: 'Nunito', sans-serif;">Skor Akhir: <span id="final-score" class="horror-font" style="font-size:2.5rem;">0</span></h2>
+        <h1 class="horror-font" style="font-size: 4rem;">WAKTU HABIS!</h1>
+        <div style="font-size: 1.5rem; margin-bottom: 10px;">Skor Akhir: <b id="final-score" style="color:var(--gold); font-size: 2.5rem;">0</b></div>
+        <div id="final-rank" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: cyan;">Peringkat: Pocong Amatir</div>
         
         <div class="leaderboard">
-            <h3>Leaderboard</h3>
-            <ol id="leaderboard-list">
-                <!-- Injected via JS -->
-            </ol>
+            <h3>Top 5 Skor</h3>
+            <ol id="leaderboard-list"></ol>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+        <div style="display: flex; gap: 15px; margin-top: 10px;">
             <button onclick="showScreen('screen-role')">MAIN LAGI</button>
-            <button id="btn-share" style="background-color: #25D366; border-color: #128C7E;">SHARE WA</button>
+            <button id="btn-share" style="background-color: #25D366; border-color: #128C7E; color: white;">📱 SHARE WA</button>
         </div>
     </div>
 
     <script>
-        // --- AUDIO SYNTHESIS (Web Audio API) ---
-        // Generates retro procedural sound effects without external files
+        /* ==========================================================================
+           AUDIO SYSTEM (Advanced Web Audio API)
+           ========================================================================== */
         const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
+        let actx;
+        let isMuted = false;
+        let bgmOsc = null, bgmGain = null;
 
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new AudioContext();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!actx) actx = new AudioContext();
+            if (actx.state === 'suspended') actx.resume();
         }
 
-        const SoundFX = {
-            jump: () => {
-                if(!audioCtx) return;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-            },
-            scream: () => { // Used when caught or unmasked
-                if(!audioCtx) return;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.4);
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊';
+            if(bgmGain) bgmGain.gain.setTargetAtTime(isMuted ? 0 : 0.15, actx.currentTime, 0.5);
+        }
+
+        const SFX = {
+            playBGM: () => {
+                if(!actx || bgmOsc) return;
+                bgmOsc = actx.createOscillator();
+                bgmGain = actx.createGain();
+                bgmOsc.type = 'triangle';
+                bgmOsc.frequency.value = 55; // Low hum
                 
-                // Add some vibrato
-                const lfo = audioCtx.createOscillator();
+                // Spooky modulation
+                const lfo = actx.createOscillator();
+                lfo.type = 'sine';
+                lfo.frequency.value = 0.2;
+                const lfoGain = actx.createGain();
+                lfoGain.gain.value = 10;
+                lfo.connect(lfoGain);
+                lfoGain.connect(bgmOsc.frequency);
+                lfo.start();
+
+                bgmGain.gain.value = isMuted ? 0 : 0.15;
+                bgmOsc.connect(bgmGain);
+                bgmGain.connect(actx.destination);
+                bgmOsc.start();
+            },
+            stopBGM: () => {
+                if(bgmOsc) { bgmOsc.stop(); bgmOsc.disconnect(); bgmOsc = null; }
+            },
+            jump: () => {
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator();
+                const gain = actx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(100, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, actx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.15);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.15);
+            },
+            scream: () => {
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator();
+                const gain = actx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, actx.currentTime + 0.6);
+                
+                // Vibrato
+                const lfo = actx.createOscillator();
                 lfo.type = 'square';
-                lfo.frequency.value = 10;
-                const lfoGain = audioCtx.createGain();
-                lfoGain.gain.value = 50;
+                lfo.frequency.value = 15;
+                const lfoGain = actx.createGain();
+                lfoGain.gain.value = 100;
                 lfo.connect(lfoGain);
                 lfoGain.connect(osc.frequency);
-                lfo.start(); lfo.stop(audioCtx.currentTime + 0.5);
+                lfo.start(); lfo.stop(actx.currentTime + 0.6);
 
-                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.4, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.6);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.6);
             },
-            laugh: () => { // Kuntilanak like sound
-                if(!audioCtx) return;
-                let time = audioCtx.currentTime;
-                for(let i=0; i<5; i++) {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(600 - (i*50), time);
-                    osc.frequency.exponentialRampToValueAtTime(300, time + 0.2);
-                    gain.gain.setValueAtTime(0.2, time);
-                    gain.gain.linearRampToValueAtTime(0, time + 0.2);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(time); osc.stop(time + 0.2);
-                    time += 0.25;
-                }
+            item: () => { // Pickup mask sound
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator();
+                const gain = actx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, actx.currentTime);
+                osc.frequency.setValueAtTime(900, actx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.3);
+            },
+            unmask: () => { // Heavy hit sound
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator();
+                const gain = actx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, actx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.5, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.4);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.4);
             }
         };
 
-        // --- GAME LOGIC ---
+        /* ==========================================================================
+           GAME ENGINE & STATE
+           ========================================================================== */
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let gameLoopReq;
-        let gameState = {
-            role: 'pocong', // 'pocong' or 'warga'
+        
+        let lastTime = 0, reqFrame;
+        let game = {
+            state: 'menu', // menu, role, playing, paused, gameover
+            role: 'pocong',
             score: 0,
-            time: 60,
-            isPlaying: false,
-            lastTime: 0,
-            timerInterval: null
+            time: 90,
+            timerId: null,
+            width: 0, height: 0,
+            camX: 0, camY: 0,
+            hasMask: false
         };
 
-        // Entities
-        let player;
-        let bots = [];
-        let tombstones = [];
-        let particles = [];
-        
-        let mouseX = -100;
-        let mouseY = -100;
-
-        function resizeCanvas() {
+        function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            game.width = canvas.width;
+            game.height = canvas.height;
+            // Check if mobile for controls
+            if('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                document.getElementById('mobile-controls').style.display = 'block';
+                document.getElementById('pc-controls').style.display = 'none';
+            }
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', resize);
+        resize();
 
-        // Utility
-        const dist = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
-        const rand = (min, max) => Math.random() * (max - min) + min;
+        /* ==========================================================================
+           INPUT HANDLING
+           ========================================================================== */
+        const keys = { w:false, a:false, s:false, d:false, space:false };
+        window.addEventListener('keydown', e => {
+            if(e.code==='KeyW' || e.code==='ArrowUp') keys.w = true;
+            if(e.code==='KeyS' || e.code==='ArrowDown') keys.s = true;
+            if(e.code==='KeyA' || e.code==='ArrowLeft') keys.a = true;
+            if(e.code==='KeyD' || e.code==='ArrowRight') keys.d = true;
+            if(e.code==='Space') { keys.space = true; handleAction(); }
+            if(e.code==='Escape' && game.state === 'playing') pauseGame();
+        });
+        window.addEventListener('keyup', e => {
+            if(e.code==='KeyW' || e.code==='ArrowUp') keys.w = false;
+            if(e.code==='KeyS' || e.code==='ArrowDown') keys.s = false;
+            if(e.code==='KeyA' || e.code==='ArrowLeft') keys.a = false;
+            if(e.code==='KeyD' || e.code==='ArrowRight') keys.d = false;
+            if(e.code==='Space') keys.space = false;
+        });
 
-        // Classes
+        // Mobile Joystick
+        let joyActive = false, joyOrigin = {x:0, y:0}, joyCurrent = {x:0, y:0};
+        const joyZone = document.getElementById('joystick-zone');
+        const joyBase = document.getElementById('joystick-base');
+        const joyStick = document.getElementById('joystick-stick');
+        const actionBtn = document.getElementById('btn-action');
+
+        joyZone.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            joyActive = true;
+            const rect = joyZone.getBoundingClientRect();
+            joyOrigin.x = touch.clientX - rect.left;
+            joyOrigin.y = touch.clientY - rect.top;
+            
+            joyBase.style.left = (joyOrigin.x - 50) + 'px';
+            joyBase.style.top = (joyOrigin.y - 50) + 'px';
+            joyBase.style.bottom = 'auto';
+            joyStick.style.transform = `translate(0px, 0px)`;
+            updateJoystick(touch);
+        });
+
+        joyZone.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if(joyActive) updateJoystick(e.changedTouches[0]);
+        });
+
+        const endJoy = (e) => {
+            e.preventDefault();
+            joyActive = false;
+            joyBase.style.bottom = '20px'; joyBase.style.left = '40px'; joyBase.style.top = 'auto';
+            joyStick.style.transform = `translate(0px, 0px)`;
+            keys.w = keys.s = keys.a = keys.d = false;
+        };
+        joyZone.addEventListener('touchend', endJoy);
+        joyZone.addEventListener('touchcancel', endJoy);
+
+        function updateJoystick(touch) {
+            const rect = joyZone.getBoundingClientRect();
+            let tx = touch.clientX - rect.left;
+            let ty = touch.clientY - rect.top;
+            let dx = tx - joyOrigin.x;
+            let dy = ty - joyOrigin.y;
+            let dist = Math.hypot(dx, dy);
+            let maxDist = 40;
+            if(dist > maxDist) {
+                dx = (dx/dist) * maxDist;
+                dy = (dy/dist) * maxDist;
+            }
+            joyStick.style.transform = `translate(${dx}px, ${dy}px)`;
+            
+            // Map to keys
+            keys.w = dy < -15; keys.s = dy > 15;
+            keys.a = dx < -15; keys.d = dx > 15;
+        }
+
+        actionBtn.addEventListener('touchstart', e => { e.preventDefault(); handleAction(); });
+
+        /* ==========================================================================
+           ENTITIES
+           ========================================================================== */
+        let player, bots = [], items = [], particles = [], graves = [], popTexts = [];
+        const WORLD_SIZE = 2000;
+
         class Entity {
             constructor(x, y, radius, speed) {
                 this.x = x; this.y = y; this.radius = radius;
                 this.speed = speed; this.vx = 0; this.vy = 0;
-                this.targetX = x; this.targetY = y;
-                this.isPlayer = false;
-                this.scared = false;
-                this.jumpPhase = 0; // for pocong
-                this.stateTimer = 0;
+                this.isPlayer = false; this.state = 'idle';
+                this.timer = 0;
             }
-            moveTowardsTarget(dt) {
-                const d = dist(this.x, this.y, this.targetX, this.targetY);
-                if (d > this.speed * dt * 0.05) { // Threshold
-                    this.vx = ((this.targetX - this.x) / d) * this.speed;
-                    this.vy = ((this.targetY - this.y) / d) * this.speed;
-                } else {
-                    this.vx = 0; this.vy = 0;
-                    if(this.isPlayer) {
-                        this.targetX = this.x; this.targetY = this.y;
-                    }
-                }
-                
-                // Prevent going off screen
-                let nextX = this.x + this.vx * dt * 0.05;
-                let nextY = this.y + this.vy * dt * 0.05;
-                
-                // Simple collision with bounds
-                nextX = Math.max(this.radius, Math.min(canvas.width - this.radius, nextX));
-                nextY = Math.max(this.radius, Math.min(canvas.height - this.radius, nextY));
-
-                this.x = nextX;
-                this.y = nextY;
+            applyBounds() {
+                this.x = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.x));
+                this.y = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.y));
             }
         }
 
         class Pocong extends Entity {
             constructor(x, y, isPlayer=false) {
-                super(x, y, 20, isPlayer ? 180 : 120);
-                this.isPlayer = isPlayer;
-                this.type = 'pocong';
-                this.jumpHeight = 0;
-                this.jumpTimer = 0;
+                super(x, y, 25, isPlayer ? 220 : 160);
+                this.isPlayer = isPlayer; this.type = 'pocong';
+                this.jumpY = 0; this.jumpTime = 0; this.stamina = 100;
+                this.cooldown = 0;
             }
             update(dt) {
-                if(!this.isPlayer) {
-                    // Bot logic: find nearest warga
-                    let nearest = null;
-                    let minDist = Infinity;
-                    bots.forEach(b => {
-                        if(b.type === 'warga' && !b.scared) {
-                            let d = dist(this.x, this.y, b.x, b.y);
-                            if(d < minDist) { minDist = d; nearest = b; }
-                        }
-                    });
-                    if(gameState.role === 'warga') { // Player is warga
-                        let d = dist(this.x, this.y, player.x, player.y);
-                        if(d < minDist) { minDist = d; nearest = player; }
-                    }
-
-                    if(nearest) {
-                        this.targetX = nearest.x; this.targetY = nearest.y;
-                    } else {
-                        // Wander
-                        this.stateTimer -= dt;
-                        if(this.stateTimer <= 0) {
-                            this.targetX = this.x + rand(-100, 100);
-                            this.targetY = this.y + rand(-100, 100);
-                            this.stateTimer = rand(1000, 3000);
-                        }
-                    }
-                }
-                
-                let isMoving = this.vx !== 0 || this.vy !== 0;
-
-                // Jumping logic
-                this.jumpTimer += dt;
-                if(isMoving) {
-                    if (this.jumpTimer > 400) { // jump duration
-                        this.jumpTimer = 0;
-                        if(this.isPlayer) SoundFX.jump();
-                    }
-                    // Sine wave for jump height
-                    this.jumpHeight = Math.abs(Math.sin((this.jumpTimer / 400) * Math.PI)) * 30;
-                    this.moveTowardsTarget(dt);
-                } else {
-                    this.jumpHeight = 0;
-                }
-            }
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y - this.jumpHeight);
-                
-                // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                ctx.beginPath();
-                ctx.ellipse(0, this.jumpHeight + 15, this.radius, this.radius/2, 0, 0, Math.PI*2);
-                ctx.fill();
-
-                // Body
-                ctx.fillStyle = 'var(--shroud-white)';
-                ctx.beginPath();
-                ctx.roundRect(-15, -30, 30, 50, 10);
-                ctx.fill();
-                
-                // Head tie
-                ctx.beginPath();
-                ctx.moveTo(-5, -30); ctx.lineTo(0, -45); ctx.lineTo(5, -30);
-                ctx.fill();
-
-                // Eyes
-                ctx.fillStyle = '#000';
-                ctx.beginPath();
-                ctx.arc(-5, -15, 3, 0, Math.PI*2);
-                ctx.arc(5, -15, 3, 0, Math.PI*2);
-                ctx.fill();
+                if(this.state === 'unmasked') return; // Dead
                 
                 if(this.isPlayer) {
-                    // Marker
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                    ctx.font = "12px sans-serif";
-                    ctx.textAlign = "center";
-                    ctx.fillText("Kamu", 0, -55);
+                    let moveX = 0, moveY = 0;
+                    if(keys.w) moveY -= 1; if(keys.s) moveY += 1;
+                    if(keys.a) moveX -= 1; if(keys.d) moveX += 1;
+                    
+                    if(moveX!==0 && moveY!==0) { moveX *= 0.707; moveY *= 0.707; } // normalize
+                    this.vx = moveX * this.speed;
+                    this.vy = moveY * this.speed;
+
+                    if(this.cooldown > 0) this.cooldown -= dt;
+                } else {
+                    // BOT AI: Chase nearest Warga
+                    let nearest = null, minDist = Infinity;
+                    const targets = game.role === 'warga' ? [player, ...bots.filter(b=>b.type==='warga')] : bots.filter(b=>b.type==='warga');
+                    
+                    targets.forEach(t => {
+                        if(t.state === 'scared') return;
+                        let d = Math.hypot(this.x - t.x, this.y - t.y);
+                        if(d < minDist) { minDist = d; nearest = t; }
+                    });
+
+                    if(nearest && minDist < 400) {
+                        let angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
+                        this.vx = Math.cos(angle) * this.speed;
+                        this.vy = Math.sin(angle) * this.speed;
+                    } else {
+                        // Wander
+                        this.timer -= dt;
+                        if(this.timer <= 0) {
+                            let angle = Math.random() * Math.PI * 2;
+                            this.vx = Math.cos(angle) * (this.speed*0.5);
+                            this.vy = Math.sin(angle) * (this.speed*0.5);
+                            this.timer = Math.random() * 2 + 1;
+                        }
+                    }
+                }
+
+                // Apply movement
+                this.x += this.vx * dt; this.y += this.vy * dt;
+                this.applyBounds();
+
+                // Jumping logic
+                let isMoving = this.vx !== 0 || this.vy !== 0;
+                if(isMoving) {
+                    this.jumpTime += dt * 5;
+                    this.jumpY = Math.abs(Math.sin(this.jumpTime)) * 30;
+                    if(this.jumpY < 2 && Math.sin(this.jumpTime) > 0) {
+                        // Landed
+                        if(this.isPlayer && Math.random() > 0.5) SFX.jump();
+                    }
+                } else {
+                    this.jumpY = 0;
+                    this.jumpTime = 0;
+                }
+            }
+            draw(ctx) {
+                if(this.state === 'unmasked') return;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.beginPath(); ctx.ellipse(0, 15, 20, 10, 0, 0, Math.PI*2); ctx.fill();
+
+                ctx.translate(0, -this.jumpY);
+                // Body
+                ctx.fillStyle = 'var(--ghost-white)';
+                ctx.beginPath(); ctx.roundRect(-20, -40, 40, 60, 20); ctx.fill();
+                // Tie
+                ctx.beginPath(); ctx.moveTo(-8, -40); ctx.lineTo(0, -55); ctx.lineTo(8, -40); ctx.fill();
+                // Face area
+                ctx.fillStyle = '#000';
+                ctx.beginPath(); ctx.roundRect(-12, -30, 24, 15, 5); ctx.fill();
+                // Eyes
+                ctx.fillStyle = this.cooldown > 0 ? 'var(--blood-red)' : '#fff';
+                ctx.beginPath(); ctx.arc(-5, -23, 2, 0, Math.PI*2); ctx.arc(5, -23, 2, 0, Math.PI*2); ctx.fill();
+
+                if(this.isPlayer) {
+                    ctx.fillStyle = 'cyan'; ctx.font = "14px bold sans-serif"; ctx.textAlign="center";
+                    ctx.fillText("Kamu", 0, -65);
                 }
                 ctx.restore();
             }
@@ -459,454 +614,485 @@
 
         class Warga extends Entity {
             constructor(x, y, isPlayer=false) {
-                super(x, y, 15, isPlayer ? 220 : 160);
-                this.isPlayer = isPlayer;
-                this.type = 'warga';
-                this.color = ['#f39c12', '#3498db', '#e74c3c', '#9b59b6'][Math.floor(Math.random()*4)];
-                this.legPhase = 0;
+                super(x, y, 20, isPlayer ? 240 : 180);
+                this.isPlayer = isPlayer; this.type = 'warga';
+                this.wiggle = 0;
+                this.stamina = 100;
             }
             update(dt) {
-                if(this.scared) {
-                    this.stateTimer -= dt;
-                    if(this.stateTimer <= 0) {
-                        this.scared = false;
-                        // Respawn far away
-                        this.x = rand(50, canvas.width-50);
-                        this.y = rand(50, canvas.height-50);
+                if(this.state === 'scared') {
+                    this.timer -= dt;
+                    if(this.timer <= 0) {
+                        this.state = 'idle';
+                        this.x = Math.random()*WORLD_SIZE; this.y = Math.random()*WORLD_SIZE;
                     }
-                    return; // Don't move while scared
-                }
-
-                if(!this.isPlayer) {
-                    // Bot logic: run away from nearest pocong
-                    let nearest = null;
-                    let minDist = Infinity;
-                    bots.forEach(b => {
-                        if(b.type === 'pocong') {
-                            let d = dist(this.x, this.y, b.x, b.y);
-                            if(d < minDist) { minDist = d; nearest = b; }
-                        }
-                    });
-                    if(gameState.role === 'pocong') {
-                        let d = dist(this.x, this.y, player.x, player.y);
-                        if(d < minDist) { minDist = d; nearest = player; }
-                    }
-
-                    if(nearest && minDist < 300) {
-                        // Run away
-                        let dx = this.x - nearest.x;
-                        let dy = this.y - nearest.y;
-                        let angle = Math.atan2(dy, dx);
-                        this.targetX = this.x + Math.cos(angle) * 100;
-                        this.targetY = this.y + Math.sin(angle) * 100;
-                    } else {
-                        // Wander slowly
-                        this.speed = 100;
-                        this.stateTimer -= dt;
-                        if(this.stateTimer <= 0) {
-                            this.targetX = this.x + rand(-50, 50);
-                            this.targetY = this.y + rand(-50, 50);
-                            this.stateTimer = rand(1000, 3000);
-                        }
-                    }
-                }
-
-                this.moveTowardsTarget(dt);
-                if(this.vx !== 0 || this.vy !== 0) {
-                    this.legPhase += dt * 0.02;
-                } else {
-                    this.legPhase = 0;
-                }
-            }
-            draw() {
-                if(this.scared) {
-                    // Draw ghost moving up
-                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-                    ctx.font = "20px monospace";
-                    ctx.fillText("👻", this.x - 10, this.y - (2000 - this.stateTimer)/50);
-                    return;
-                }
-
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                
-                // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                ctx.beginPath();
-                ctx.ellipse(0, 15, this.radius, this.radius/2, 0, 0, Math.PI*2);
-                ctx.fill();
-
-                // Legs
-                ctx.strokeStyle = '#222'; ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.moveTo(-5, 10); ctx.lineTo(-5 + Math.sin(this.legPhase)*10, 20);
-                ctx.moveTo(5, 10); ctx.lineTo(5 - Math.sin(this.legPhase)*10, 20);
-                ctx.stroke();
-
-                // Body
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, this.radius, 0, Math.PI*2);
-                ctx.fill();
-
-                // Face
-                ctx.fillStyle = '#000';
-                ctx.beginPath();
-                ctx.arc(-5, -3, 2, 0, Math.PI*2);
-                ctx.arc(5, -3, 2, 0, Math.PI*2);
-                ctx.fill();
-                
-                // Scared expression if pocong is near
-                let isScaredExp = false;
-                if(gameState.role === 'pocong') {
-                    if(dist(this.x, this.y, player.x, player.y) < 150) isScaredExp = true;
-                } else {
-                    bots.forEach(b => {
-                        if(b.type === 'pocong' && dist(this.x, this.y, b.x, b.y) < 150) isScaredExp = true;
-                    });
-                }
-
-                if(isScaredExp) {
-                    ctx.beginPath();
-                    ctx.ellipse(0, 5, 3, 5, 0, 0, Math.PI*2);
-                    ctx.fill();
-                } else {
-                    ctx.beginPath();
-                    ctx.arc(0, 5, 4, 0, Math.PI);
-                    ctx.stroke();
+                    return; // Don't move
                 }
 
                 if(this.isPlayer) {
-                    // Marker
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                    ctx.font = "12px sans-serif";
-                    ctx.textAlign = "center";
-                    ctx.fillText("Kamu", 0, -25);
+                    let moveX = 0, moveY = 0;
+                    if(keys.w) moveY -= 1; if(keys.s) moveY += 1;
+                    if(keys.a) moveX -= 1; if(keys.d) moveX += 1;
+                    if(moveX!==0 && moveY!==0) { moveX *= 0.707; moveY *= 0.707; }
+                    
+                    // Sprint if holding shift? Let's just keep it simple.
+                    this.vx = moveX * this.speed;
+                    this.vy = moveY * this.speed;
+                } else {
+                    // BOT AI: Run away from Pocong
+                    let nearest = null, minDist = Infinity;
+                    const threats = game.role === 'pocong' ? [player, ...bots.filter(b=>b.type==='pocong')] : bots.filter(b=>b.type==='pocong');
+                    
+                    threats.forEach(t => {
+                        if(t.state === 'unmasked') return;
+                        let d = Math.hypot(this.x - t.x, this.y - t.y);
+                        if(d < minDist) { minDist = d; nearest = t; }
+                    });
+
+                    if(nearest && minDist < 350) {
+                        let angle = Math.atan2(this.y - nearest.y, this.x - nearest.x);
+                        this.vx = Math.cos(angle) * this.speed;
+                        this.vy = Math.sin(angle) * this.speed;
+                    } else {
+                        // Wander
+                        this.timer -= dt;
+                        if(this.timer <= 0) {
+                            let angle = Math.random() * Math.PI * 2;
+                            this.vx = Math.cos(angle) * (this.speed*0.4);
+                            this.vy = Math.sin(angle) * (this.speed*0.4);
+                            this.timer = Math.random() * 2 + 1;
+                        }
+                    }
                 }
 
+                this.x += this.vx * dt; this.y += this.vy * dt;
+                this.applyBounds();
+
+                let isMoving = this.vx !== 0 || this.vy !== 0;
+                if(isMoving) this.wiggle += dt * 15; else this.wiggle = 0;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                if(this.state === 'scared') {
+                    // Draw flying ghost emoji
+                    ctx.font = "40px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+                    ctx.fillText("👻", 0, -30 - (2 - this.timer)*50);
+                    ctx.globalAlpha = this.timer / 2;
+                    ctx.fillText("💀", 0, 0);
+                    ctx.restore();
+                    return;
+                }
+
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.beginPath(); ctx.ellipse(0, 15, 15, 8, 0, 0, Math.PI*2); ctx.fill();
+
+                ctx.rotate(Math.sin(this.wiggle) * 0.1);
+                ctx.font = "40px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+                
+                // Face logic
+                let isThreatened = false;
+                const threats = game.role === 'pocong' ? [player, ...bots.filter(b=>b.type==='pocong')] : bots.filter(b=>b.type==='pocong');
+                threats.forEach(t => { if(t.state!=='unmasked' && Math.hypot(this.x-t.x, this.y-t.y) < 200) isThreatened = true; });
+
+                if(isThreatened) ctx.fillText("😱", 0, 0);
+                else ctx.fillText("🏃", 0, 0);
+
+                if(this.isPlayer) {
+                    ctx.fillStyle = 'cyan'; ctx.font = "14px bold sans-serif";
+                    ctx.fillText("Kamu", 0, -35);
+                    if(game.hasMask) ctx.fillText("🎭", 0, -55);
+                }
                 ctx.restore();
             }
         }
 
-        // Setup environment
-        function setupGame() {
-            bots = [];
-            tombstones = [];
-            particles = [];
-            
-            // Create tombstones
-            for(let i=0; i<15; i++) {
-                tombstones.push({
-                    x: rand(50, canvas.width-50),
-                    y: rand(50, canvas.height-50),
-                    w: rand(30, 50),
-                    h: rand(40, 70)
-                });
-            }
+        /* ==========================================================================
+           ACTION & COMBAT LOGIC
+           ========================================================================== */
+        function handleAction() {
+            if(game.state !== 'playing') return;
 
-            // Create Player
-            if(gameState.role === 'pocong') {
-                player = new Pocong(canvas.width/2, canvas.height/2, true);
-                // Create Warga bots
-                for(let i=0; i<8; i++) {
-                    bots.push(new Warga(rand(50, canvas.width-50), rand(50, canvas.height-50)));
-                }
-            } else {
-                player = new Warga(canvas.width/2, canvas.height/2, true);
-                // Create Pocong bots
-                for(let i=0; i<4; i++) {
-                    bots.push(new Pocong(rand(50, canvas.width-50), rand(50, canvas.height-50)));
-                }
-            }
-        }
-
-        // Input handling
-        function handleInput(e) {
-            if(!gameState.isPlaying) return;
-            let rect = canvas.getBoundingClientRect();
-            
-            if(e.type.includes('touch')) {
-                mouseX = e.touches[0].clientX - rect.left;
-                mouseY = e.touches[0].clientY - rect.top;
-            } else {
-                mouseX = e.clientX - rect.left;
-                mouseY = e.clientY - rect.top;
-            }
-
-            // Unmask logic for Warga
-            if(gameState.role === 'warga') {
-                let unmasked = false;
-                for(let i=bots.length-1; i>=0; i--) {
-                    let b = bots[i];
-                    if(b.type === 'pocong' && dist(mouseX, mouseY, b.x, b.y) < 40) {
-                        if(dist(player.x, player.y, b.x, b.y) < 100) {
-                            // Unmask success!
-                            SoundFX.scream();
-                            createParticles(b.x, b.y, 'var(--shroud-white)');
-                            bots.splice(i, 1); // remove pocong
-                            addScore(20);
-                            triggerScreenShake();
-                            unmasked = true;
-                            // Add new pocong after delay
-                            setTimeout(() => {
-                                if(gameState.isPlaying) {
-                                    bots.push(new Pocong(rand(50, canvas.width-50), rand(50, canvas.height-50)));
-                                }
-                            }, 2000);
-                            break;
-                        }
-                    }
-                }
-                if(!unmasked) {
-                    player.targetX = mouseX;
-                    player.targetY = mouseY;
-                }
-            } else {
-                player.targetX = mouseX;
-                player.targetY = mouseY;
-            }
-        }
-
-        canvas.addEventListener('mousedown', handleInput);
-        canvas.addEventListener('touchstart', handleInput, {passive: false});
-        
-        // Also track movement for continuous moving if dragging
-        canvas.addEventListener('mousemove', (e) => {
-            if(e.buttons === 1) handleInput(e);
-            
-            // Check interaction hint
-            if(gameState.role === 'warga') {
-                let rect = canvas.getBoundingClientRect();
-                let mx = e.clientX - rect.left;
-                let my = e.clientY - rect.top;
-                let showHint = false;
+            if(game.role === 'pocong') {
+                if(player.cooldown > 0) return;
+                // Area attack / Scare
+                player.cooldown = 1.0;
+                SFX.scream();
+                triggerShake(0.5);
+                spawnParticles(player.x, player.y, 'var(--blood-red)', 30);
+                
+                // Hit check
                 bots.forEach(b => {
-                    if(b.type === 'pocong' && dist(player.x, player.y, b.x, b.y) < 100 && dist(mx, my, b.x, b.y) < 40) {
-                        showHint = true;
+                    if(b.type === 'warga' && b.state !== 'scared' && Math.hypot(player.x - b.x, player.y - b.y) < 120) {
+                        b.state = 'scared';
+                        b.timer = 2.0;
+                        addScore(15);
+                        spawnText("WAAAA!", b.x, b.y, "var(--blood-red)");
                     }
                 });
-                document.getElementById('interaction-hint').style.display = showHint ? 'block' : 'none';
-            }
-        });
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            handleInput(e);
-        }, {passive: false});
 
-        // Screen Shake
-        function triggerScreenShake() {
-            document.body.classList.add('shake');
-            setTimeout(() => document.body.classList.remove('shake'), 500);
-        }
-
-        function createParticles(x, y, color) {
-            for(let i=0; i<15; i++) {
-                particles.push({
-                    x: x, y: y,
-                    vx: rand(-3, 3), vy: rand(-3, 3),
-                    life: 1, color: color
+            } else if(game.role === 'warga') {
+                if(!game.hasMask) {
+                    spawnText("Butuh Topeng! 🎭", player.x, player.y-30, "#fff");
+                    return;
+                }
+                // Unmask attack
+                let unmasked = false;
+                bots.forEach(b => {
+                    if(b.type === 'pocong' && b.state !== 'unmasked' && Math.hypot(player.x - b.x, player.y - b.y) < 100) {
+                        b.state = 'unmasked';
+                        SFX.unmask();
+                        triggerShake(0.8);
+                        spawnParticles(b.x, b.y, 'var(--ghost-white)', 50);
+                        addScore(50);
+                        spawnText("BONGKAR! 🎭", b.x, b.y, "cyan");
+                        unmasked = true;
+                        game.hasMask = false; // consume
+                        document.getElementById('stamina-ui').style.display = 'none';
+                        
+                        // Respawn new pocong later
+                        setTimeout(() => { if(game.state === 'playing') bots.push(new Pocong(Math.random()*WORLD_SIZE, Math.random()*WORLD_SIZE)); }, 3000);
+                    }
                 });
+                
+                if(!unmasked) spawnText("Terlalu jauh!", player.x, player.y-30, "#ccc");
             }
         }
 
-        function addScore(pts) {
-            gameState.score += pts;
-            document.getElementById('ui-score').innerText = gameState.score;
-            document.getElementById('ui-score').style.transform = 'scale(1.5)';
-            setTimeout(() => document.getElementById('ui-score').style.transform = 'scale(1)', 200);
+        /* ==========================================================================
+           GAME LOOP & RENDERER
+           ========================================================================== */
+        function setupWorld() {
+            bots = []; items = []; particles = []; graves = []; popTexts = [];
+            game.hasMask = false;
+            
+            // Graves
+            for(let i=0; i<60; i++) graves.push({x: Math.random()*WORLD_SIZE, y: Math.random()*WORLD_SIZE, w: 40+Math.random()*20, h: 60+Math.random()*30});
+
+            if(game.role === 'pocong') {
+                player = new Pocong(WORLD_SIZE/2, WORLD_SIZE/2, true);
+                for(let i=0; i<15; i++) bots.push(new Warga(Math.random()*WORLD_SIZE, Math.random()*WORLD_SIZE));
+                document.getElementById('stamina-ui').style.display = 'block'; // Show cooldown bar for pocong
+            } else {
+                player = new Warga(WORLD_SIZE/2, WORLD_SIZE/2, true);
+                for(let i=0; i<6; i++) bots.push(new Pocong(Math.random()*WORLD_SIZE, Math.random()*WORLD_SIZE));
+                document.getElementById('stamina-ui').style.display = 'none'; // Topeng status shown above head
+                spawnItem();
+            }
         }
 
-        // Main Loop
-        function update(time) {
-            if(!gameState.isPlaying) return;
-            const dt = time - gameState.lastTime;
-            gameState.lastTime = time;
+        function spawnItem() {
+            if(game.role === 'warga' && !game.hasMask && items.length < 1) {
+                items.push({x: Math.random()*WORLD_SIZE, y: Math.random()*WORLD_SIZE, type: 'mask'});
+            }
+        }
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+            lastTime = timestamp;
 
-            // Draw Background environment
-            ctx.fillStyle = 'rgba(43, 66, 21, 0.1)'; // Grass texture illusion
-            ctx.fillRect(0,0,canvas.width, canvas.height);
-            
-            tombstones.forEach(t => {
-                ctx.fillStyle = 'var(--tombstone)';
-                ctx.beginPath();
-                ctx.roundRect(t.x - t.w/2, t.y - t.h/2, t.w, t.h, [20, 20, 0, 0]);
-                ctx.fill();
-                ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                ctx.font = "10px sans-serif";
-                ctx.textAlign = "center";
-                ctx.fillText("RIP", t.x, t.y);
-            });
+            if(game.state === 'playing') {
+                update(dt);
+                render();
+            }
 
-            // Update & Draw Entities
+            reqFrame = requestAnimationFrame(loop);
+        }
+
+        function update(dt) {
             player.update(dt);
             
-            bots.forEach(b => {
-                b.update(dt);
-                
-                // Collisions
-                if(gameState.role === 'pocong') {
-                    if(!b.scared && dist(player.x, player.y, b.x, b.y) < player.radius + b.radius) {
-                        b.scared = true;
-                        b.stateTimer = 2000;
-                        addScore(10);
-                        SoundFX.scream();
-                        createParticles(b.x, b.y, 'var(--blood-red)');
-                    }
-                } else if(gameState.role === 'warga') {
-                    if(dist(player.x, player.y, b.x, b.y) < player.radius + b.radius) {
-                        // Caught by pocong
-                        if(!player.scared) { // prevent multi-hits
-                            player.scared = true; // Use scared property as invulnerability frame
-                            addScore(-10);
-                            triggerScreenShake();
-                            SoundFX.scream();
+            // Camera follow
+            game.camX = player.x - game.width / 2;
+            game.camY = player.y - game.height / 2;
+            
+            // Bounds clamp camera
+            game.camX = Math.max(0, Math.min(WORLD_SIZE - game.width, game.camX));
+            game.camY = Math.max(0, Math.min(WORLD_SIZE - game.height, game.camY));
+
+            // Bots
+            for(let i=bots.length-1; i>=0; i--) {
+                bots[i].update(dt);
+                // Remove dead bots
+                if((bots[i].type === 'warga' && bots[i].state === 'idle' && bots[i].timer === 0) || bots[i].state === 'unmasked') {
+                    // Logic handled in update (respawn warga, keep unmasked state)
+                }
+
+                // Player Warga caught by Pocong
+                if(game.role === 'warga' && bots[i].type === 'pocong' && bots[i].state !== 'unmasked') {
+                    if(Math.hypot(player.x - bots[i].x, player.y - bots[i].y) < 30) {
+                        // Caught!
+                        if(player.state !== 'scared') {
+                            SFX.scream();
+                            triggerFlash();
+                            triggerShake(0.8);
+                            addScore(-20);
+                            spawnText("-20 KENA!", player.x, player.y, "var(--blood-red)");
+                            player.state = 'scared';
+                            player.timer = 1.5;
                             // Push back
-                            player.x += rand(-50, 50);
-                            player.y += rand(-50, 50);
-                            setTimeout(() => { player.scared = false; }, 1000);
+                            player.x += (Math.random() - 0.5)*200;
+                            player.y += (Math.random() - 0.5)*200;
+                            player.applyBounds();
+                            game.hasMask = false; // drop mask
+                            setTimeout(() => { if(player) player.state = 'idle'; }, 1500);
                         }
                     }
                 }
-            });
+            }
 
-            // Sort by Y for depth sorting (pseudo 3D)
-            let allEntities = [player, ...bots];
-            allEntities.sort((a,b) => a.y - b.y);
-            allEntities.forEach(e => e.draw());
+            // Items
+            for(let i=items.length-1; i>=0; i--) {
+                let it = items[i];
+                if(Math.hypot(player.x - it.x, player.y - it.y) < 40) {
+                    game.hasMask = true;
+                    SFX.item();
+                    spawnText("DAPAT TOPENG!", player.x, player.y, "cyan");
+                    items.splice(i, 1);
+                    document.getElementById('stamina-ui').style.display = 'block';
+                    document.getElementById('stamina-bar').style.background = 'cyan';
+                    document.getElementById('stamina-bar').style.width = '100%';
+                }
+            }
+
+            // Item spawner logic
+            if(game.role === 'warga' && !game.hasMask && items.length === 0 && Math.random() < 0.01) spawnItem();
 
             // Particles
             for(let i=particles.length-1; i>=0; i--) {
                 let p = particles[i];
-                p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-                if(p.life <= 0) {
-                    particles.splice(i, 1);
-                } else {
-                    ctx.globalAlpha = p.life;
-                    ctx.fillStyle = p.color;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
+                p.x += p.vx*dt; p.y += p.vy*dt; p.life -= dt;
+                if(p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Texts
+            for(let i=popTexts.length-1; i>=0; i--) {
+                let t = popTexts[i];
+                t.y -= 50*dt; t.life -= dt;
+                if(t.life <= 0) popTexts.splice(i, 1);
+            }
+
+            // HUD UI Update
+            if(game.role === 'pocong') {
+                document.getElementById('stamina-bar').style.width = Math.max(0, (1 - player.cooldown)*100) + '%';
+            } else if(game.role === 'warga') {
+                if(!game.hasMask) document.getElementById('stamina-ui').style.display = 'none';
+            }
+        }
+
+        function render() {
+            ctx.fillStyle = '#0f1712'; // Grass ground
+            ctx.fillRect(0, 0, game.width, game.height);
+            
+            ctx.save();
+            ctx.translate(-game.camX, -game.camY);
+
+            // Grid / Texture detail (optional, skip for performance, draw grass patches instead)
+            ctx.fillStyle = 'rgba(45, 74, 34, 0.2)';
+            for(let i=0; i<WORLD_SIZE; i+=200) {
+                for(let j=0; j<WORLD_SIZE; j+=200) {
+                    ctx.fillRect(i, j, 100, 100);
                 }
             }
 
-            gameLoopReq = requestAnimationFrame(update);
+            // Graves
+            graves.forEach(g => {
+                ctx.fillStyle = '#444';
+                ctx.beginPath(); ctx.roundRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h, [10, 10, 0, 0]); ctx.fill();
+                ctx.fillStyle = '#222'; ctx.font = "14px monospace"; ctx.textAlign="center"; ctx.fillText("RIP", g.x, g.y);
+            });
+
+            // Items
+            items.forEach(it => {
+                ctx.font = "30px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+                ctx.fillText("🎭", it.x, it.y + Math.sin(performance.now()*0.005)*5);
+            });
+
+            // Entities Sorting for Y-Depth
+            let entities = [player, ...bots];
+            entities.sort((a,b) => a.y - b.y);
+            entities.forEach(e => e.draw(ctx));
+
+            // Particles
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+            });
+            ctx.globalAlpha = 1.0;
+
+            // Ambient Fireflies in world
+            ctx.fillStyle = 'rgba(150, 255, 100, 0.6)';
+            for(let i=0; i<50; i++) {
+                let fx = (performance.now()*0.02 + i*100) % WORLD_SIZE;
+                let fy = (performance.now()*0.015 + i*200) % WORLD_SIZE;
+                ctx.beginPath(); ctx.arc(fx, fy, 2, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Texts
+            popTexts.forEach(t => {
+                ctx.globalAlpha = Math.max(0, t.life);
+                ctx.fillStyle = t.color;
+                ctx.font = "bold 24px 'Creepster', cursive"; ctx.textAlign="center";
+                ctx.fillText(t.text, t.x, t.y);
+                ctx.lineWidth = 1; ctx.strokeStyle = '#000'; ctx.strokeText(t.text, t.x, t.y);
+            });
+            ctx.globalAlpha = 1.0;
+
+            ctx.restore();
+            
+            // Vignette effect over canvas
+            let grad = ctx.createRadialGradient(game.width/2, game.height/2, game.width/4, game.width/2, game.height/2, game.width);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.8)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, game.width, game.height);
         }
 
-        // Screens and Flow
+        /* ==========================================================================
+           UTILITIES & EFFECTS
+           ========================================================================== */
+        function triggerShake(intensity) {
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 400);
+        }
+
+        function triggerFlash() {
+            const f = document.getElementById('flash-overlay');
+            f.classList.add('flash');
+            setTimeout(() => f.classList.remove('flash'), 100);
+        }
+
+        function spawnParticles(x, y, color, count) {
+            for(let i=0; i<count; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let speed = Math.random() * 100 + 50;
+                particles.push({
+                    x: x, y: y,
+                    vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+                    life: Math.random()*0.5 + 0.5,
+                    color: color, size: Math.random()*3 + 1
+                });
+            }
+        }
+
+        function spawnText(txt, x, y, color) {
+            popTexts.push({text: txt, x: x, y: y, color: color, life: 1.5});
+        }
+
+        function addScore(pts) {
+            game.score += pts;
+            const el = document.getElementById('ui-score');
+            el.innerText = game.score;
+            el.style.transform = 'scale(1.5)';
+            setTimeout(() => el.style.transform = 'scale(1)', 200);
+        }
+
+        /* ==========================================================================
+           GAME FLOW
+           ========================================================================== */
         function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => {
-                s.classList.add('hidden');
-            });
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         }
 
         function startGame(role) {
-            initAudio(); // Required to init context on user gesture
-            SoundFX.laugh();
-            
-            gameState.role = role;
-            gameState.score = 0;
-            gameState.time = 60;
-            gameState.isPlaying = true;
-            
+            initAudio();
+            game.role = role;
+            game.score = 0; game.time = 90;
             document.getElementById('ui-score').innerText = '0';
-            document.getElementById('ui-time').innerText = '60';
-            document.getElementById('interaction-hint').style.display = 'none';
+            document.getElementById('ui-time').innerText = '90';
             
-            setupGame();
+            setupWorld();
             showScreen('screen-game');
+            game.state = 'playing';
             
-            gameState.lastTime = performance.now();
-            if(gameLoopReq) cancelAnimationFrame(gameLoopReq);
-            gameLoopReq = requestAnimationFrame(update);
+            SFX.playBGM();
 
-            // Timer
-            if(gameState.timerInterval) clearInterval(gameState.timerInterval);
-            gameState.timerInterval = setInterval(() => {
-                gameState.time--;
-                document.getElementById('ui-time').innerText = gameState.time;
+            if(game.timerId) clearInterval(game.timerId);
+            game.timerId = setInterval(() => {
+                if(game.state !== 'playing') return;
+                game.time--;
+                document.getElementById('ui-time').innerText = game.time;
                 
-                // Passive score for Warga
-                if(gameState.role === 'warga' && gameState.time > 0) {
-                    addScore(1);
-                }
+                if(game.role === 'warga' && game.time > 0) addScore(2); // Survival points
 
-                if(gameState.time <= 0) {
-                    endGame();
-                }
+                if(game.time <= 0) gameOver();
             }, 1000);
+
+            if(!reqFrame) reqFrame = requestAnimationFrame(loop);
         }
 
-        function endGame() {
-            gameState.isPlaying = false;
-            clearInterval(gameState.timerInterval);
-            cancelAnimationFrame(gameLoopReq);
-            
-            document.getElementById('final-score').innerText = gameState.score;
-            SoundFX.laugh();
-            
-            // Save to Leaderboard
-            saveScore(gameState.score, gameState.role);
-            loadLeaderboard();
+        function pauseGame() {
+            if(game.state === 'playing') {
+                game.state = 'paused';
+                showScreen('screen-pause');
+                document.getElementById('screen-game').classList.remove('hidden'); // keep game visible behind
+            }
+        }
 
-            // Share text
-            const shareText = `Gila! Gua main POCONG VS WARGA jadi ${gameState.role.toUpperCase()} dan dapet skor ${gameState.score}! Coba kalahin skor gua kalo berani! 👻👻👻`;
+        function resumeGame() {
+            game.state = 'playing';
+            showScreen('screen-game');
+            lastTime = performance.now();
+        }
+
+        function quitGame() {
+            game.state = 'menu';
+            SFX.stopBGM();
+            clearInterval(game.timerId);
+            showScreen('screen-menu');
+        }
+
+        function gameOver() {
+            game.state = 'gameover';
+            SFX.stopBGM();
+            clearInterval(game.timerId);
+            
+            document.getElementById('final-score').innerText = game.score;
+            
+            // Ranks
+            let rank = "";
+            if(game.role === 'pocong') {
+                if(game.score > 200) rank = "Raja Setan 👑";
+                else if(game.score > 100) rank = "Pocong Terseram 👻";
+                else rank = "Pocong Amatir 📦";
+            } else {
+                if(game.score > 300) rank = "Dukun Sakti 🧙‍♂️";
+                else if(game.score > 150) rank = "Warga Pemberani 🏃‍♂️";
+                else rank = "Tumbal Proyek 💀";
+            }
+            document.getElementById('final-rank').innerText = "Peringkat: " + rank;
+
+            saveScore(game.score, rank);
+            
+            const shareMsg = `Gila! Gua main POCONG VS WARGA dapet skor ${game.score} dan dapet title "${rank}"! Coba kalahin skor gua kalo berani! 👻`;
             document.getElementById('btn-share').onclick = () => {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
             };
 
             showScreen('screen-gameover');
         }
 
-        function saveScore(score, role) {
-            let lb = JSON.parse(localStorage.getItem('pvw_leaderboard') || '[]');
+        function saveScore(score, rank) {
+            let lb = JSON.parse(localStorage.getItem('pvw_ultimate_lb') || '[]');
             const d = new Date();
-            lb.push({
-                score: score,
-                role: role,
-                date: `${d.getDate()}/${d.getMonth()+1} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`
-            });
+            lb.push({ score: score, rank: rank, date: `${d.getDate()}/${d.getMonth()+1}` });
             lb.sort((a,b) => b.score - a.score);
-            lb = lb.slice(0, 5); // Keep top 5
-            localStorage.setItem('pvw_leaderboard', JSON.stringify(lb));
-        }
-
-        function loadLeaderboard() {
+            lb = lb.slice(0, 5);
+            localStorage.setItem('pvw_ultimate_lb', JSON.stringify(lb));
+            
             const list = document.getElementById('leaderboard-list');
             list.innerHTML = '';
-            let lb = JSON.parse(localStorage.getItem('pvw_leaderboard') || '[]');
-            if(lb.length === 0) {
-                list.innerHTML = '<li>Belum ada skor</li>';
-                return;
-            }
-            lb.forEach(entry => {
-                const li = document.createElement('li');
-                li.innerHTML = `<strong>${entry.score}</strong> (${entry.role}) - <span style="font-size:0.8rem">${entry.date}</span>`;
-                list.appendChild(li);
+            lb.forEach(e => {
+                list.innerHTML += `<li><b style="color:var(--gold)">${e.score}</b> - ${e.rank} <small style="color:#666">(${e.date})</small></li>`;
             });
         }
-
-        // Ambient particles for menu
-        function generateMenuParticles() {
-            const container = document.getElementById('particles');
-            for(let i=0; i<30; i++) {
-                const div = document.createElement('div');
-                div.style.position = 'absolute';
-                div.style.width = Math.random() * 4 + 'px';
-                div.style.height = div.style.width;
-                div.style.backgroundColor = i % 2 === 0 ? 'rgba(138, 3, 3, 0.5)' : 'rgba(144, 238, 144, 0.5)'; // fireflies/blood
-                div.style.borderRadius = '50%';
-                div.style.left = Math.random() * 100 + 'vw';
-                div.style.top = Math.random() * 100 + 'vh';
-                div.style.animation = `jumpCSS ${Math.random()*3 + 2}s infinite alternate`;
-                container.appendChild(div);
-            }
-        }
-        generateMenuParticles();
-        loadLeaderboard();
+        
+        // Initial setup
+        saveScore(0, "Pemanasan"); // Init dummy to populate list if empty
         showScreen('screen-menu');
 
     </script>
