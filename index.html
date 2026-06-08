@@ -3,292 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocong vs Warga: Ultimate</title>
+    <title>Pocong vs Warga: DreadOut Edition</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Jolly+Lodger&family=Nunito:wght@400;700;900&display=swap');
 
         :root {
-            --bg-dark: #050a07;
-            --blood-red: #9a030e;
-            --moss-green: #2d4a22;
-            --ghost-white: #e8edea;
-            --text-color: #f4f4f4;
-            --gold: #f39c12;
-            --ui-bg: rgba(0, 0, 0, 0.7);
+            --bg-night: #02050b;
+            --blood-red: #8a0303;
+            --ghost-white: #e3e8e5;
+            --dirt: #2a1f1a;
+            --moon: #f4f6f0;
+            --ui-bg: rgba(0, 0, 0, 0.8);
+            --gold: #f1c40f;
         }
 
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark); color: var(--text-color);
+            background-color: var(--bg-night); color: #fff;
             font-family: 'Nunito', sans-serif; overflow: hidden;
-            touch-action: none;
         }
 
-        .horror-font { font-family: 'Creepster', cursive; color: var(--blood-red); text-shadow: 2px 2px 5px #000; }
-        
-        h1 { font-size: 3.5rem; text-align: center; margin: 10px 0; line-height: 1.1; letter-spacing: 2px; }
-        h2 { font-size: 2rem; margin-bottom: 20px; }
+        .horror-font { font-family: 'Creepster', cursive; color: var(--blood-red); text-shadow: 2px 2px 4px #000, 0 0 10px var(--blood-red); }
+        .title-font { font-family: 'Jolly Lodger', cursive; color: var(--ghost-white); text-shadow: 3px 3px 5px #000, 0 0 20px #555; }
 
+        h1 { font-size: 5rem; text-align: center; margin: 0; line-height: 1; letter-spacing: 5px; }
+        
         /* Screens */
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #112015 0%, var(--bg-dark) 100%);
-            transition: opacity 0.5s ease; z-index: 10;
+            background: radial-gradient(circle at center, #0a1118 0%, var(--bg-night) 100%);
+            transition: opacity 0.5s ease; z-index: 20;
         }
         .hidden { opacity: 0; pointer-events: none; z-index: -1 !important; display: none !important; }
 
+        /* Loading Screen */
+        #loading-text { font-size: 2rem; margin-top: 20px; animation: pulse 1.5s infinite; color: var(--ghost-white); }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
         /* Buttons */
         button {
-            background-color: var(--moss-green); color: var(--ghost-white);
-            border: 2px solid var(--blood-red); padding: 15px 40px;
-            font-size: 1.5rem; font-family: 'Creepster', cursive;
-            cursor: pointer; border-radius: 12px; margin: 10px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
-            transition: all 0.2s; letter-spacing: 1px;
-            text-transform: uppercase;
+            background: linear-gradient(180deg, #3a0000 0%, #1a0000 100%);
+            color: var(--ghost-white); border: 2px solid var(--blood-red);
+            padding: 15px 50px; font-size: 1.8rem; font-family: 'Creepster', cursive;
+            cursor: pointer; border-radius: 8px; margin: 15px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.2);
+            transition: all 0.2s; letter-spacing: 2px; text-transform: uppercase;
         }
         button:hover {
-            transform: translateY(-3px) scale(1.05); background-color: #3d662e;
-            box-shadow: 0 0 20px var(--blood-red);
+            transform: translateY(-5px) scale(1.05);
+            background: linear-gradient(180deg, #5a0000 0%, #2a0000 100%);
+            box-shadow: 0 12px 20px rgba(138, 3, 3, 0.6), inset 0 0 15px rgba(255,0,0,0.4);
         }
         button:active { transform: translateY(2px) scale(0.95); }
 
-        /* Custom UI Elements */
-        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
-        .hud-top { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .hud-box {
-            background: var(--ui-bg); padding: 10px 20px; border-radius: 10px;
-            border: 2px solid var(--moss-green); font-size: 1.5rem; font-weight: 900;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-        }
+        /* UI / HUD */
+        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         
-        .stamina-container { width: 200px; height: 15px; background: #222; border-radius: 10px; margin-top: 10px; border: 1px solid #555; overflow: hidden; }
-        #stamina-bar { width: 100%; height: 100%; background: var(--gold); transition: width 0.1s; }
+        .hud-top { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .score-box {
+            font-family: 'Creepster', cursive; font-size: 3.5rem; color: var(--blood-red);
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            line-height: 1;
+        }
+        .combo-box { font-family: 'Jolly Lodger', cursive; font-size: 2.5rem; color: var(--gold); text-shadow: 2px 2px 4px #000; display: none; }
+        .timer-box {
+            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 2.5rem; color: var(--ghost-white);
+            background: var(--ui-bg); padding: 5px 20px; border-radius: 10px; border: 2px solid #555;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
 
-        .controls-guide {
-            position: absolute; bottom: 15px; left: 15px; background: var(--ui-bg);
-            padding: 15px; border-radius: 10px; font-size: 0.9rem;
-            border: 1px solid #444; color: #ccc;
+        .hud-bottom-left {
+            position: absolute; bottom: 20px; left: 20px; background: var(--ui-bg);
+            padding: 15px 25px; border-radius: 10px; border: 1px solid #444;
+            font-size: 1rem; color: #ccc; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            line-height: 1.6;
         }
-        .key-btn {
-            display: inline-block; background: #333; color: #fff; padding: 3px 8px;
-            border-radius: 5px; border: 1px solid #555; font-family: monospace; font-weight: bold;
-            box-shadow: 0 2px 0 #111; margin: 0 2px;
+        .key {
+            display: inline-block; background: #222; color: #fff; padding: 2px 8px;
+            border-radius: 4px; border: 1px solid #555; font-family: monospace; font-weight: bold;
+            box-shadow: 0 2px 0 #000; margin: 0 3px;
         }
+
+        .hud-bottom-right { position: absolute; bottom: 20px; right: 20px; pointer-events: auto; }
+        .icon-btn {
+            background: var(--ui-bg); border: 2px solid #555; color: white;
+            width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: 0.2s;
+        }
+        .icon-btn:hover { border-color: var(--ghost-white); transform: scale(1.1); }
+
+        /* Flash & Effects */
+        #screen-flash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; opacity: 0; z-index: 15; pointer-events: none; transition: opacity 0.1s;
+        }
+
+        #tutorial-overlay {
+            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(138, 3, 3, 0.9); padding: 20px 40px; border-radius: 15px;
+            font-size: 2rem; font-weight: bold; text-align: center; border: 2px solid #fff;
+            box-shadow: 0 0 30px rgba(255,0,0,0.5); z-index: 12; display: none;
+            animation: float 2s infinite ease-in-out;
+        }
+
+        @keyframes float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, -60%); } }
+
+        /* Canvas */
+        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* Leaderboard */
+        .leaderboard {
+            background: rgba(0,0,0,0.8); padding: 20px 30px; border-radius: 15px;
+            border: 2px solid #333; margin: 20px 0; width: 350px; text-align: left;
+        }
+        .leaderboard h3 { margin: 0 0 15px 0; text-align: center; color: var(--gold); font-size: 1.5rem; }
+        .leaderboard ol { padding-left: 20px; margin: 0; font-size: 1.2rem; }
+        .leaderboard li { margin-bottom: 10px; border-bottom: 1px dashed #444; padding-bottom: 5px; }
 
         /* Mobile Controls */
         #mobile-controls {
-            display: none; position: absolute; bottom: 20px; width: 100%;
-            height: 150px; z-index: 30; pointer-events: none;
+            display: none; position: absolute; bottom: 20px; width: 100%; height: 150px; z-index: 30; pointer-events: none;
         }
-        .joystick-zone, .action-zone { pointer-events: auto; position: absolute; top: 0; height: 100%; width: 50%; }
-        .joystick-zone { left: 0; }
-        .action-zone { right: 0; display: flex; justify-content: center; align-items: center; }
-        .joystick-base {
-            position: absolute; bottom: 20px; left: 40px; width: 100px; height: 100px;
-            background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
+        .dpad { position: absolute; bottom: 20px; left: 20px; width: 150px; height: 150px; pointer-events: auto; }
+        .dpad-btn {
+            position: absolute; width: 50px; height: 50px; background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; display: flex;
+            justify-content: center; align-items: center; color: white; font-size: 1.5rem;
         }
-        .joystick-stick {
-            position: absolute; top: 25px; left: 25px; width: 50px; height: 50px;
-            background: rgba(255,255,255,0.5); border-radius: 50%; pointer-events: none;
-        }
-        .btn-action-mobile {
-            width: 80px; height: 80px; background: rgba(154, 3, 14, 0.5);
-            border: 3px solid var(--blood-red); border-radius: 50%;
-            color: white; font-weight: bold; display: flex; justify-content: center;
-            align-items: center; font-size: 1.2rem; margin-right: 40px; margin-top: 40px;
-        }
-        .btn-action-mobile:active { background: rgba(154, 3, 14, 0.8); transform: scale(0.9); }
-
-        /* Buttons Top Right */
-        .top-right-btns { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; pointer-events: auto; }
-        .icon-btn {
-            background: var(--ui-bg); border: 2px solid #555; color: white;
-            width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-        }
-        .icon-btn:hover { border-color: var(--ghost-white); }
-
-        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
-        canvas { display: block; width: 100%; height: 100%; }
-
-        /* Effects */
-        #flash-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--blood-red); opacity: 0; z-index: 25; pointer-events: none;
-            transition: opacity 0.1s;
-        }
-        .flash { opacity: 0.5 !important; }
+        .dpad-btn:active { background: rgba(255,255,255,0.3); }
+        .btn-left { top: 50px; left: 0; } .btn-right { top: 50px; left: 100px; }
         
-        .shake { animation: shakeCSS 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shakeCSS {
-            10%, 90% { transform: translate3d(-2px, 2px, 0); }
-            20%, 80% { transform: translate3d(4px, -3px, 0); }
-            30%, 50%, 70% { transform: translate3d(-6px, 4px, 0); }
-            40%, 60% { transform: translate3d(6px, -4px, 0); }
+        .action-mobile {
+            position: absolute; bottom: 40px; right: 40px; width: 90px; height: 90px;
+            background: rgba(138, 3, 3, 0.6); border: 3px solid var(--blood-red); border-radius: 50%;
+            color: white; font-weight: bold; font-size: 1.2rem; display: flex; justify-content: center;
+            align-items: center; pointer-events: auto;
         }
-
-        /* Leaderboard & Cards */
-        .role-cards { display: flex; gap: 30px; margin: 30px 0; flex-wrap: wrap; justify-content: center; }
-        .role-card {
-            background: rgba(0,0,0,0.8); border: 2px solid #444; padding: 30px 20px;
-            border-radius: 15px; cursor: pointer; text-align: center; width: 220px;
-            transition: all 0.3s;
-        }
-        .role-card:hover { border-color: var(--blood-red); transform: translateY(-10px); box-shadow: 0 10px 20px rgba(154, 3, 14, 0.4); }
-        .role-icon { font-size: 4rem; margin-bottom: 15px; }
-
-        .leaderboard {
-            background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px;
-            border: 1px solid var(--moss-green); margin: 20px 0; width: 300px;
-        }
-        .leaderboard h3 { margin: 0 0 15px 0; text-align: center; color: var(--gold); }
-        .leaderboard ol { padding-left: 25px; margin: 0; font-size: 1.2rem; }
-        .leaderboard li { margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-
-        /* Decorative Menu UI */
-        .fog {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;
-            background: linear-gradient(to top, rgba(200,220,210,0.2), transparent);
-            pointer-events: none; z-index: 2;
-        }
-        .moon {
-            position: absolute; top: 50px; right: 100px; width: 100px; height: 100px;
-            background: #fff; border-radius: 50%; box-shadow: 0 0 50px #fff;
-            opacity: 0.8; z-index: 1; pointer-events: none;
-        }
+        .action-mobile:active { transform: scale(0.9); background: rgba(138, 3, 3, 0.9); }
 
         @media (max-width: 768px) {
-            .controls-guide { display: none; } /* Hide PC controls on mobile */
-            h1 { font-size: 2.5rem; }
-            .hud-box { font-size: 1.2rem; padding: 8px 15px; }
+            .hud-bottom-left { display: none; }
             #mobile-controls { display: block; }
+            h1 { font-size: 3.5rem; }
+            .score-box { font-size: 2.5rem; }
+            .timer-box { font-size: 1.5rem; padding: 5px 15px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- LOADING SCREEN -->
+    <div id="screen-loading" class="screen">
+        <h1 class="horror-font" style="font-size: 6rem; filter: blur(2px);">POCONG</h1>
+        <div id="loading-text">Memuat Teror...</div>
+    </div>
+
     <!-- MAIN MENU -->
-    <div id="screen-menu" class="screen">
-        <div class="moon"></div>
-        <div class="fog"></div>
-        <div style="font-size: 6rem; animation: shakeCSS 3s infinite; text-shadow: 0 0 20px #fff; margin-bottom: -20px;">👻</div>
-        <h1 class="horror-font">POCONG<br><span style="font-family:'Nunito',sans-serif; font-size: 2rem; color: #fff; text-shadow: none;">VS</span><br>WARGA</h1>
-        <p style="color: #ccc; max-width: 400px; text-align: center; margin-bottom: 30px; font-size: 1.1rem; z-index: 10;">
-            Bertahan hidup dari teror malam, atau jadilah sang teror itu sendiri.
+    <div id="screen-menu" class="screen hidden">
+        <h2 class="title-font" style="margin:0; font-size: 3rem;">LEGENDA URBAN</h2>
+        <h1 class="horror-font">POCONG<br><span style="font-size: 2.5rem; color:#fff; font-family:'Nunito', sans-serif;">VS</span><br>WARGA</h1>
+        <p style="color: #bbb; max-width: 500px; text-align: center; margin: 20px 0 40px 0; font-size: 1.2rem;">
+            Sebar teror di pemukiman warga.<br>Ketuk pintu mereka, dan kejutkan saat mereka membuka pintu!
         </p>
-        <button onclick="showScreen('screen-role'); initAudio();">MULAI GAME</button>
+        <button onclick="startGame()">MULAI TEROR</button>
     </div>
 
-    <!-- ROLE SELECTION -->
-    <div id="screen-role" class="screen hidden">
-        <h2 class="horror-font" style="font-size: 3rem;">PILIH PERANMU</h2>
-        <div class="role-cards">
-            <div class="role-card" onclick="startGame('pocong')">
-                <div class="role-icon">👻</div>
-                <h3 class="horror-font" style="font-size: 2rem; margin:0;">POCONG</h3>
-                <p style="color: #bbb; font-size: 0.95rem; margin-top: 10px;">
-                    Tangkap dan takuti warga sebanyak mungkin.<br><br>
-                    <span class="key-btn">WASD</span> Gerak<br>
-                    <span class="key-btn">SPACE</span> Takuti
-                </p>
-            </div>
-            <div class="role-card" onclick="startGame('warga')">
-                <div class="role-icon">🧍</div>
-                <h3 class="horror-font" style="font-size: 2rem; margin:0; color:var(--gold);">WARGA</h3>
-                <p style="color: #bbb; font-size: 0.95rem; margin-top: 10px;">
-                    Hindari pocong, cari <b style="color:cyan">🎭 Topeng</b>, lalu bongkar kostumnya!<br><br>
-                    <span class="key-btn">WASD</span> Gerak<br>
-                    <span class="key-btn">SPACE</span> Bongkar
-                </p>
-            </div>
-        </div>
-        <button onclick="showScreen('screen-menu')" style="background: transparent; font-size: 1.2rem; padding: 10px 20px; border-color: #555;">KEMBALI</button>
-    </div>
-
-    <!-- GAME UI & CANVAS -->
+    <!-- GAMEPLAY -->
     <div id="screen-game" class="screen hidden" style="background: transparent;">
-        <div id="flash-overlay"></div>
-        <div id="canvas-container">
+        <div id="screen-flash"></div>
+        <div id="tutorial-overlay">Ketuk Pintu Rumah Warga!</div>
+        
+        <div id="game-container">
             <canvas id="gameCanvas"></canvas>
         </div>
-        
+
         <div id="game-ui">
             <div class="hud-top">
                 <div>
-                    <div class="hud-box">🏆 SKOR: <span id="ui-score" style="color: var(--gold);">0</span></div>
-                    <div class="stamina-container" id="stamina-ui" style="display:none;">
-                        <div id="stamina-bar"></div>
-                    </div>
+                    <div class="score-box" id="ui-score">0</div>
+                    <div class="combo-box" id="ui-combo">COMBO x2!</div>
                 </div>
-                <div class="hud-box" style="border-color: var(--blood-red);">⏱️ <span id="ui-time">90</span>s</div>
+                <div class="timer-box" id="ui-time">90</div>
             </div>
 
-            <div class="top-right-btns" style="top: 80px;">
+            <div class="hud-bottom-left">
+                <div style="margin-bottom: 8px; color: #fff; font-weight: bold;">KONTROL</div>
+                <span class="key">A</span> <span class="key">D</span> / <span class="key">←</span> <span class="key">→</span> Bergerak<br><br>
+                <span class="key">E</span> / <span class="key" style="width: 50px; text-align:center;">SPACE</span> Ketuk Pintu<br><br>
+                <span class="key">ESC</span> Pause
+            </div>
+
+            <div class="hud-bottom-right">
                 <button class="icon-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
-                <button class="icon-btn" onclick="pauseGame()">⏸️</button>
             </div>
 
-            <div class="controls-guide" id="pc-controls">
-                <div style="margin-bottom: 5px;"><b>KONTROL PC</b></div>
-                <span class="key-btn">W</span><span class="key-btn">A</span><span class="key-btn">S</span><span class="key-btn">D</span> atau <span class="key-btn">↑↓←→</span> : Bergerak<br>
-                <span class="key-btn" style="width: 60px; text-align: center; margin-top: 5px;">SPACE</span> : Aksi (Takuti / Bongkar)
-            </div>
-
-            <!-- Mobile Controls -->
             <div id="mobile-controls">
-                <div class="joystick-zone" id="joystick-zone">
-                    <div class="joystick-base" id="joystick-base">
-                        <div class="joystick-stick" id="joystick-stick"></div>
-                    </div>
+                <div class="dpad">
+                    <div class="dpad-btn btn-left" id="btn-left">◀</div>
+                    <div class="dpad-btn btn-right" id="btn-right">▶</div>
                 </div>
-                <div class="action-zone">
-                    <div class="btn-action-mobile" id="btn-action">AKSI</div>
-                </div>
+                <div class="action-mobile" id="btn-action">KETUK</div>
             </div>
         </div>
     </div>
 
     <!-- PAUSE MENU -->
-    <div id="screen-pause" class="screen hidden" style="background: rgba(0,0,0,0.8); z-index: 50;">
+    <div id="screen-pause" class="screen hidden" style="background: rgba(0,0,0,0.9); z-index: 50;">
         <h1 class="horror-font">PAUSED</h1>
         <button onclick="resumeGame()">LANJUTKAN</button>
-        <button onclick="quitGame()" style="background: var(--blood-red);">BERHENTI</button>
+        <button onclick="quitGame()" style="background: linear-gradient(180deg, #444 0%, #222 100%); border-color:#666;">BERHENTI</button>
     </div>
 
     <!-- GAME OVER -->
     <div id="screen-gameover" class="screen hidden">
-        <h1 class="horror-font" style="font-size: 4rem;">WAKTU HABIS!</h1>
-        <div style="font-size: 1.5rem; margin-bottom: 10px;">Skor Akhir: <b id="final-score" style="color:var(--gold); font-size: 2.5rem;">0</b></div>
-        <div id="final-rank" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: cyan;">Peringkat: Pocong Amatir</div>
+        <h1 class="title-font" style="font-size: 4rem; color:var(--blood-red);">MALAM BERAKHIR</h1>
+        <div style="font-size: 1.5rem; margin-top: 10px;">Skor Teror:</div>
+        <div id="final-score" class="horror-font" style="font-size: 5rem; line-height: 1;">0</div>
         
         <div class="leaderboard">
-            <h3>Top 5 Skor</h3>
+            <h3>Leaderboard Teror</h3>
             <ol id="leaderboard-list"></ol>
         </div>
 
-        <div style="display: flex; gap: 15px; margin-top: 10px;">
-            <button onclick="showScreen('screen-role')">MAIN LAGI</button>
-            <button id="btn-share" style="background-color: #25D366; border-color: #128C7E; color: white;">📱 SHARE WA</button>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button onclick="showScreen('screen-menu')">KEMBALI</button>
+            <button id="btn-share" style="background: #25D366; border-color: #128C7E; color: white;">📱 SHARE WA</button>
         </div>
     </div>
 
     <script>
         /* ==========================================================================
-           AUDIO SYSTEM (Advanced Web Audio API)
+           AUDIO SYSTEM (Web Audio API - Gamelan Horror + SFX)
            ========================================================================== */
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let actx;
         let isMuted = false;
-        let bgmOsc = null, bgmGain = null;
+        let bgmNodes = [];
+        let cricketNode = null;
 
         function initAudio() {
             if (!actx) actx = new AudioContext();
@@ -298,93 +254,118 @@
         function toggleMute() {
             isMuted = !isMuted;
             document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊';
-            if(bgmGain) bgmGain.gain.setTargetAtTime(isMuted ? 0 : 0.15, actx.currentTime, 0.5);
+            // Simple mute by suspending context for now to easily mute all procedural sounds
+            if(isMuted) actx.suspend(); else actx.resume();
         }
 
         const SFX = {
             playBGM: () => {
-                if(!actx || bgmOsc) return;
-                bgmOsc = actx.createOscillator();
-                bgmGain = actx.createGain();
-                bgmOsc.type = 'triangle';
-                bgmOsc.frequency.value = 55; // Low hum
+                if(!actx || bgmNodes.length > 0) return;
                 
-                // Spooky modulation
-                const lfo = actx.createOscillator();
-                lfo.type = 'sine';
-                lfo.frequency.value = 0.2;
-                const lfoGain = actx.createGain();
-                lfoGain.gain.value = 10;
-                lfo.connect(lfoGain);
-                lfoGain.connect(bgmOsc.frequency);
-                lfo.start();
+                // Crickets noise
+                const bufferSize = actx.sampleRate * 2;
+                const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+                
+                let noise = actx.createBufferSource();
+                noise.buffer = buffer; noise.loop = true;
+                
+                let filter = actx.createBiquadFilter();
+                filter.type = 'bandpass'; filter.frequency.value = 4000; filter.Q.value = 10;
+                
+                let lfo = actx.createOscillator(); lfo.frequency.value = 15;
+                let lfoGain = actx.createGain(); lfoGain.gain.value = 500;
+                lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
+                
+                let noiseGain = actx.createGain(); noiseGain.gain.value = 0.05;
+                noise.connect(filter); filter.connect(noiseGain); noiseGain.connect(actx.destination);
+                noise.start(); lfo.start();
+                
+                bgmNodes.push(noise, lfo, noiseGain);
 
-                bgmGain.gain.value = isMuted ? 0 : 0.15;
-                bgmOsc.connect(bgmGain);
-                bgmGain.connect(actx.destination);
-                bgmOsc.start();
+                // Gamelan drone
+                let drone = actx.createOscillator(); drone.type = 'triangle'; drone.frequency.value = 65;
+                let dGain = actx.createGain(); dGain.gain.value = 0.1;
+                drone.connect(dGain); dGain.connect(actx.destination);
+                drone.start();
+                bgmNodes.push(drone, dGain);
+
+                // Random gamelan hits (pelog scale: E F G B C)
+                const freqs = [329.63, 349.23, 392.00, 493.88, 523.25].map(f => f/2);
+                setInterval(() => {
+                    if(game.state !== 'playing' || isMuted) return;
+                    if(Math.random() > 0.3) return;
+                    
+                    let osc = actx.createOscillator(); osc.type = 'sine';
+                    osc.frequency.value = freqs[Math.floor(Math.random()*freqs.length)];
+                    let g = actx.createGain();
+                    g.gain.setValueAtTime(0, actx.currentTime);
+                    g.gain.linearRampToValueAtTime(0.3, actx.currentTime + 0.1);
+                    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 3);
+                    osc.connect(g); g.connect(actx.destination);
+                    osc.start(); osc.stop(actx.currentTime + 3);
+                }, 2000);
             },
             stopBGM: () => {
-                if(bgmOsc) { bgmOsc.stop(); bgmOsc.disconnect(); bgmOsc = null; }
+                bgmNodes.forEach(n => { try{ n.stop(); }catch(e){} try{ n.disconnect(); }catch(e){} });
+                bgmNodes = [];
             },
             jump: () => {
                 if(isMuted || !actx) return;
-                const osc = actx.createOscillator();
-                const gain = actx.createGain();
+                const osc = actx.createOscillator(); const gain = actx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(100, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(300, actx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.3, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.15);
+                osc.frequency.setValueAtTime(80, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, actx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.2);
                 osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.15);
+                osc.start(); osc.stop(actx.currentTime + 0.2);
             },
-            scream: () => {
+            knock: () => {
                 if(isMuted || !actx) return;
-                const osc = actx.createOscillator();
-                const gain = actx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, actx.currentTime + 0.6);
-                
-                // Vibrato
-                const lfo = actx.createOscillator();
-                lfo.type = 'square';
-                lfo.frequency.value = 15;
-                const lfoGain = actx.createGain();
-                lfoGain.gain.value = 100;
-                lfo.connect(lfoGain);
-                lfoGain.connect(osc.frequency);
-                lfo.start(); lfo.stop(actx.currentTime + 0.6);
-
-                gain.gain.setValueAtTime(0.4, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.6);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.6);
-            },
-            item: () => { // Pickup mask sound
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator();
-                const gain = actx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, actx.currentTime);
-                osc.frequency.setValueAtTime(900, actx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.3, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.3);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.3);
-            },
-            unmask: () => { // Heavy hit sound
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator();
-                const gain = actx.createGain();
+                const osc = actx.createOscillator(); const gain = actx.createGain();
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(150, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, actx.currentTime + 0.4);
+                osc.frequency.setValueAtTime(100, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, actx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.5, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.1);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.1);
+            },
+            whoosh: () => { // Jumpscare jump
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator(); const gain = actx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(100, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, actx.currentTime + 0.2);
                 gain.gain.setValueAtTime(0.5, actx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.4);
                 osc.connect(gain); gain.connect(actx.destination);
                 osc.start(); osc.stop(actx.currentTime + 0.4);
+            },
+            faint: () => { // Short funny scream
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator(); const gain = actx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, actx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.4, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.5);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.5);
+            },
+            combo: (level) => {
+                if(isMuted || !actx) return;
+                const osc = actx.createOscillator(); const gain = actx.createGain();
+                osc.type = 'square';
+                let baseFreq = 400 + (level * 100);
+                osc.frequency.setValueAtTime(baseFreq, actx.currentTime);
+                osc.frequency.setValueAtTime(baseFreq*1.5, actx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(actx.destination);
+                osc.start(); osc.stop(actx.currentTime + 0.3);
             }
         };
 
@@ -396,14 +377,15 @@
         
         let lastTime = 0, reqFrame;
         let game = {
-            state: 'menu', // menu, role, playing, paused, gameover
-            role: 'pocong',
+            state: 'loading',
             score: 0,
             time: 90,
+            combo: 0,
+            comboTimer: 0,
             timerId: null,
             width: 0, height: 0,
-            camX: 0, camY: 0,
-            hasMask: false
+            camX: 0,
+            worldWidth: 3000
         };
 
         function resize() {
@@ -411,11 +393,6 @@
             canvas.height = window.innerHeight;
             game.width = canvas.width;
             game.height = canvas.height;
-            // Check if mobile for controls
-            if('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                document.getElementById('mobile-controls').style.display = 'block';
-                document.getElementById('pc-controls').style.display = 'none';
-            }
         }
         window.addEventListener('resize', resize);
         resize();
@@ -423,369 +400,354 @@
         /* ==========================================================================
            INPUT HANDLING
            ========================================================================== */
-        const keys = { w:false, a:false, s:false, d:false, space:false };
+        const keys = { left:false, right:false, action:false, actionPressed:false };
+        
         window.addEventListener('keydown', e => {
-            if(e.code==='KeyW' || e.code==='ArrowUp') keys.w = true;
-            if(e.code==='KeyS' || e.code==='ArrowDown') keys.s = true;
-            if(e.code==='KeyA' || e.code==='ArrowLeft') keys.a = true;
-            if(e.code==='KeyD' || e.code==='ArrowRight') keys.d = true;
-            if(e.code==='Space') { keys.space = true; handleAction(); }
+            if(e.code==='KeyA' || e.code==='ArrowLeft') keys.left = true;
+            if(e.code==='KeyD' || e.code==='ArrowRight') keys.right = true;
+            if((e.code==='Space' || e.code==='KeyE') && !keys.action) { keys.action = true; keys.actionPressed = true; handleAction(); }
             if(e.code==='Escape' && game.state === 'playing') pauseGame();
         });
         window.addEventListener('keyup', e => {
-            if(e.code==='KeyW' || e.code==='ArrowUp') keys.w = false;
-            if(e.code==='KeyS' || e.code==='ArrowDown') keys.s = false;
-            if(e.code==='KeyA' || e.code==='ArrowLeft') keys.a = false;
-            if(e.code==='KeyD' || e.code==='ArrowRight') keys.d = false;
-            if(e.code==='Space') keys.space = false;
+            if(e.code==='KeyA' || e.code==='ArrowLeft') keys.left = false;
+            if(e.code==='KeyD' || e.code==='ArrowRight') keys.right = false;
+            if(e.code==='Space' || e.code==='KeyE') keys.action = false;
         });
 
-        // Mobile Joystick
-        let joyActive = false, joyOrigin = {x:0, y:0}, joyCurrent = {x:0, y:0};
-        const joyZone = document.getElementById('joystick-zone');
-        const joyBase = document.getElementById('joystick-base');
-        const joyStick = document.getElementById('joystick-stick');
-        const actionBtn = document.getElementById('btn-action');
+        // Mobile Controls
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const btnAction = document.getElementById('btn-action');
 
-        joyZone.addEventListener('touchstart', e => {
-            e.preventDefault();
-            const touch = e.changedTouches[0];
-            joyActive = true;
-            const rect = joyZone.getBoundingClientRect();
-            joyOrigin.x = touch.clientX - rect.left;
-            joyOrigin.y = touch.clientY - rect.top;
-            
-            joyBase.style.left = (joyOrigin.x - 50) + 'px';
-            joyBase.style.top = (joyOrigin.y - 50) + 'px';
-            joyBase.style.bottom = 'auto';
-            joyStick.style.transform = `translate(0px, 0px)`;
-            updateJoystick(touch);
-        });
-
-        joyZone.addEventListener('touchmove', e => {
-            e.preventDefault();
-            if(joyActive) updateJoystick(e.changedTouches[0]);
-        });
-
-        const endJoy = (e) => {
-            e.preventDefault();
-            joyActive = false;
-            joyBase.style.bottom = '20px'; joyBase.style.left = '40px'; joyBase.style.top = 'auto';
-            joyStick.style.transform = `translate(0px, 0px)`;
-            keys.w = keys.s = keys.a = keys.d = false;
+        const bindTouch = (el, key) => {
+            el.addEventListener('touchstart', e => { e.preventDefault(); keys[key] = true; if(key==='action') handleAction(); });
+            el.addEventListener('touchend', e => { e.preventDefault(); keys[key] = false; });
+            el.addEventListener('touchcancel', e => { e.preventDefault(); keys[key] = false; });
         };
-        joyZone.addEventListener('touchend', endJoy);
-        joyZone.addEventListener('touchcancel', endJoy);
-
-        function updateJoystick(touch) {
-            const rect = joyZone.getBoundingClientRect();
-            let tx = touch.clientX - rect.left;
-            let ty = touch.clientY - rect.top;
-            let dx = tx - joyOrigin.x;
-            let dy = ty - joyOrigin.y;
-            let dist = Math.hypot(dx, dy);
-            let maxDist = 40;
-            if(dist > maxDist) {
-                dx = (dx/dist) * maxDist;
-                dy = (dy/dist) * maxDist;
-            }
-            joyStick.style.transform = `translate(${dx}px, ${dy}px)`;
-            
-            // Map to keys
-            keys.w = dy < -15; keys.s = dy > 15;
-            keys.a = dx < -15; keys.d = dx > 15;
-        }
-
-        actionBtn.addEventListener('touchstart', e => { e.preventDefault(); handleAction(); });
+        bindTouch(btnLeft, 'left');
+        bindTouch(btnRight, 'right');
+        bindTouch(btnAction, 'action');
 
         /* ==========================================================================
-           ENTITIES
+           ENTITIES & DRAWING (CSS/SVG style on Canvas)
            ========================================================================== */
-        let player, bots = [], items = [], particles = [], graves = [], popTexts = [];
-        const WORLD_SIZE = 2000;
+        let player, houses = [], particles = [], floatTexts = [];
+        const GROUND_Y = Math.min(window.innerHeight * 0.8, 800);
 
-        class Entity {
-            constructor(x, y, radius, speed) {
-                this.x = x; this.y = y; this.radius = radius;
-                this.speed = speed; this.vx = 0; this.vy = 0;
-                this.isPlayer = false; this.state = 'idle';
-                this.timer = 0;
-            }
-            applyBounds() {
-                this.x = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.x));
-                this.y = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.y));
-            }
-        }
-
-        class Pocong extends Entity {
-            constructor(x, y, isPlayer=false) {
-                super(x, y, 25, isPlayer ? 220 : 160);
-                this.isPlayer = isPlayer; this.type = 'pocong';
-                this.jumpY = 0; this.jumpTime = 0; this.stamina = 100;
-                this.cooldown = 0;
+        class Pocong {
+            constructor(x) {
+                this.x = x; this.y = GROUND_Y;
+                this.vx = 0; this.vy = 0;
+                this.speed = 250;
+                this.dir = 1; // 1 right, -1 left
+                this.jumpY = 0; this.jumpTime = 0;
+                this.state = 'idle'; // idle, moving, knocking, jumpscare
+                this.animTimer = 0;
             }
             update(dt) {
-                if(this.state === 'unmasked') return; // Dead
+                if(this.state === 'jumpscare') {
+                    this.animTimer += dt;
+                    this.x += this.dir * 400 * dt; // Leap forward
+                    this.jumpY = Math.sin((this.animTimer/0.5)*Math.PI) * 100;
+                    if(this.animTimer > 0.5) {
+                        this.state = 'idle'; this.jumpY = 0;
+                    }
+                    return;
+                }
+
+                let moveX = 0;
+                if(keys.left) moveX -= 1;
+                if(keys.right) moveX += 1;
                 
-                if(this.isPlayer) {
-                    let moveX = 0, moveY = 0;
-                    if(keys.w) moveY -= 1; if(keys.s) moveY += 1;
-                    if(keys.a) moveX -= 1; if(keys.d) moveX += 1;
-                    
-                    if(moveX!==0 && moveY!==0) { moveX *= 0.707; moveY *= 0.707; } // normalize
+                if(this.state === 'knocking') {
+                    moveX = 0; // stop while knocking
+                    this.animTimer += dt;
+                    if(this.animTimer > 0.3) this.state = 'idle';
+                }
+
+                if(moveX !== 0) {
+                    this.dir = moveX;
                     this.vx = moveX * this.speed;
-                    this.vy = moveY * this.speed;
-
-                    if(this.cooldown > 0) this.cooldown -= dt;
-                } else {
-                    // BOT AI: Chase nearest Warga
-                    let nearest = null, minDist = Infinity;
-                    const targets = game.role === 'warga' ? [player, ...bots.filter(b=>b.type==='warga')] : bots.filter(b=>b.type==='warga');
-                    
-                    targets.forEach(t => {
-                        if(t.state === 'scared') return;
-                        let d = Math.hypot(this.x - t.x, this.y - t.y);
-                        if(d < minDist) { minDist = d; nearest = t; }
-                    });
-
-                    if(nearest && minDist < 400) {
-                        let angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
-                        this.vx = Math.cos(angle) * this.speed;
-                        this.vy = Math.sin(angle) * this.speed;
-                    } else {
-                        // Wander
-                        this.timer -= dt;
-                        if(this.timer <= 0) {
-                            let angle = Math.random() * Math.PI * 2;
-                            this.vx = Math.cos(angle) * (this.speed*0.5);
-                            this.vy = Math.sin(angle) * (this.speed*0.5);
-                            this.timer = Math.random() * 2 + 1;
-                        }
-                    }
-                }
-
-                // Apply movement
-                this.x += this.vx * dt; this.y += this.vy * dt;
-                this.applyBounds();
-
-                // Jumping logic
-                let isMoving = this.vx !== 0 || this.vy !== 0;
-                if(isMoving) {
-                    this.jumpTime += dt * 5;
-                    this.jumpY = Math.abs(Math.sin(this.jumpTime)) * 30;
-                    if(this.jumpY < 2 && Math.sin(this.jumpTime) > 0) {
-                        // Landed
-                        if(this.isPlayer && Math.random() > 0.5) SFX.jump();
+                    this.state = 'moving';
+                    this.jumpTime += dt * 6;
+                    this.jumpY = Math.abs(Math.sin(this.jumpTime)) * 40;
+                    if(this.jumpY < 5 && Math.sin(this.jumpTime) > 0) {
+                        if(Math.random()>0.5) SFX.jump(); // Footstep/thud
                     }
                 } else {
-                    this.jumpY = 0;
-                    this.jumpTime = 0;
+                    this.vx = 0;
+                    if(this.state === 'moving') { this.state = 'idle'; this.jumpY = 0; this.jumpTime = 0; }
                 }
+
+                this.x += this.vx * dt;
+                this.x = Math.max(50, Math.min(game.worldWidth - 50, this.x));
             }
             draw(ctx) {
-                if(this.state === 'unmasked') return;
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 
                 // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.4)';
-                ctx.beginPath(); ctx.ellipse(0, 15, 20, 10, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                ctx.beginPath(); ctx.ellipse(0, 5, 25 - this.jumpY*0.2, 8, 0, 0, Math.PI*2); ctx.fill();
 
                 ctx.translate(0, -this.jumpY);
-                // Body
-                ctx.fillStyle = 'var(--ghost-white)';
-                ctx.beginPath(); ctx.roundRect(-20, -40, 40, 60, 20); ctx.fill();
-                // Tie
-                ctx.beginPath(); ctx.moveTo(-8, -40); ctx.lineTo(0, -55); ctx.lineTo(8, -40); ctx.fill();
-                // Face area
-                ctx.fillStyle = '#000';
-                ctx.beginPath(); ctx.roundRect(-12, -30, 24, 15, 5); ctx.fill();
-                // Eyes
-                ctx.fillStyle = this.cooldown > 0 ? 'var(--blood-red)' : '#fff';
-                ctx.beginPath(); ctx.arc(-5, -23, 2, 0, Math.PI*2); ctx.arc(5, -23, 2, 0, Math.PI*2); ctx.fill();
+                ctx.scale(this.dir, 1); // Flip horizontally based on direction
 
-                if(this.isPlayer) {
-                    ctx.fillStyle = 'cyan'; ctx.font = "14px bold sans-serif"; ctx.textAlign="center";
-                    ctx.fillText("Kamu", 0, -65);
+                // Sickle (Cerulit) - Back arm
+                ctx.fillStyle = '#4a2f1d'; // Handle
+                ctx.beginPath(); ctx.roundRect(-20, -60, 5, 40, 2); ctx.fill();
+                ctx.fillStyle = '#7a7a7a'; // Rusty blade
+                ctx.beginPath(); ctx.moveTo(-20, -60); ctx.quadraticCurveTo(-40, -80, -10, -90); ctx.quadraticCurveTo(-30, -70, -15, -60); ctx.fill();
+                // Rust spots on blade
+                ctx.fillStyle = '#5c3a21'; ctx.beginPath(); ctx.arc(-25, -75, 2, 0, Math.PI*2); ctx.arc(-20, -80, 1.5, 0, Math.PI*2); ctx.fill();
+
+                // Body (Kain Kafan)
+                ctx.fillStyle = varColor('--ghost-white');
+                ctx.beginPath();
+                ctx.moveTo(-15, -120); // Top knot
+                ctx.quadraticCurveTo(0, -135, 15, -120);
+                ctx.bezierCurveTo(25, -100, 30, -20, 15, 0); // Front belly/feet
+                ctx.quadraticCurveTo(0, 10, -15, 0); // Bottom knot
+                ctx.bezierCurveTo(-30, -20, -25, -100, -15, -120); // Back
+                ctx.fill();
+
+                // Ties (Tali Pocong)
+                ctx.strokeStyle = '#aab2ab'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(-18, -115); ctx.lineTo(18, -115); ctx.stroke(); // Head
+                ctx.beginPath(); ctx.moveTo(-22, -60); ctx.lineTo(25, -60); ctx.stroke(); // Neck
+                ctx.beginPath(); ctx.moveTo(-12, -5); ctx.lineTo(12, -5); ctx.stroke(); // Bottom
+
+                // Blood stains
+                ctx.fillStyle = 'rgba(138, 3, 3, 0.7)';
+                ctx.beginPath(); ctx.arc(5, -50, 8, 0, Math.PI*2); ctx.arc(-5, -45, 10, 0, Math.PI*2); ctx.arc(10, -70, 6, 0, Math.PI*2); ctx.fill();
+
+                // Face Hole
+                ctx.fillStyle = '#111';
+                ctx.beginPath(); ctx.ellipse(10, -95, 12, 16, 0, 0, Math.PI*2); ctx.fill();
+
+                // Eyes & Mouth
+                ctx.fillStyle = '#fff'; // Glow eyes
+                if(this.state === 'jumpscare') ctx.fillStyle = 'var(--blood-red)';
+                ctx.beginPath(); ctx.arc(14, -100, 2.5, 0, Math.PI*2); ctx.arc(6, -100, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath(); ctx.ellipse(10, -88, 4, this.state==='jumpscare'?8:3, 0, 0, Math.PI*2); ctx.fill(); // Mouth open wide if jumpscare
+
+                // Front arm (knocking)
+                if(this.state === 'knocking') {
+                    ctx.strokeStyle = varColor('--ghost-white'); ctx.lineWidth = 12; ctx.lineCap = 'round';
+                    ctx.beginPath(); ctx.moveTo(0, -60); 
+                    let knockExt = Math.sin(this.animTimer*Math.PI*10)*15;
+                    ctx.lineTo(25 + knockExt, -60); ctx.stroke();
                 }
+
                 ctx.restore();
             }
         }
 
-        class Warga extends Entity {
-            constructor(x, y, isPlayer=false) {
-                super(x, y, 20, isPlayer ? 240 : 180);
-                this.isPlayer = isPlayer; this.type = 'warga';
-                this.wiggle = 0;
-                this.stamina = 100;
+        class House {
+            constructor(x) {
+                this.x = x; this.y = GROUND_Y;
+                this.width = 250; this.height = 200;
+                this.doorX = this.x + 50;
+                this.doorWidth = 60; this.doorHeight = 110;
+                this.knockCount = 0;
+                this.state = 'closed'; // closed, waiting, opening, open, done
+                this.timer = 0;
+                this.wargaType = Math.random() > 0.5 ? 'cowok' : 'cewek';
+                this.wargaState = 'hidden'; // hidden, curious, scared, fainted, running
+                this.wargaX = this.doorX + this.doorWidth/2;
             }
             update(dt) {
-                if(this.state === 'scared') {
+                if(this.state === 'waiting') {
                     this.timer -= dt;
                     if(this.timer <= 0) {
-                        this.state = 'idle';
-                        this.x = Math.random()*WORLD_SIZE; this.y = Math.random()*WORLD_SIZE;
+                        this.state = 'opening'; this.timer = 0;
+                        // Light flickers
                     }
-                    return; // Don't move
-                }
-
-                if(this.isPlayer) {
-                    let moveX = 0, moveY = 0;
-                    if(keys.w) moveY -= 1; if(keys.s) moveY += 1;
-                    if(keys.a) moveX -= 1; if(keys.d) moveX += 1;
-                    if(moveX!==0 && moveY!==0) { moveX *= 0.707; moveY *= 0.707; }
-                    
-                    // Sprint if holding shift? Let's just keep it simple.
-                    this.vx = moveX * this.speed;
-                    this.vy = moveY * this.speed;
-                } else {
-                    // BOT AI: Run away from Pocong
-                    let nearest = null, minDist = Infinity;
-                    const threats = game.role === 'pocong' ? [player, ...bots.filter(b=>b.type==='pocong')] : bots.filter(b=>b.type==='pocong');
-                    
-                    threats.forEach(t => {
-                        if(t.state === 'unmasked') return;
-                        let d = Math.hypot(this.x - t.x, this.y - t.y);
-                        if(d < minDist) { minDist = d; nearest = t; }
-                    });
-
-                    if(nearest && minDist < 350) {
-                        let angle = Math.atan2(this.y - nearest.y, this.x - nearest.x);
-                        this.vx = Math.cos(angle) * this.speed;
-                        this.vy = Math.sin(angle) * this.speed;
-                    } else {
-                        // Wander
-                        this.timer -= dt;
-                        if(this.timer <= 0) {
-                            let angle = Math.random() * Math.PI * 2;
-                            this.vx = Math.cos(angle) * (this.speed*0.4);
-                            this.vy = Math.sin(angle) * (this.speed*0.4);
-                            this.timer = Math.random() * 2 + 1;
-                        }
+                } else if(this.state === 'opening') {
+                    this.timer += dt;
+                    if(this.timer > 0.5) {
+                        this.state = 'open';
+                        this.wargaState = 'curious';
+                        
+                        // Decide fate
+                        setTimeout(() => {
+                            if(this.state !== 'open') return;
+                            if(Math.random() < 0.3) {
+                                // Run away
+                                this.wargaState = 'running';
+                                spawnText("KABUUUR!", this.wargaX, this.y - 120, "#fff");
+                                addScore(50);
+                            } else {
+                                // Trigger jumpscare
+                                if(Math.abs(player.x - this.doorX) < 150) {
+                                    player.state = 'jumpscare'; player.animTimer = 0; player.dir = (this.doorX > player.x) ? 1 : -1;
+                                    SFX.whoosh();
+                                    setTimeout(() => {
+                                        this.wargaState = 'fainted';
+                                        SFX.faint();
+                                        triggerFlash();
+                                        triggerShake();
+                                        spawnText("PINGSAN!", this.wargaX, this.y - 100, "var(--gold)");
+                                        spawnStars(this.wargaX, this.y - 120);
+                                        addScore(100);
+                                    }, 200); // delay sync with jump
+                                }
+                            }
+                        }, 800);
                     }
                 }
 
-                this.x += this.vx * dt; this.y += this.vy * dt;
-                this.applyBounds();
-
-                let isMoving = this.vx !== 0 || this.vy !== 0;
-                if(isMoving) this.wiggle += dt * 15; else this.wiggle = 0;
+                if(this.wargaState === 'running') {
+                    this.wargaX += 200 * dt; // Run right
+                    if(this.wargaX > this.x + 400) this.state = 'done';
+                }
             }
             draw(ctx) {
                 ctx.save();
                 ctx.translate(this.x, this.y);
+
+                // House Body
+                ctx.fillStyle = '#1e2420'; ctx.fillRect(0, -this.height, this.width, this.height);
+                // Roof
+                ctx.fillStyle = '#0f120e'; ctx.beginPath(); ctx.moveTo(-20, -this.height); ctx.lineTo(this.width/2, -this.height - 80); ctx.lineTo(this.width+20, -this.height); ctx.fill();
+
+                // Window
+                let lightOn = this.knockCount > 0 && this.state !== 'done';
+                if(this.state === 'waiting' && Math.floor(this.timer*10)%2===0) lightOn = false; // flicker
+                ctx.fillStyle = lightOn ? '#e6c875' : '#111';
+                ctx.fillRect(140, -120, 60, 60);
+                // Window frame
+                ctx.strokeStyle = '#333'; ctx.lineWidth = 4;
+                ctx.strokeRect(140, -120, 60, 60);
+                ctx.beginPath(); ctx.moveTo(170, -120); ctx.lineTo(170, -60); ctx.moveTo(140, -90); ctx.lineTo(200, -90); ctx.stroke();
+
+                ctx.restore();
+
+                // Warga & Door (drawn in world space for running)
+                // Inside house background (behind door)
+                ctx.fillStyle = '#000'; ctx.fillRect(this.doorX, this.y - this.doorHeight, this.doorWidth, this.doorHeight);
                 
-                if(this.state === 'scared') {
-                    // Draw flying ghost emoji
-                    ctx.font = "40px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
-                    ctx.fillText("👻", 0, -30 - (2 - this.timer)*50);
-                    ctx.globalAlpha = this.timer / 2;
-                    ctx.fillText("💀", 0, 0);
-                    ctx.restore();
-                    return;
+                // Draw Warga if open
+                if(this.state === 'opening' || this.state === 'open' || this.state === 'done') {
+                    if(this.wargaState !== 'hidden') this.drawWarga(ctx, this.wargaX, this.y);
                 }
 
-                ctx.fillStyle = 'rgba(0,0,0,0.4)';
-                ctx.beginPath(); ctx.ellipse(0, 15, 15, 8, 0, 0, Math.PI*2); ctx.fill();
-
-                ctx.rotate(Math.sin(this.wiggle) * 0.1);
-                ctx.font = "40px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+                // Draw Door
+                ctx.fillStyle = '#3a2311';
+                let doorOpenPercent = 0;
+                if(this.state === 'opening') doorOpenPercent = this.timer / 0.5;
+                if(this.state === 'open' || this.state === 'done') doorOpenPercent = 1;
                 
-                // Face logic
-                let isThreatened = false;
-                const threats = game.role === 'pocong' ? [player, ...bots.filter(b=>b.type==='pocong')] : bots.filter(b=>b.type==='pocong');
-                threats.forEach(t => { if(t.state!=='unmasked' && Math.hypot(this.x-t.x, this.y-t.y) < 200) isThreatened = true; });
-
-                if(isThreatened) ctx.fillText("😱", 0, 0);
-                else ctx.fillText("🏃", 0, 0);
-
-                if(this.isPlayer) {
-                    ctx.fillStyle = 'cyan'; ctx.font = "14px bold sans-serif";
-                    ctx.fillText("Kamu", 0, -35);
-                    if(game.hasMask) ctx.fillText("🎭", 0, -55);
+                let currentDoorWidth = this.doorWidth * (1 - doorOpenPercent);
+                if(currentDoorWidth > 0) {
+                    ctx.fillRect(this.doorX, this.y - this.doorHeight, currentDoorWidth, this.doorHeight);
+                    // Doorknob
+                    ctx.fillStyle = '#888'; ctx.beginPath(); ctx.arc(this.doorX + currentDoorWidth - 10, this.y - this.doorHeight/2, 4, 0, Math.PI*2); ctx.fill();
                 }
+            }
+            drawWarga(ctx, x, y) {
+                ctx.save();
+                ctx.translate(x, y);
+                
+                if(this.wargaState === 'fainted') {
+                    ctx.translate(0, 10);
+                    ctx.rotate(Math.PI/2); // Lie down
+                } else if(this.wargaState === 'running') {
+                    ctx.translate(0, -Math.abs(Math.sin(performance.now()*0.02))*10);
+                }
+
+                // Body
+                ctx.fillStyle = this.wargaType === 'cowok' ? '#2980b9' : '#c0392b';
+                ctx.fillRect(-15, -70, 30, 40); // Torso
+                // Legs
+                ctx.fillStyle = '#2c3e50';
+                if(this.wargaState === 'running') {
+                    ctx.fillRect(-12 + Math.sin(performance.now()*0.02)*10, -30, 10, 30);
+                    ctx.fillRect(2 - Math.sin(performance.now()*0.02)*10, -30, 10, 30);
+                } else {
+                    ctx.fillRect(-12, -30, 10, 30); ctx.fillRect(2, -30, 10, 30);
+                }
+                
+                // Head
+                ctx.fillStyle = '#f1c27d';
+                ctx.beginPath(); ctx.arc(0, -85, 18, 0, Math.PI*2); ctx.fill();
+
+                // Hair
+                ctx.fillStyle = '#111';
+                if(this.wargaType === 'cowok') {
+                    ctx.beginPath(); ctx.arc(0, -90, 18, Math.PI, 0); ctx.fill();
+                } else {
+                    ctx.beginPath(); ctx.arc(0, -85, 20, Math.PI, 0); ctx.fillRect(-20, -85, 40, 20); ctx.fill();
+                }
+
+                // Face Expressions
+                ctx.fillStyle = '#000';
+                if(this.wargaState === 'fainted') {
+                    // X eyes
+                    ctx.font = "14px Arial"; ctx.textAlign="center"; ctx.fillText("X X", 0, -80);
+                    ctx.beginPath(); ctx.ellipse(0, -75, 4, 6, 0, 0, Math.PI*2); ctx.fill(); // Open mouth
+                } else if(this.wargaState === 'scared' || this.wargaState === 'running') {
+                    // Scared 😱
+                    ctx.beginPath(); ctx.arc(-6, -88, 2, 0, Math.PI*2); ctx.arc(6, -88, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.ellipse(0, -78, 6, 8, 0, 0, Math.PI*2); ctx.fill(); // Big mouth
+                } else {
+                    // Curious 🤔
+                    ctx.beginPath(); ctx.arc(-6, -86, 2, 0, Math.PI*2); ctx.arc(6, -86, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(-4, -78); ctx.lineTo(4, -78); ctx.stroke();
+                    ctx.font = "20px Arial"; ctx.fillText("?", 25, -90);
+                }
+
                 ctx.restore();
             }
         }
 
+        // Helpers
+        function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
         /* ==========================================================================
-           ACTION & COMBAT LOGIC
+           ACTION & GAME LOGIC
            ========================================================================== */
         function handleAction() {
-            if(game.state !== 'playing') return;
+            if(game.state !== 'playing' || player.state === 'knocking' || player.state === 'jumpscare') return;
 
-            if(game.role === 'pocong') {
-                if(player.cooldown > 0) return;
-                // Area attack / Scare
-                player.cooldown = 1.0;
-                SFX.scream();
-                triggerShake(0.5);
-                spawnParticles(player.x, player.y, 'var(--blood-red)', 30);
-                
-                // Hit check
-                bots.forEach(b => {
-                    if(b.type === 'warga' && b.state !== 'scared' && Math.hypot(player.x - b.x, player.y - b.y) < 120) {
-                        b.state = 'scared';
-                        b.timer = 2.0;
-                        addScore(15);
-                        spawnText("WAAAA!", b.x, b.y, "var(--blood-red)");
+            // Check if near door
+            let knocked = false;
+            for(let h of houses) {
+                if(Math.abs(player.x - h.doorX) < 60 && h.state === 'closed') {
+                    player.state = 'knocking'; player.animTimer = 0; player.dir = (h.doorX > player.x) ? 1 : -1;
+                    h.knockCount++;
+                    SFX.knock();
+                    spawnText("TOK!", h.doorX, h.y - h.doorHeight - 20, "#fff");
+                    
+                    if(h.knockCount >= 3) {
+                        h.state = 'waiting'; h.timer = 1.0;
                     }
-                });
-
-            } else if(game.role === 'warga') {
-                if(!game.hasMask) {
-                    spawnText("Butuh Topeng! 🎭", player.x, player.y-30, "#fff");
-                    return;
+                    knocked = true;
+                    break;
                 }
-                // Unmask attack
-                let unmasked = false;
-                bots.forEach(b => {
-                    if(b.type === 'pocong' && b.state !== 'unmasked' && Math.hypot(player.x - b.x, player.y - b.y) < 100) {
-                        b.state = 'unmasked';
-                        SFX.unmask();
-                        triggerShake(0.8);
-                        spawnParticles(b.x, b.y, 'var(--ghost-white)', 50);
-                        addScore(50);
-                        spawnText("BONGKAR! 🎭", b.x, b.y, "cyan");
-                        unmasked = true;
-                        game.hasMask = false; // consume
-                        document.getElementById('stamina-ui').style.display = 'none';
-                        
-                        // Respawn new pocong later
-                        setTimeout(() => { if(game.state === 'playing') bots.push(new Pocong(Math.random()*WORLD_SIZE, Math.random()*WORLD_SIZE)); }, 3000);
-                    }
-                });
-                
-                if(!unmasked) spawnText("Terlalu jauh!", player.x, player.y-30, "#ccc");
+            }
+            
+            if(!knocked) {
+                // Just swing
+                player.state = 'knocking'; player.animTimer = 0;
             }
         }
 
         /* ==========================================================================
            GAME LOOP & RENDERER
            ========================================================================== */
-        function setupWorld() {
-            bots = []; items = []; particles = []; graves = []; popTexts = [];
-            game.hasMask = false;
+        function initWorld() {
+            player = new Pocong(200);
+            houses = []; floatTexts = []; particles = [];
             
-            // Graves
-            for(let i=0; i<60; i++) graves.push({x: Math.random()*WORLD_SIZE, y: Math.random()*WORLD_SIZE, w: 40+Math.random()*20, h: 60+Math.random()*30});
-
-            if(game.role === 'pocong') {
-                player = new Pocong(WORLD_SIZE/2, WORLD_SIZE/2, true);
-                for(let i=0; i<15; i++) bots.push(new Warga(Math.random()*WORLD_SIZE, Math.random()*WORLD_SIZE));
-                document.getElementById('stamina-ui').style.display = 'block'; // Show cooldown bar for pocong
-            } else {
-                player = new Warga(WORLD_SIZE/2, WORLD_SIZE/2, true);
-                for(let i=0; i<6; i++) bots.push(new Pocong(Math.random()*WORLD_SIZE, Math.random()*WORLD_SIZE));
-                document.getElementById('stamina-ui').style.display = 'none'; // Topeng status shown above head
-                spawnItem();
+            // Generate Houses
+            let currX = 500;
+            for(let i=0; i<8; i++) {
+                houses.push(new House(currX));
+                currX += 400 + Math.random()*200;
             }
-        }
-
-        function spawnItem() {
-            if(game.role === 'warga' && !game.hasMask && items.length < 1) {
-                items.push({x: Math.random()*WORLD_SIZE, y: Math.random()*WORLD_SIZE, type: 'mask'});
-            }
+            game.worldWidth = currX + 500;
         }
 
         function loop(timestamp) {
@@ -796,6 +758,8 @@
             if(game.state === 'playing') {
                 update(dt);
                 render();
+            } else if(game.state === 'tutorial') {
+                render(); // Just draw background and player
             }
 
             reqFrame = requestAnimationFrame(loop);
@@ -803,191 +767,163 @@
 
         function update(dt) {
             player.update(dt);
-            
-            // Camera follow
-            game.camX = player.x - game.width / 2;
-            game.camY = player.y - game.height / 2;
-            
-            // Bounds clamp camera
-            game.camX = Math.max(0, Math.min(WORLD_SIZE - game.width, game.camX));
-            game.camY = Math.max(0, Math.min(WORLD_SIZE - game.height, game.camY));
+            houses.forEach(h => h.update(dt));
 
-            // Bots
-            for(let i=bots.length-1; i>=0; i--) {
-                bots[i].update(dt);
-                // Remove dead bots
-                if((bots[i].type === 'warga' && bots[i].state === 'idle' && bots[i].timer === 0) || bots[i].state === 'unmasked') {
-                    // Logic handled in update (respawn warga, keep unmasked state)
-                }
-
-                // Player Warga caught by Pocong
-                if(game.role === 'warga' && bots[i].type === 'pocong' && bots[i].state !== 'unmasked') {
-                    if(Math.hypot(player.x - bots[i].x, player.y - bots[i].y) < 30) {
-                        // Caught!
-                        if(player.state !== 'scared') {
-                            SFX.scream();
-                            triggerFlash();
-                            triggerShake(0.8);
-                            addScore(-20);
-                            spawnText("-20 KENA!", player.x, player.y, "var(--blood-red)");
-                            player.state = 'scared';
-                            player.timer = 1.5;
-                            // Push back
-                            player.x += (Math.random() - 0.5)*200;
-                            player.y += (Math.random() - 0.5)*200;
-                            player.applyBounds();
-                            game.hasMask = false; // drop mask
-                            setTimeout(() => { if(player) player.state = 'idle'; }, 1500);
-                        }
-                    }
-                }
-            }
-
-            // Items
-            for(let i=items.length-1; i>=0; i--) {
-                let it = items[i];
-                if(Math.hypot(player.x - it.x, player.y - it.y) < 40) {
-                    game.hasMask = true;
-                    SFX.item();
-                    spawnText("DAPAT TOPENG!", player.x, player.y, "cyan");
-                    items.splice(i, 1);
-                    document.getElementById('stamina-ui').style.display = 'block';
-                    document.getElementById('stamina-bar').style.background = 'cyan';
-                    document.getElementById('stamina-bar').style.width = '100%';
-                }
-            }
-
-            // Item spawner logic
-            if(game.role === 'warga' && !game.hasMask && items.length === 0 && Math.random() < 0.01) spawnItem();
+            // Camera follow (Smooth)
+            let targetCamX = player.x - game.width / 2;
+            targetCamX = Math.max(0, Math.min(game.worldWidth - game.width, targetCamX));
+            game.camX += (targetCamX - game.camX) * dt * 5;
 
             // Particles
             for(let i=particles.length-1; i>=0; i--) {
                 let p = particles[i];
-                p.x += p.vx*dt; p.y += p.vy*dt; p.life -= dt;
+                p.x += p.vx*dt; p.y += p.vy*dt;
+                p.vy += 200*dt; // Gravity
+                p.life -= dt;
                 if(p.life <= 0) particles.splice(i, 1);
             }
 
             // Texts
-            for(let i=popTexts.length-1; i>=0; i--) {
-                let t = popTexts[i];
-                t.y -= 50*dt; t.life -= dt;
-                if(t.life <= 0) popTexts.splice(i, 1);
+            for(let i=floatTexts.length-1; i>=0; i--) {
+                let t = floatTexts[i];
+                t.y -= 40*dt; t.life -= dt;
+                if(t.life <= 0) floatTexts.splice(i, 1);
             }
 
-            // HUD UI Update
-            if(game.role === 'pocong') {
-                document.getElementById('stamina-bar').style.width = Math.max(0, (1 - player.cooldown)*100) + '%';
-            } else if(game.role === 'warga') {
-                if(!game.hasMask) document.getElementById('stamina-ui').style.display = 'none';
+            // Combo timer
+            if(game.comboTimer > 0) {
+                game.comboTimer -= dt;
+                if(game.comboTimer <= 0) { game.combo = 0; document.getElementById('ui-combo').style.display='none'; }
             }
         }
 
         function render() {
-            ctx.fillStyle = '#0f1712'; // Grass ground
+            // Background layers (Parallax)
+            ctx.fillStyle = varColor('--bg-night');
             ctx.fillRect(0, 0, game.width, game.height);
-            
-            ctx.save();
-            ctx.translate(-game.camX, -game.camY);
 
-            // Grid / Texture detail (optional, skip for performance, draw grass patches instead)
-            ctx.fillStyle = 'rgba(45, 74, 34, 0.2)';
-            for(let i=0; i<WORLD_SIZE; i+=200) {
-                for(let j=0; j<WORLD_SIZE; j+=200) {
-                    ctx.fillRect(i, j, 100, 100);
+            // Moon
+            ctx.fillStyle = varColor('--moon');
+            ctx.beginPath(); ctx.arc(game.width - 150, 150, 60, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 50; ctx.shadowColor = '#fff'; ctx.fill(); ctx.shadowBlur = 0;
+
+            // Trees Back (Parallax 0.3)
+            ctx.fillStyle = '#0a0e14';
+            for(let i=0; i<game.worldWidth; i+=300) {
+                let px = i - game.camX * 0.3;
+                if(px > -100 && px < game.width+100) {
+                    ctx.beginPath(); ctx.moveTo(px, GROUND_Y); ctx.lineTo(px+20, GROUND_Y-300); ctx.lineTo(px+40, GROUND_Y); ctx.fill();
                 }
             }
 
-            // Graves
-            graves.forEach(g => {
-                ctx.fillStyle = '#444';
-                ctx.beginPath(); ctx.roundRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h, [10, 10, 0, 0]); ctx.fill();
-                ctx.fillStyle = '#222'; ctx.font = "14px monospace"; ctx.textAlign="center"; ctx.fillText("RIP", g.x, g.y);
-            });
+            ctx.save();
+            ctx.translate(-game.camX, 0);
 
-            // Items
-            items.forEach(it => {
-                ctx.font = "30px sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
-                ctx.fillText("🎭", it.x, it.y + Math.sin(performance.now()*0.005)*5);
-            });
+            // Ground
+            ctx.fillStyle = varColor('--dirt');
+            ctx.fillRect(0, GROUND_Y, game.worldWidth, game.height - GROUND_Y);
+            // Road line
+            ctx.strokeStyle = '#111'; ctx.lineWidth = 10;
+            ctx.beginPath(); ctx.moveTo(0, GROUND_Y+20); ctx.lineTo(game.worldWidth, GROUND_Y+20); ctx.stroke();
 
-            // Entities Sorting for Y-Depth
-            let entities = [player, ...bots];
-            entities.sort((a,b) => a.y - b.y);
-            entities.forEach(e => e.draw(ctx));
+            // Trees Front
+            ctx.fillStyle = '#0f1411';
+            for(let i=150; i<game.worldWidth; i+=400) {
+                // Trunk
+                ctx.fillRect(i, GROUND_Y-200, 15, 200);
+                // Leaves (Kamboja shape)
+                ctx.beginPath(); ctx.arc(i+7, GROUND_Y-220, 60, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(i-30, GROUND_Y-190, 50, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(i+40, GROUND_Y-190, 50, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Houses
+            houses.forEach(h => h.draw(ctx));
 
             // Particles
             particles.forEach(p => {
-                ctx.globalAlpha = p.life;
                 ctx.fillStyle = p.color;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size); ctx.restore();
+            });
+
+            // Player
+            player.draw(ctx);
+
+            // Floating Texts
+            floatTexts.forEach(t => {
+                ctx.globalAlpha = Math.max(0, t.life);
+                ctx.fillStyle = t.color;
+                ctx.font = "bold 28px 'Creepster', cursive"; ctx.textAlign="center";
+                ctx.fillText(t.text, t.x, t.y);
+                ctx.lineWidth = 2; ctx.strokeStyle = '#000'; ctx.strokeText(t.text, t.x, t.y);
             });
             ctx.globalAlpha = 1.0;
 
-            // Ambient Fireflies in world
-            ctx.fillStyle = 'rgba(150, 255, 100, 0.6)';
-            for(let i=0; i<50; i++) {
-                let fx = (performance.now()*0.02 + i*100) % WORLD_SIZE;
-                let fy = (performance.now()*0.015 + i*200) % WORLD_SIZE;
+            // Ambient Fireflies
+            ctx.fillStyle = 'rgba(150, 255, 100, 0.8)';
+            for(let i=0; i<30; i++) {
+                let fx = (performance.now()*0.02 + i*200) % game.worldWidth;
+                let fy = GROUND_Y - 50 - Math.abs(Math.sin(performance.now()*0.001 + i)*150);
                 ctx.beginPath(); ctx.arc(fx, fy, 2, 0, Math.PI*2); ctx.fill();
             }
 
-            // Texts
-            popTexts.forEach(t => {
-                ctx.globalAlpha = Math.max(0, t.life);
-                ctx.fillStyle = t.color;
-                ctx.font = "bold 24px 'Creepster', cursive"; ctx.textAlign="center";
-                ctx.fillText(t.text, t.x, t.y);
-                ctx.lineWidth = 1; ctx.strokeStyle = '#000'; ctx.strokeText(t.text, t.x, t.y);
-            });
-            ctx.globalAlpha = 1.0;
-
             ctx.restore();
+
+            // Fog overlay
+            let grad = ctx.createLinearGradient(0, game.height, 0, GROUND_Y-150);
+            grad.addColorStop(0, 'rgba(200,220,210,0.4)');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, game.width, game.height);
             
-            // Vignette effect over canvas
-            let grad = ctx.createRadialGradient(game.width/2, game.height/2, game.width/4, game.width/2, game.height/2, game.width);
-            grad.addColorStop(0, 'rgba(0,0,0,0)');
-            grad.addColorStop(1, 'rgba(0,0,0,0.8)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, game.width, game.height);
+            // Dark Vignette
+            let vig = ctx.createRadialGradient(game.width/2, game.height/2, game.height/2, game.width/2, game.height/2, game.width);
+            vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.9)');
+            ctx.fillStyle = vig; ctx.fillRect(0, 0, game.width, game.height);
         }
 
         /* ==========================================================================
-           UTILITIES & EFFECTS
+           EFFECTS & UTILS
            ========================================================================== */
-        function triggerShake(intensity) {
-            document.body.classList.add('shake');
-            setTimeout(() => document.body.classList.remove('shake'), 400);
-        }
-
-        function triggerFlash() {
-            const f = document.getElementById('flash-overlay');
-            f.classList.add('flash');
-            setTimeout(() => f.classList.remove('flash'), 100);
-        }
-
-        function spawnParticles(x, y, color, count) {
-            for(let i=0; i<count; i++) {
-                let angle = Math.random() * Math.PI * 2;
-                let speed = Math.random() * 100 + 50;
+        function spawnText(txt, x, y, color) { floatTexts.push({text: txt, x: x, y: y, color: color, life: 2.0}); }
+        
+        function spawnStars(x, y) {
+            for(let i=0; i<5; i++) {
+                let angle = (Math.PI*2/5) * i;
                 particles.push({
-                    x: x, y: y,
-                    vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
-                    life: Math.random()*0.5 + 0.5,
-                    color: color, size: Math.random()*3 + 1
+                    x: x, y: y, vx: Math.cos(angle)*150, vy: -150 - Math.random()*100,
+                    size: 8, color: 'var(--gold)', life: 1.0, r: Math.random()*Math.PI
                 });
             }
         }
 
-        function spawnText(txt, x, y, color) {
-            popTexts.push({text: txt, x: x, y: y, color: color, life: 1.5});
+        function triggerFlash() {
+            const f = document.getElementById('screen-flash');
+            f.style.opacity = 0.8; setTimeout(() => f.style.opacity = 0, 100);
+        }
+        function triggerShake() {
+            const c = document.getElementById('game-container');
+            c.style.transform = 'translate(10px, 10px)';
+            setTimeout(() => c.style.transform = 'translate(-10px, -10px)', 50);
+            setTimeout(() => c.style.transform = 'translate(5px, 5px)', 100);
+            setTimeout(() => c.style.transform = 'translate(0, 0)', 150);
         }
 
-        function addScore(pts) {
-            game.score += pts;
-            const el = document.getElementById('ui-score');
-            el.innerText = game.score;
-            el.style.transform = 'scale(1.5)';
-            setTimeout(() => el.style.transform = 'scale(1)', 200);
+        function addScore(base) {
+            game.combo++; game.comboTimer = 3.0;
+            let mult = Math.min(game.combo, 5);
+            let finalPts = base * mult;
+            game.score += finalPts;
+            
+            document.getElementById('ui-score').innerText = game.score;
+            document.getElementById('ui-score').style.transform = 'scale(1.5)';
+            setTimeout(() => document.getElementById('ui-score').style.transform = 'scale(1)', 200);
+
+            if(game.combo > 1) {
+                const cb = document.getElementById('ui-combo');
+                cb.style.display = 'block'; cb.innerText = `COMBO x${game.combo}!`;
+                cb.style.transform = 'scale(1.5)'; setTimeout(() => cb.style.transform = 'scale(1)', 200);
+                SFX.combo(game.combo);
+            }
         }
 
         /* ==========================================================================
@@ -998,38 +934,46 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        function startGame(role) {
+        // Fake loading -> Menu
+        setTimeout(() => { showScreen('screen-menu'); loadLeaderboard(); }, 2000);
+
+        function startGame() {
             initAudio();
-            game.role = role;
-            game.score = 0; game.time = 90;
+            initWorld();
+            game.score = 0; game.time = 90; game.combo = 0;
             document.getElementById('ui-score').innerText = '0';
             document.getElementById('ui-time').innerText = '90';
+            document.getElementById('ui-combo').style.display = 'none';
             
-            setupWorld();
             showScreen('screen-game');
-            game.state = 'playing';
-            
-            SFX.playBGM();
-
-            if(game.timerId) clearInterval(game.timerId);
-            game.timerId = setInterval(() => {
-                if(game.state !== 'playing') return;
-                game.time--;
-                document.getElementById('ui-time').innerText = game.time;
-                
-                if(game.role === 'warga' && game.time > 0) addScore(2); // Survival points
-
-                if(game.time <= 0) gameOver();
-            }, 1000);
+            game.state = 'tutorial';
+            const tut = document.getElementById('tutorial-overlay');
+            tut.style.display = 'block';
 
             if(!reqFrame) reqFrame = requestAnimationFrame(loop);
+
+            // Phase 1 -> 2
+            setTimeout(() => {
+                tut.style.display = 'none';
+                game.state = 'playing';
+                SFX.playBGM();
+                
+                // Timer
+                if(game.timerId) clearInterval(game.timerId);
+                game.timerId = setInterval(() => {
+                    if(game.state !== 'playing') return;
+                    game.time--;
+                    document.getElementById('ui-time').innerText = game.time;
+                    if(game.time <= 0) gameOver();
+                }, 1000);
+            }, 5000); // 5 sec tutorial
         }
 
         function pauseGame() {
             if(game.state === 'playing') {
                 game.state = 'paused';
                 showScreen('screen-pause');
-                document.getElementById('screen-game').classList.remove('hidden'); // keep game visible behind
+                document.getElementById('screen-game').classList.remove('hidden');
             }
         }
 
@@ -1050,50 +994,30 @@
             game.state = 'gameover';
             SFX.stopBGM();
             clearInterval(game.timerId);
-            
             document.getElementById('final-score').innerText = game.score;
-            
-            // Ranks
-            let rank = "";
-            if(game.role === 'pocong') {
-                if(game.score > 200) rank = "Raja Setan 👑";
-                else if(game.score > 100) rank = "Pocong Terseram 👻";
-                else rank = "Pocong Amatir 📦";
-            } else {
-                if(game.score > 300) rank = "Dukun Sakti 🧙‍♂️";
-                else if(game.score > 150) rank = "Warga Pemberani 🏃‍♂️";
-                else rank = "Tumbal Proyek 💀";
-            }
-            document.getElementById('final-rank').innerText = "Peringkat: " + rank;
+            saveScore(game.score);
 
-            saveScore(game.score, rank);
-            
-            const shareMsg = `Gila! Gua main POCONG VS WARGA dapet skor ${game.score} dan dapet title "${rank}"! Coba kalahin skor gua kalo berani! 👻`;
+            const shareMsg = `MALAM TERROR! Gua main Pocong DreadOut dapet skor ${game.score}! Berani coba teror warga? 👻🩸`;
             document.getElementById('btn-share').onclick = () => {
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
             };
-
             showScreen('screen-gameover');
         }
 
-        function saveScore(score, rank) {
-            let lb = JSON.parse(localStorage.getItem('pvw_ultimate_lb') || '[]');
-            const d = new Date();
-            lb.push({ score: score, rank: rank, date: `${d.getDate()}/${d.getMonth()+1}` });
-            lb.sort((a,b) => b.score - a.score);
-            lb = lb.slice(0, 5);
-            localStorage.setItem('pvw_ultimate_lb', JSON.stringify(lb));
-            
+        function saveScore(score) {
+            let lb = JSON.parse(localStorage.getItem('pvw_dreadout_lb') || '[]');
+            lb.push(score); lb.sort((a,b) => b - a); lb = lb.slice(0, 5);
+            localStorage.setItem('pvw_dreadout_lb', JSON.stringify(lb));
+            loadLeaderboard();
+        }
+
+        function loadLeaderboard() {
+            let lb = JSON.parse(localStorage.getItem('pvw_dreadout_lb') || '[]');
             const list = document.getElementById('leaderboard-list');
             list.innerHTML = '';
-            lb.forEach(e => {
-                list.innerHTML += `<li><b style="color:var(--gold)">${e.score}</b> - ${e.rank} <small style="color:#666">(${e.date})</small></li>`;
-            });
+            if(lb.length===0) list.innerHTML = "<li>Belum ada teror</li>";
+            lb.forEach((s, i) => list.innerHTML += `<li><span style="color:var(--gold)">#${i+1}</span> - ${s} Poin</li>`);
         }
-        
-        // Initial setup
-        saveScore(0, "Pemanasan"); // Init dummy to populate list if empty
-        showScreen('screen-menu');
 
     </script>
 </body>
