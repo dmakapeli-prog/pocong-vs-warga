@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocong vs Warga: DreadOut Edition</title>
+    <title>Pocong vs Warga: Ultra HD</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Jolly+Lodger&family=Nunito:wght@400;700;900&display=swap');
 
         :root {
-            --bg-night: #02050b;
+            --bg-night: #050a14;
             --blood-red: #8a0303;
-            --ghost-white: #e3e8e5;
-            --dirt: #2a1f1a;
-            --moon: #f4f6f0;
-            --ui-bg: rgba(0, 0, 0, 0.8);
             --gold: #f1c40f;
+            --ui-bg: rgba(0, 0, 0, 0.85);
         }
 
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -25,12 +22,9 @@
             font-family: 'Nunito', sans-serif; overflow: hidden;
         }
 
-        .horror-font { font-family: 'Creepster', cursive; color: var(--blood-red); text-shadow: 2px 2px 4px #000, 0 0 10px var(--blood-red); }
-        .title-font { font-family: 'Jolly Lodger', cursive; color: var(--ghost-white); text-shadow: 3px 3px 5px #000, 0 0 20px #555; }
+        .horror-font { font-family: 'Creepster', cursive; color: var(--blood-red); text-shadow: 2px 2px 5px #000, 0 0 15px var(--blood-red); }
+        .title-font { font-family: 'Jolly Lodger', cursive; color: #e3e8e5; text-shadow: 3px 3px 6px #000, 0 0 25px #555; }
 
-        h1 { font-size: 5rem; text-align: center; margin: 0; line-height: 1; letter-spacing: 5px; }
-        
-        /* Screens */
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -39,149 +33,58 @@
         }
         .hidden { opacity: 0; pointer-events: none; z-index: -1 !important; display: none !important; }
 
-        /* Loading Screen */
-        #loading-text { font-size: 2rem; margin-top: 20px; animation: pulse 1.5s infinite; color: var(--ghost-white); }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-        /* Buttons */
         button {
-            background: linear-gradient(180deg, #3a0000 0%, #1a0000 100%);
-            color: var(--ghost-white); border: 2px solid var(--blood-red);
-            padding: 15px 50px; font-size: 1.8rem; font-family: 'Creepster', cursive;
+            background: linear-gradient(180deg, #4a0000 0%, #1a0000 100%);
+            color: #fff; border: 2px solid var(--blood-red);
+            padding: 15px 50px; font-size: 2rem; font-family: 'Creepster', cursive;
             cursor: pointer; border-radius: 8px; margin: 15px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.2);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.3);
             transition: all 0.2s; letter-spacing: 2px; text-transform: uppercase;
         }
         button:hover {
             transform: translateY(-5px) scale(1.05);
-            background: linear-gradient(180deg, #5a0000 0%, #2a0000 100%);
-            box-shadow: 0 12px 20px rgba(138, 3, 3, 0.6), inset 0 0 15px rgba(255,0,0,0.4);
+            background: linear-gradient(180deg, #6a0000 0%, #2a0000 100%);
+            box-shadow: 0 12px 25px rgba(138, 3, 3, 0.7), inset 0 0 20px rgba(255,0,0,0.5);
         }
-        button:active { transform: translateY(2px) scale(0.95); }
 
-        /* UI / HUD */
         #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         
         .hud-top { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .score-box {
-            font-family: 'Creepster', cursive; font-size: 3.5rem; color: var(--blood-red);
-            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            line-height: 1;
-        }
-        .combo-box { font-family: 'Jolly Lodger', cursive; font-size: 2.5rem; color: var(--gold); text-shadow: 2px 2px 4px #000; display: none; }
-        .timer-box {
-            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 2.5rem; color: var(--ghost-white);
-            background: var(--ui-bg); padding: 5px 20px; border-radius: 10px; border: 2px solid #555;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-        }
+        .score-box { font-family: 'Creepster', cursive; font-size: 4rem; color: var(--blood-red); text-shadow: 3px 3px 0 #000, -1px -1px 0 #000; line-height: 1; }
+        .combo-box { font-family: 'Jolly Lodger', cursive; font-size: 3rem; color: var(--gold); text-shadow: 0 0 15px #f39c12, 2px 2px 5px #000; display: none; }
+        .timer-box { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 2.5rem; color: #fff; background: var(--ui-bg); padding: 5px 25px; border-radius: 12px; border: 2px solid #555; }
 
         .hud-bottom-left {
             position: absolute; bottom: 20px; left: 20px; background: var(--ui-bg);
-            padding: 15px 25px; border-radius: 10px; border: 1px solid #444;
-            font-size: 1rem; color: #ccc; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-            line-height: 1.6;
+            padding: 15px 25px; border-radius: 10px; border: 1px solid #444; font-size: 1.1rem; color: #ddd; line-height: 1.6;
         }
-        .key {
-            display: inline-block; background: #222; color: #fff; padding: 2px 8px;
-            border-radius: 4px; border: 1px solid #555; font-family: monospace; font-weight: bold;
-            box-shadow: 0 2px 0 #000; margin: 0 3px;
-        }
+        .key { display: inline-block; background: #222; color: #fff; padding: 2px 10px; border-radius: 6px; border: 1px solid #666; font-family: monospace; font-weight: bold; box-shadow: 0 3px 0 #000; margin: 0 3px; }
 
-        .hud-bottom-right { position: absolute; bottom: 20px; right: 20px; pointer-events: auto; }
-        .icon-btn {
-            background: var(--ui-bg); border: 2px solid #555; color: white;
-            width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-            transition: 0.2s;
-        }
-        .icon-btn:hover { border-color: var(--ghost-white); transform: scale(1.1); }
-
-        /* Flash & Effects */
-        #screen-flash {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; opacity: 0; z-index: 15; pointer-events: none; transition: opacity 0.1s;
-        }
-
-        #tutorial-overlay {
-            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(138, 3, 3, 0.9); padding: 20px 40px; border-radius: 15px;
-            font-size: 2rem; font-weight: bold; text-align: center; border: 2px solid #fff;
-            box-shadow: 0 0 30px rgba(255,0,0,0.5); z-index: 12; display: none;
-            animation: float 2s infinite ease-in-out;
-        }
-
-        @keyframes float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, -60%); } }
-
-        /* Canvas */
+        #screen-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f00; opacity: 0; z-index: 15; pointer-events: none; transition: opacity 0.1s; }
         #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* Leaderboard */
-        .leaderboard {
-            background: rgba(0,0,0,0.8); padding: 20px 30px; border-radius: 15px;
-            border: 2px solid #333; margin: 20px 0; width: 350px; text-align: left;
-        }
-        .leaderboard h3 { margin: 0 0 15px 0; text-align: center; color: var(--gold); font-size: 1.5rem; }
-        .leaderboard ol { padding-left: 20px; margin: 0; font-size: 1.2rem; }
-        .leaderboard li { margin-bottom: 10px; border-bottom: 1px dashed #444; padding-bottom: 5px; }
-
-        /* Mobile Controls */
-        #mobile-controls {
-            display: none; position: absolute; bottom: 20px; width: 100%; height: 150px; z-index: 30; pointer-events: none;
-        }
-        .dpad { position: absolute; bottom: 20px; left: 20px; width: 150px; height: 150px; pointer-events: auto; }
-        .dpad-btn {
-            position: absolute; width: 50px; height: 50px; background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; display: flex;
-            justify-content: center; align-items: center; color: white; font-size: 1.5rem;
-        }
-        .dpad-btn:active { background: rgba(255,255,255,0.3); }
-        .btn-left { top: 50px; left: 0; } .btn-right { top: 50px; left: 100px; }
-        
-        .action-mobile {
-            position: absolute; bottom: 40px; right: 40px; width: 90px; height: 90px;
-            background: rgba(138, 3, 3, 0.6); border: 3px solid var(--blood-red); border-radius: 50%;
-            color: white; font-weight: bold; font-size: 1.2rem; display: flex; justify-content: center;
-            align-items: center; pointer-events: auto;
-        }
-        .action-mobile:active { transform: scale(0.9); background: rgba(138, 3, 3, 0.9); }
-
         @media (max-width: 768px) {
             .hud-bottom-left { display: none; }
-            #mobile-controls { display: block; }
-            h1 { font-size: 3.5rem; }
-            .score-box { font-size: 2.5rem; }
-            .timer-box { font-size: 1.5rem; padding: 5px 15px; }
+            .score-box { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOADING SCREEN -->
-    <div id="screen-loading" class="screen">
-        <h1 class="horror-font" style="font-size: 6rem; filter: blur(2px);">POCONG</h1>
-        <div id="loading-text">Memuat Teror...</div>
-    </div>
-
-    <!-- MAIN MENU -->
-    <div id="screen-menu" class="screen hidden">
-        <h2 class="title-font" style="margin:0; font-size: 3rem;">LEGENDA URBAN</h2>
-        <h1 class="horror-font">POCONG<br><span style="font-size: 2.5rem; color:#fff; font-family:'Nunito', sans-serif;">VS</span><br>WARGA</h1>
-        <p style="color: #bbb; max-width: 500px; text-align: center; margin: 20px 0 40px 0; font-size: 1.2rem;">
-            Sebar teror di pemukiman warga.<br>Ketuk pintu mereka, dan kejutkan saat mereka membuka pintu!
+    <div id="screen-menu" class="screen">
+        <h2 class="title-font" style="margin:0; font-size: 4rem;">TEROR MALAM</h2>
+        <h1 class="horror-font" style="font-size: 7rem;">POCONG VS WARGA</h1>
+        <p style="color: #ccc; max-width: 600px; text-align: center; margin: 20px 0 40px 0; font-size: 1.3rem;">
+            Menyelinap di kegelapan. Ketuk pintu warga, beri mereka mimpi buruk yang tak terlupakan.
         </p>
         <button onclick="startGame()">MULAI TEROR</button>
     </div>
 
-    <!-- GAMEPLAY -->
     <div id="screen-game" class="screen hidden" style="background: transparent;">
         <div id="screen-flash"></div>
-        <div id="tutorial-overlay">Ketuk Pintu Rumah Warga!</div>
+        <div id="game-container"><canvas id="gameCanvas"></canvas></div>
         
-        <div id="game-container">
-            <canvas id="gameCanvas"></canvas>
-        </div>
-
         <div id="game-ui">
             <div class="hud-top">
                 <div>
@@ -190,293 +93,227 @@
                 </div>
                 <div class="timer-box" id="ui-time">90</div>
             </div>
-
             <div class="hud-bottom-left">
-                <div style="margin-bottom: 8px; color: #fff; font-weight: bold;">KONTROL</div>
-                <span class="key">A</span> <span class="key">D</span> / <span class="key">←</span> <span class="key">→</span> Bergerak<br><br>
-                <span class="key">E</span> / <span class="key" style="width: 50px; text-align:center;">SPACE</span> Ketuk Pintu<br><br>
-                <span class="key">ESC</span> Pause
-            </div>
-
-            <div class="hud-bottom-right">
-                <button class="icon-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
-            </div>
-
-            <div id="mobile-controls">
-                <div class="dpad">
-                    <div class="dpad-btn btn-left" id="btn-left">◀</div>
-                    <div class="dpad-btn btn-right" id="btn-right">▶</div>
-                </div>
-                <div class="action-mobile" id="btn-action">KETUK</div>
+                <span class="key">A</span> <span class="key">D</span> Bergerak<br><br>
+                <span class="key">SPACE</span> Ketuk Pintu<br><br>
+                <span class="key">SHIFT</span> Sprint
             </div>
         </div>
     </div>
 
-    <!-- PAUSE MENU -->
-    <div id="screen-pause" class="screen hidden" style="background: rgba(0,0,0,0.9); z-index: 50;">
-        <h1 class="horror-font">PAUSED</h1>
-        <button onclick="resumeGame()">LANJUTKAN</button>
-        <button onclick="quitGame()" style="background: linear-gradient(180deg, #444 0%, #222 100%); border-color:#666;">BERHENTI</button>
-    </div>
-
-    <!-- GAME OVER -->
     <div id="screen-gameover" class="screen hidden">
-        <h1 class="title-font" style="font-size: 4rem; color:var(--blood-red);">MALAM BERAKHIR</h1>
-        <div style="font-size: 1.5rem; margin-top: 10px;">Skor Teror:</div>
-        <div id="final-score" class="horror-font" style="font-size: 5rem; line-height: 1;">0</div>
-        
-        <div class="leaderboard">
-            <h3>Leaderboard Teror</h3>
-            <ol id="leaderboard-list"></ol>
-        </div>
-
-        <div style="display: flex; gap: 15px; margin-top: 20px;">
-            <button onclick="showScreen('screen-menu')">KEMBALI</button>
-            <button id="btn-share" style="background: #25D366; border-color: #128C7E; color: white;">📱 SHARE WA</button>
-        </div>
+        <h1 class="title-font" style="font-size: 5rem; color:var(--blood-red);">MALAM TELAH USAI</h1>
+        <div style="font-size: 2rem; margin-top: 10px;">Total Teror:</div>
+        <div id="final-score" class="horror-font" style="font-size: 6rem; line-height: 1;">0</div>
+        <button onclick="location.reload()" style="margin-top:40px;">KEMBALI</button>
     </div>
 
     <script>
-        /* ==========================================================================
-           AUDIO SYSTEM (Web Audio API - Gamelan Horror + SFX)
-           ========================================================================== */
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let actx;
-        let isMuted = false;
-        let bgmNodes = [];
-        let cricketNode = null;
-
-        function initAudio() {
-            if (!actx) actx = new AudioContext();
-            if (actx.state === 'suspended') actx.resume();
-        }
-
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊';
-            // Simple mute by suspending context for now to easily mute all procedural sounds
-            if(isMuted) actx.suspend(); else actx.resume();
-        }
-
+        // --- UTILS & MATH ---
+        const lerp = (a, b, t) => a + (b - a) * t;
+        
+        // --- AUDIO ENGINE ---
+        const actx = new (window.AudioContext || window.webkitAudioContext)();
         const SFX = {
             playBGM: () => {
-                if(!actx || bgmNodes.length > 0) return;
-                
-                // Crickets noise
+                if(actx.state === 'suspended') actx.resume();
+                // Crickets
                 const bufferSize = actx.sampleRate * 2;
                 const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
                 const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-                
-                let noise = actx.createBufferSource();
-                noise.buffer = buffer; noise.loop = true;
-                
-                let filter = actx.createBiquadFilter();
-                filter.type = 'bandpass'; filter.frequency.value = 4000; filter.Q.value = 10;
-                
-                let lfo = actx.createOscillator(); lfo.frequency.value = 15;
-                let lfoGain = actx.createGain(); lfoGain.gain.value = 500;
+                for (let i=0; i<bufferSize; i++) data[i] = Math.random()*2-1;
+                let noise = actx.createBufferSource(); noise.buffer = buffer; noise.loop = true;
+                let filter = actx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 4500; filter.Q.value = 15;
+                let lfo = actx.createOscillator(); lfo.frequency.value = 10;
+                let lfoGain = actx.createGain(); lfoGain.gain.value = 800;
                 lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
-                
-                let noiseGain = actx.createGain(); noiseGain.gain.value = 0.05;
+                let noiseGain = actx.createGain(); noiseGain.gain.value = 0.03;
                 noise.connect(filter); filter.connect(noiseGain); noiseGain.connect(actx.destination);
                 noise.start(); lfo.start();
-                
-                bgmNodes.push(noise, lfo, noiseGain);
 
-                // Gamelan drone
-                let drone = actx.createOscillator(); drone.type = 'triangle'; drone.frequency.value = 65;
-                let dGain = actx.createGain(); dGain.gain.value = 0.1;
+                // Drone
+                let drone = actx.createOscillator(); drone.type = 'triangle'; drone.frequency.value = 55;
+                let dGain = actx.createGain(); dGain.gain.value = 0.08;
                 drone.connect(dGain); dGain.connect(actx.destination);
                 drone.start();
-                bgmNodes.push(drone, dGain);
-
-                // Random gamelan hits (pelog scale: E F G B C)
-                const freqs = [329.63, 349.23, 392.00, 493.88, 523.25].map(f => f/2);
-                setInterval(() => {
-                    if(game.state !== 'playing' || isMuted) return;
-                    if(Math.random() > 0.3) return;
-                    
-                    let osc = actx.createOscillator(); osc.type = 'sine';
-                    osc.frequency.value = freqs[Math.floor(Math.random()*freqs.length)];
-                    let g = actx.createGain();
-                    g.gain.setValueAtTime(0, actx.currentTime);
-                    g.gain.linearRampToValueAtTime(0.3, actx.currentTime + 0.1);
-                    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 3);
-                    osc.connect(g); g.connect(actx.destination);
-                    osc.start(); osc.stop(actx.currentTime + 3);
-                }, 2000);
-            },
-            stopBGM: () => {
-                bgmNodes.forEach(n => { try{ n.stop(); }catch(e){} try{ n.disconnect(); }catch(e){} });
-                bgmNodes = [];
-            },
-            jump: () => {
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator(); const gain = actx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(80, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(150, actx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.2);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.2);
             },
             knock: () => {
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator(); const gain = actx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(100, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, actx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.5, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.1);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.1);
+                let osc = actx.createOscillator(); let g = actx.createGain();
+                osc.type = 'square'; osc.frequency.setValueAtTime(80, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, actx.currentTime+0.1);
+                g.gain.setValueAtTime(0.6, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.1);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime+0.1);
             },
-            whoosh: () => { // Jumpscare jump
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator(); const gain = actx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(100, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, actx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.5, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.4);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.4);
-            },
-            faint: () => { // Short funny scream
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator(); const gain = actx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(200, actx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.4, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.5);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.5);
-            },
-            combo: (level) => {
-                if(isMuted || !actx) return;
-                const osc = actx.createOscillator(); const gain = actx.createGain();
-                osc.type = 'square';
-                let baseFreq = 400 + (level * 100);
-                osc.frequency.setValueAtTime(baseFreq, actx.currentTime);
-                osc.frequency.setValueAtTime(baseFreq*1.5, actx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.3, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.3);
-                osc.connect(gain); gain.connect(actx.destination);
-                osc.start(); osc.stop(actx.currentTime + 0.3);
+            jumpscare: () => {
+                let osc = actx.createOscillator(); let g = actx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, actx.currentTime+0.2);
+                g.gain.setValueAtTime(0.5, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.5);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime+0.5);
+                
+                let osc2 = actx.createOscillator(); let g2 = actx.createGain();
+                osc2.type = 'square'; osc2.frequency.setValueAtTime(900, actx.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(300, actx.currentTime+0.6);
+                g2.gain.setValueAtTime(0.4, actx.currentTime); g2.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.6);
+                osc2.connect(g2); g2.connect(actx.destination); osc2.start(); osc2.stop(actx.currentTime+0.6);
             }
         };
 
-        /* ==========================================================================
-           GAME ENGINE & STATE
-           ========================================================================== */
+        // --- SVG FACTORY (Generates offscreen canvases for performance) ---
+        function renderSVGToCanvas(svgString, width, height) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const svg = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(svg);
+            return new Promise(res => {
+                img.onload = () => { ctx.drawImage(img, 0, 0); URL.revokeObjectURL(url); res(canvas); };
+                img.src = url;
+            });
+        }
+
+        const ASSETS = {};
+        
+        async function loadAssets() {
+            // 4 House Variations
+            const colors = ['#f1c40f', '#2ecc71', '#ecf0f1', '#3498db'];
+            for(let i=0; i<4; i++) {
+                let svg = `<svg width="400" height="350" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="noise${i}"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise"/><feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.1 0" in="noise" result="coloredNoise"/><feBlend in="SourceGraphic" in2="coloredNoise" mode="multiply"/></filter>
+                        <linearGradient id="roofGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8e44ad"/><stop offset="100%" stop-color="#2c3e50"/></linearGradient>
+                    </defs>
+                    <!-- Shadow -->
+                    <ellipse cx="200" cy="340" rx="180" ry="10" fill="rgba(0,0,0,0.5)" />
+                    <!-- Wall -->
+                    <rect x="50" y="150" width="300" height="190" fill="${colors[i]}" filter="url(#noise${i})" />
+                    <rect x="50" y="320" width="300" height="20" fill="#7f8c8d" /> <!-- Base board -->
+                    <!-- Roof -->
+                    <path d="M 30 150 L 200 20 L 370 150 Z" fill="#c0392b" />
+                    <path d="M 20 150 L 200 10 L 380 150 L 370 160 L 200 30 L 30 160 Z" fill="#7f8c8d" /> <!-- Fascia -->
+                    <!-- Door Frame & Door (Closed) -->
+                    <rect x="220" y="200" width="80" height="130" fill="#3e2723" />
+                    <rect x="225" y="205" width="70" height="125" fill="#5d4037" />
+                    <circle cx="285" cy="270" r="4" fill="#f1c40f" /> <!-- Knob -->
+                    <!-- Window -->
+                    <rect x="90" y="210" width="80" height="80" fill="#2c3e50" />
+                    <rect x="95" y="215" width="70" height="70" fill="#34495e" /> <!-- Glass -->
+                    <!-- Window Bars -->
+                    <line x1="130" y1="210" x2="130" y2="290" stroke="#7f8c8d" stroke-width="3" />
+                    <line x1="90" y1="250" x2="170" y2="250" stroke="#7f8c8d" stroke-width="3" />
+                    <!-- Curtains -->
+                    <path d="M 95 215 Q 110 240 95 285 L 115 285 Q 125 240 130 215 Z" fill="#e74c3c" opacity="0.8" />
+                    <path d="M 165 215 Q 150 240 165 285 L 145 285 Q 135 240 130 215 Z" fill="#e74c3c" opacity="0.8" />
+                    <!-- Porch Light -->
+                    <rect x="255" y="170" width="10" height="15" fill="#222" />
+                    <circle cx="260" cy="185" r="8" fill="#f1c40f" />
+                    <circle cx="260" cy="185" r="20" fill="rgba(241,196,15,0.3)" /> <!-- Glow -->
+                    <!-- Plant -->
+                    <rect x="60" y="310" width="30" height="30" fill="#e67e22" />
+                    <circle cx="75" cy="290" r="25" fill="#27ae60" />
+                    <circle cx="65" cy="300" r="15" fill="#2ecc71" />
+                    <circle cx="85" cy="300" r="15" fill="#2ecc71" />
+                </svg>`;
+                ASSETS[`house_${i}`] = await renderSVGToCanvas(svg, 400, 350);
+            }
+
+            // Sickle (Cerulit) SVG
+            const sickleSVG = `<svg width="60" height="100" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="25" y="40" width="10" height="55" rx="3" fill="#5d4037" /> <!-- Handle -->
+                <path d="M 30 45 C 50 40, 60 10, 30 5 C 10 0, -10 20, 5 45 C 15 25, 20 25, 30 45 Z" fill="#95a5a6" /> <!-- Blade -->
+                <path d="M 30 45 C 50 40, 60 10, 30 5 C 20 15, 25 30, 30 45 Z" fill="#bdc3c7" /> <!-- Shine -->
+                <circle cx="20" cy="15" r="2" fill="#7f8c8d" /> <!-- Rust -->
+                <circle cx="10" cy="30" r="1.5" fill="#7f8c8d" />
+            </svg>`;
+            ASSETS.sickle = await renderSVGToCanvas(sickleSVG, 60, 100);
+        }
+
+        // --- ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
         let lastTime = 0, reqFrame;
+        
         let game = {
-            state: 'loading',
-            score: 0,
-            time: 90,
-            combo: 0,
-            comboTimer: 0,
-            timerId: null,
-            width: 0, height: 0,
-            camX: 0,
-            worldWidth: 3000
+            state: 'menu', score: 0, time: 90, combo: 0, comboTime: 0,
+            width: window.innerWidth, height: window.innerHeight,
+            camX: 0, worldWidth: 5000, groundY: window.innerHeight * 0.8
         };
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            game.width = canvas.width;
-            game.height = canvas.height;
-        }
-        window.addEventListener('resize', resize);
-        resize();
+        window.addEventListener('resize', () => {
+            game.width = canvas.width = window.innerWidth;
+            game.height = canvas.height = window.innerHeight;
+            game.groundY = Math.min(game.height * 0.8, 800);
+        });
+        window.dispatchEvent(new Event('resize'));
 
-        /* ==========================================================================
-           INPUT HANDLING
-           ========================================================================== */
-        const keys = { left:false, right:false, action:false, actionPressed:false };
-        
+        // --- INPUT ---
+        const keys = { left:false, right:false, action:false, sprint:false };
         window.addEventListener('keydown', e => {
             if(e.code==='KeyA' || e.code==='ArrowLeft') keys.left = true;
             if(e.code==='KeyD' || e.code==='ArrowRight') keys.right = true;
-            if((e.code==='Space' || e.code==='KeyE') && !keys.action) { keys.action = true; keys.actionPressed = true; handleAction(); }
-            if(e.code==='Escape' && game.state === 'playing') pauseGame();
+            if(e.code==='Space' && !keys.action) { keys.action = true; handleAction(); }
+            if(e.code==='ShiftLeft' || e.code==='ShiftRight') keys.sprint = true;
         });
         window.addEventListener('keyup', e => {
             if(e.code==='KeyA' || e.code==='ArrowLeft') keys.left = false;
             if(e.code==='KeyD' || e.code==='ArrowRight') keys.right = false;
-            if(e.code==='Space' || e.code==='KeyE') keys.action = false;
+            if(e.code==='Space') keys.action = false;
+            if(e.code==='ShiftLeft' || e.code==='ShiftRight') keys.sprint = false;
         });
 
-        // Mobile Controls
-        const btnLeft = document.getElementById('btn-left');
-        const btnRight = document.getElementById('btn-right');
-        const btnAction = document.getElementById('btn-action');
-
-        const bindTouch = (el, key) => {
-            el.addEventListener('touchstart', e => { e.preventDefault(); keys[key] = true; if(key==='action') handleAction(); });
-            el.addEventListener('touchend', e => { e.preventDefault(); keys[key] = false; });
-            el.addEventListener('touchcancel', e => { e.preventDefault(); keys[key] = false; });
-        };
-        bindTouch(btnLeft, 'left');
-        bindTouch(btnRight, 'right');
-        bindTouch(btnAction, 'action');
-
-        /* ==========================================================================
-           ENTITIES & DRAWING (CSS/SVG style on Canvas)
-           ========================================================================== */
-        let player, houses = [], particles = [], floatTexts = [];
-        const GROUND_Y = Math.min(window.innerHeight * 0.8, 800);
+        // --- ENTITIES ---
+        let player, houses = [], wargas = [], particles = [], texts = [];
 
         class Pocong {
             constructor(x) {
-                this.x = x; this.y = GROUND_Y;
-                this.vx = 0; this.vy = 0;
-                this.speed = 250;
-                this.dir = 1; // 1 right, -1 left
-                this.jumpY = 0; this.jumpTime = 0;
+                this.x = x; this.y = game.groundY;
+                this.vx = 0; this.dir = 1;
+                this.jumpY = 0; this.animTime = 0;
                 this.state = 'idle'; // idle, moving, knocking, jumpscare
-                this.animTimer = 0;
+                this.swingAngle = 0;
             }
             update(dt) {
+                let targetVx = 0;
+                let acc = 1500;
+                let maxSpeed = keys.sprint ? 500 : 250;
+
                 if(this.state === 'jumpscare') {
-                    this.animTimer += dt;
-                    this.x += this.dir * 400 * dt; // Leap forward
-                    this.jumpY = Math.sin((this.animTimer/0.5)*Math.PI) * 100;
-                    if(this.animTimer > 0.5) {
-                        this.state = 'idle'; this.jumpY = 0;
-                    }
+                    this.animTime += dt;
+                    this.x += this.dir * 800 * dt; // Leap
+                    this.jumpY = Math.sin((this.animTime/0.4)*Math.PI) * 120;
+                    this.swingAngle = Math.sin(this.animTime*10) * Math.PI/2;
+                    if(this.animTime > 0.4) { this.state = 'idle'; this.jumpY = 0; this.swingAngle = 0; }
                     return;
                 }
 
-                let moveX = 0;
-                if(keys.left) moveX -= 1;
-                if(keys.right) moveX += 1;
-                
                 if(this.state === 'knocking') {
-                    moveX = 0; // stop while knocking
-                    this.animTimer += dt;
-                    if(this.animTimer > 0.3) this.state = 'idle';
+                    this.animTime += dt;
+                    this.swingAngle = -Math.abs(Math.sin(this.animTime*15)) * Math.PI/3;
+                    if(this.animTime > 0.3) { this.state = 'idle'; this.swingAngle = 0; }
+                } else {
+                    if(keys.left) targetVx = -maxSpeed;
+                    if(keys.right) targetVx = maxSpeed;
                 }
 
-                if(moveX !== 0) {
-                    this.dir = moveX;
-                    this.vx = moveX * this.speed;
+                // Smooth Acceleration/Deceleration
+                if(targetVx !== 0) {
+                    this.dir = targetVx > 0 ? 1 : -1;
+                    this.vx += Math.sign(targetVx) * acc * dt;
+                    if(Math.abs(this.vx) > maxSpeed) this.vx = Math.sign(this.vx) * maxSpeed;
                     this.state = 'moving';
-                    this.jumpTime += dt * 6;
-                    this.jumpY = Math.abs(Math.sin(this.jumpTime)) * 40;
-                    if(this.jumpY < 5 && Math.sin(this.jumpTime) > 0) {
-                        if(Math.random()>0.5) SFX.jump(); // Footstep/thud
-                    }
+                    this.animTime += dt * (keys.sprint ? 12 : 8);
+                    this.jumpY = Math.abs(Math.sin(this.animTime)) * 40;
                 } else {
-                    this.vx = 0;
-                    if(this.state === 'moving') { this.state = 'idle'; this.jumpY = 0; this.jumpTime = 0; }
+                    // Friction
+                    if(Math.abs(this.vx) > 10) {
+                        this.vx -= Math.sign(this.vx) * acc * dt * 1.5;
+                        this.jumpY = Math.abs(Math.sin(this.animTime)) * 40; // Finish jump
+                    } else {
+                        this.vx = 0; this.state = 'idle';
+                        this.animTime += dt * 2;
+                        this.jumpY = Math.sin(this.animTime) * 5; // Sway slightly
+                    }
                 }
 
                 this.x += this.vx * dt;
@@ -488,56 +325,142 @@
                 
                 // Shadow
                 ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                ctx.beginPath(); ctx.ellipse(0, 5, 25 - this.jumpY*0.2, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(0, 10, 35 - this.jumpY*0.2, 10, 0, 0, Math.PI*2); ctx.fill();
 
                 ctx.translate(0, -this.jumpY);
-                ctx.scale(this.dir, 1); // Flip horizontally based on direction
+                ctx.scale(this.dir, 1);
 
-                // Sickle (Cerulit) - Back arm
-                ctx.fillStyle = '#4a2f1d'; // Handle
-                ctx.beginPath(); ctx.roundRect(-20, -60, 5, 40, 2); ctx.fill();
-                ctx.fillStyle = '#7a7a7a'; // Rusty blade
-                ctx.beginPath(); ctx.moveTo(-20, -60); ctx.quadraticCurveTo(-40, -80, -10, -90); ctx.quadraticCurveTo(-30, -70, -15, -60); ctx.fill();
-                // Rust spots on blade
-                ctx.fillStyle = '#5c3a21'; ctx.beginPath(); ctx.arc(-25, -75, 2, 0, Math.PI*2); ctx.arc(-20, -80, 1.5, 0, Math.PI*2); ctx.fill();
+                // Sickle Arm
+                ctx.save();
+                ctx.translate(10, -80);
+                ctx.rotate(this.swingAngle);
+                if(ASSETS.sickle) ctx.drawImage(ASSETS.sickle, -10, -60, 40, 70);
+                ctx.restore();
 
-                // Body (Kain Kafan)
-                ctx.fillStyle = varColor('--ghost-white');
+                // Body Shroud (SVG Path representation in Canvas)
+                ctx.fillStyle = '#ecf0f1';
                 ctx.beginPath();
-                ctx.moveTo(-15, -120); // Top knot
-                ctx.quadraticCurveTo(0, -135, 15, -120);
-                ctx.bezierCurveTo(25, -100, 30, -20, 15, 0); // Front belly/feet
-                ctx.quadraticCurveTo(0, 10, -15, 0); // Bottom knot
-                ctx.bezierCurveTo(-30, -20, -25, -100, -15, -120); // Back
+                ctx.moveTo(-15, -150); // Top knot
+                ctx.bezierCurveTo(0, -170, 15, -150, 10, -130);
+                ctx.bezierCurveTo(35, -100, 40, -30, 20, 0); // Front belly
+                ctx.quadraticCurveTo(0, 15, -20, 0); // Bottom knot
+                ctx.bezierCurveTo(-40, -30, -35, -100, -20, -130); // Back
                 ctx.fill();
 
-                // Ties (Tali Pocong)
-                ctx.strokeStyle = '#aab2ab'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.moveTo(-18, -115); ctx.lineTo(18, -115); ctx.stroke(); // Head
-                ctx.beginPath(); ctx.moveTo(-22, -60); ctx.lineTo(25, -60); ctx.stroke(); // Neck
-                ctx.beginPath(); ctx.moveTo(-12, -5); ctx.lineTo(12, -5); ctx.stroke(); // Bottom
+                // Cloth folds (Texture)
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-10, -110); ctx.quadraticCurveTo(5, -80, -5, -40); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(5, -100); ctx.quadraticCurveTo(20, -70, 10, -30); ctx.stroke();
 
-                // Blood stains
-                ctx.fillStyle = 'rgba(138, 3, 3, 0.7)';
-                ctx.beginPath(); ctx.arc(5, -50, 8, 0, Math.PI*2); ctx.arc(-5, -45, 10, 0, Math.PI*2); ctx.arc(10, -70, 6, 0, Math.PI*2); ctx.fill();
+                // Ties
+                ctx.strokeStyle = '#7f8c8d'; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(-18, -140); ctx.lineTo(15, -140); ctx.stroke(); // Head
+                ctx.beginPath(); ctx.moveTo(-25, -110); ctx.lineTo(25, -110); ctx.stroke(); // Neck
+                ctx.beginPath(); ctx.moveTo(-15, -10); ctx.lineTo(15, -10); ctx.stroke(); // Feet
+
+                // Blood Splatters
+                ctx.fillStyle = 'rgba(138, 3, 3, 0.8)';
+                ctx.beginPath(); ctx.arc(10, -70, 8, 0, Math.PI*2); ctx.arc(15, -75, 5, 0, Math.PI*2); ctx.arc(5, -60, 6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(-10, -90, 7, 0, Math.PI*2); ctx.fill();
 
                 // Face Hole
                 ctx.fillStyle = '#111';
-                ctx.beginPath(); ctx.ellipse(10, -95, 12, 16, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(12, -125, 12, 16, 0, 0, Math.PI*2); ctx.fill();
 
-                // Eyes & Mouth
-                ctx.fillStyle = '#fff'; // Glow eyes
-                if(this.state === 'jumpscare') ctx.fillStyle = 'var(--blood-red)';
-                ctx.beginPath(); ctx.arc(14, -100, 2.5, 0, Math.PI*2); ctx.arc(6, -100, 2.5, 0, Math.PI*2); ctx.fill();
+                // Face Skin
+                ctx.fillStyle = '#95a5a6'; // Pale
+                ctx.beginPath(); ctx.ellipse(12, -125, 10, 14, 0, 0, Math.PI*2); ctx.fill();
+
+                // Eyes
+                ctx.fillStyle = this.state === 'jumpscare' ? 'var(--blood-red)' : '#000';
+                ctx.beginPath(); ctx.ellipse(15, -130, 3, 4, 0, 0, Math.PI*2); ctx.ellipse(7, -130, 3, 4, 0, 0, Math.PI*2); ctx.fill();
+                
+                // Open Mouth
                 ctx.fillStyle = '#000';
-                ctx.beginPath(); ctx.ellipse(10, -88, 4, this.state==='jumpscare'?8:3, 0, 0, Math.PI*2); ctx.fill(); // Mouth open wide if jumpscare
+                ctx.beginPath(); ctx.ellipse(12, -118, 4, this.state==='jumpscare'?8:4, 0, 0, Math.PI*2); ctx.fill();
 
-                // Front arm (knocking)
-                if(this.state === 'knocking') {
-                    ctx.strokeStyle = varColor('--ghost-white'); ctx.lineWidth = 12; ctx.lineCap = 'round';
-                    ctx.beginPath(); ctx.moveTo(0, -60); 
-                    let knockExt = Math.sin(this.animTimer*Math.PI*10)*15;
-                    ctx.lineTo(25 + knockExt, -60); ctx.stroke();
+                // Trailing cloth when sprinting
+                if(this.state === 'moving' && Math.abs(this.vx) > 300) {
+                    ctx.fillStyle = 'rgba(236, 240, 241, 0.5)';
+                    ctx.beginPath(); ctx.moveTo(-20, -100); ctx.lineTo(-60, -90 + Math.sin(this.animTime)*20); ctx.lineTo(-20, -60); ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        class Warga {
+            constructor(x) {
+                this.x = x; this.y = game.groundY;
+                this.vx = 0; this.dir = 1;
+                this.state = 'hidden'; // hidden, curious, scared, running, fainted
+                this.animTime = 0;
+                this.shirtColor = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'][Math.floor(Math.random()*4)];
+            }
+            update(dt) {
+                if(this.state === 'running') {
+                    this.animTime += dt * 15;
+                    this.vx = 350; // Sprint
+                    this.x += this.vx * dt;
+                } else if(this.state === 'fainted') {
+                    this.vx = 0;
+                } else if(this.state === 'curious' || this.state === 'scared') {
+                    this.vx = 0;
+                    this.animTime += dt * 2;
+                }
+            }
+            draw(ctx) {
+                if(this.state === 'hidden') return;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                if(this.state === 'fainted') {
+                    ctx.translate(0, 10); ctx.rotate(Math.PI/2); // Fall over
+                } else {
+                    ctx.translate(0, -Math.abs(Math.sin(this.animTime))*15); // Run bounce
+                }
+
+                // Legs
+                ctx.fillStyle = '#2c3e50';
+                let legSwing = this.state === 'running' ? Math.sin(this.animTime)*20 : 0;
+                ctx.beginPath(); ctx.roundRect(-15 + legSwing, -40, 12, 40, 5); ctx.fill(); // Back leg
+                ctx.beginPath(); ctx.roundRect(5 - legSwing, -40, 12, 40, 5); ctx.fill(); // Front leg
+
+                // Back Arm
+                ctx.fillStyle = '#d35400'; // Skin
+                ctx.beginPath(); ctx.roundRect(-10 - legSwing, -90, 10, 35, 5); ctx.fill();
+
+                // Torso
+                ctx.fillStyle = this.shirtColor;
+                ctx.beginPath(); ctx.roundRect(-18, -100, 36, 60, 8); ctx.fill();
+
+                // Front Arm
+                ctx.fillStyle = '#d35400';
+                ctx.beginPath(); ctx.roundRect(0 + legSwing, -90, 10, 35, 5); ctx.fill();
+
+                // Head
+                ctx.fillStyle = '#d35400'; // Sawo matang
+                ctx.beginPath(); ctx.arc(0, -115, 20, 0, Math.PI*2); ctx.fill();
+
+                // Hair
+                ctx.fillStyle = '#111';
+                ctx.beginPath(); ctx.arc(0, -118, 20, Math.PI, 0); ctx.fill();
+                ctx.fillRect(-20, -118, 5, 10);
+
+                // Face Expressions
+                ctx.fillStyle = '#000';
+                if(this.state === 'fainted') {
+                    ctx.font = "16px Arial"; ctx.textAlign="center"; ctx.fillText("X X", 0, -115);
+                    ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.ellipse(0, -105, 4, 8, 0, 0, Math.PI*2); ctx.fill(); // Tongue
+                } else if(this.state === 'scared' || this.state === 'running') {
+                    ctx.beginPath(); ctx.arc(-7, -118, 3, 0, Math.PI*2); ctx.arc(7, -118, 3, 0, Math.PI*2); ctx.fill(); // Big eyes
+                    ctx.beginPath(); ctx.ellipse(0, -108, 6, 10, 0, 0, Math.PI*2); ctx.fill(); // Scream
+                    // Sweat
+                    ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(15, -125, 3, 0, Math.PI*2); ctx.fill();
+                } else { // Curious
+                    ctx.beginPath(); ctx.arc(-7, -118, 2, 0, Math.PI*2); ctx.arc(7, -118, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(-10, -125); ctx.lineTo(-4, -122); ctx.stroke(); // Raised eyebrow
+                    ctx.beginPath(); ctx.moveTo(-5, -108); ctx.lineTo(5, -108); ctx.stroke(); // Mouth
                 }
 
                 ctx.restore();
@@ -545,221 +468,125 @@
         }
 
         class House {
-            constructor(x) {
-                this.x = x; this.y = GROUND_Y;
-                this.width = 250; this.height = 200;
-                this.doorX = this.x + 50;
-                this.doorWidth = 60; this.doorHeight = 110;
+            constructor(x, type) {
+                this.x = x; this.y = game.groundY;
+                this.type = type;
+                this.doorX = this.x + 220;
                 this.knockCount = 0;
-                this.state = 'closed'; // closed, waiting, opening, open, done
+                this.state = 'closed'; // closed, waiting, opening
                 this.timer = 0;
-                this.wargaType = Math.random() > 0.5 ? 'cowok' : 'cewek';
-                this.wargaState = 'hidden'; // hidden, curious, scared, fainted, running
-                this.wargaX = this.doorX + this.doorWidth/2;
+                this.warga = new Warga(this.doorX + 35);
+                wargas.push(this.warga);
             }
             update(dt) {
                 if(this.state === 'waiting') {
                     this.timer -= dt;
                     if(this.timer <= 0) {
                         this.state = 'opening'; this.timer = 0;
-                        // Light flickers
-                    }
-                } else if(this.state === 'opening') {
-                    this.timer += dt;
-                    if(this.timer > 0.5) {
-                        this.state = 'open';
-                        this.wargaState = 'curious';
+                        this.warga.state = 'curious';
                         
-                        // Decide fate
                         setTimeout(() => {
-                            if(this.state !== 'open') return;
                             if(Math.random() < 0.3) {
-                                // Run away
-                                this.wargaState = 'running';
-                                spawnText("KABUUUR!", this.wargaX, this.y - 120, "#fff");
+                                this.warga.state = 'running';
+                                spawnText("KABUUUR!", this.warga.x, this.y - 160, "#fff");
                                 addScore(50);
                             } else {
-                                // Trigger jumpscare
-                                if(Math.abs(player.x - this.doorX) < 150) {
-                                    player.state = 'jumpscare'; player.animTimer = 0; player.dir = (this.doorX > player.x) ? 1 : -1;
-                                    SFX.whoosh();
+                                if(Math.abs(player.x - this.doorX) < 200) {
+                                    player.state = 'jumpscare'; player.animTime = 0; player.dir = (this.doorX > player.x) ? 1 : -1;
+                                    SFX.jumpscare();
                                     setTimeout(() => {
-                                        this.wargaState = 'fainted';
-                                        SFX.faint();
-                                        triggerFlash();
-                                        triggerShake();
-                                        spawnText("PINGSAN!", this.wargaX, this.y - 100, "var(--gold)");
-                                        spawnStars(this.wargaX, this.y - 120);
+                                        this.warga.state = 'fainted';
+                                        flashScreen(); shakeScreen();
+                                        spawnText("+100 PINGSAN!", this.warga.x, this.y - 150, "var(--gold)");
+                                        spawnStars(this.warga.x, this.y - 150);
                                         addScore(100);
-                                    }, 200); // delay sync with jump
+                                    }, 200);
                                 }
                             }
                         }, 800);
                     }
                 }
-
-                if(this.wargaState === 'running') {
-                    this.wargaX += 200 * dt; // Run right
-                    if(this.wargaX > this.x + 400) this.state = 'done';
-                }
             }
             draw(ctx) {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-
-                // House Body
-                ctx.fillStyle = '#1e2420'; ctx.fillRect(0, -this.height, this.width, this.height);
-                // Roof
-                ctx.fillStyle = '#0f120e'; ctx.beginPath(); ctx.moveTo(-20, -this.height); ctx.lineTo(this.width/2, -this.height - 80); ctx.lineTo(this.width+20, -this.height); ctx.fill();
-
-                // Window
-                let lightOn = this.knockCount > 0 && this.state !== 'done';
-                if(this.state === 'waiting' && Math.floor(this.timer*10)%2===0) lightOn = false; // flicker
-                ctx.fillStyle = lightOn ? '#e6c875' : '#111';
-                ctx.fillRect(140, -120, 60, 60);
-                // Window frame
-                ctx.strokeStyle = '#333'; ctx.lineWidth = 4;
-                ctx.strokeRect(140, -120, 60, 60);
-                ctx.beginPath(); ctx.moveTo(170, -120); ctx.lineTo(170, -60); ctx.moveTo(140, -90); ctx.lineTo(200, -90); ctx.stroke();
-
-                ctx.restore();
-
-                // Warga & Door (drawn in world space for running)
-                // Inside house background (behind door)
-                ctx.fillStyle = '#000'; ctx.fillRect(this.doorX, this.y - this.doorHeight, this.doorWidth, this.doorHeight);
-                
-                // Draw Warga if open
-                if(this.state === 'opening' || this.state === 'open' || this.state === 'done') {
-                    if(this.wargaState !== 'hidden') this.drawWarga(ctx, this.wargaX, this.y);
-                }
-
-                // Draw Door
-                ctx.fillStyle = '#3a2311';
-                let doorOpenPercent = 0;
-                if(this.state === 'opening') doorOpenPercent = this.timer / 0.5;
-                if(this.state === 'open' || this.state === 'done') doorOpenPercent = 1;
-                
-                let currentDoorWidth = this.doorWidth * (1 - doorOpenPercent);
-                if(currentDoorWidth > 0) {
-                    ctx.fillRect(this.doorX, this.y - this.doorHeight, currentDoorWidth, this.doorHeight);
-                    // Doorknob
-                    ctx.fillStyle = '#888'; ctx.beginPath(); ctx.arc(this.doorX + currentDoorWidth - 10, this.y - this.doorHeight/2, 4, 0, Math.PI*2); ctx.fill();
-                }
-            }
-            drawWarga(ctx, x, y) {
-                ctx.save();
-                ctx.translate(x, y);
-                
-                if(this.wargaState === 'fainted') {
-                    ctx.translate(0, 10);
-                    ctx.rotate(Math.PI/2); // Lie down
-                } else if(this.wargaState === 'running') {
-                    ctx.translate(0, -Math.abs(Math.sin(performance.now()*0.02))*10);
-                }
-
-                // Body
-                ctx.fillStyle = this.wargaType === 'cowok' ? '#2980b9' : '#c0392b';
-                ctx.fillRect(-15, -70, 30, 40); // Torso
-                // Legs
-                ctx.fillStyle = '#2c3e50';
-                if(this.wargaState === 'running') {
-                    ctx.fillRect(-12 + Math.sin(performance.now()*0.02)*10, -30, 10, 30);
-                    ctx.fillRect(2 - Math.sin(performance.now()*0.02)*10, -30, 10, 30);
-                } else {
-                    ctx.fillRect(-12, -30, 10, 30); ctx.fillRect(2, -30, 10, 30);
+                if(ASSETS[`house_${this.type}`]) {
+                    ctx.drawImage(ASSETS[`house_${this.type}`], this.x, this.y - 330);
                 }
                 
-                // Head
-                ctx.fillStyle = '#f1c27d';
-                ctx.beginPath(); ctx.arc(0, -85, 18, 0, Math.PI*2); ctx.fill();
+                // Door Interaction logic
+                ctx.fillStyle = '#222';
+                ctx.fillRect(this.doorX, this.y - 120, 70, 120); // Inner darkness
 
-                // Hair
-                ctx.fillStyle = '#111';
-                if(this.wargaType === 'cowok') {
-                    ctx.beginPath(); ctx.arc(0, -90, 18, Math.PI, 0); ctx.fill();
-                } else {
-                    ctx.beginPath(); ctx.arc(0, -85, 20, Math.PI, 0); ctx.fillRect(-20, -85, 40, 20); ctx.fill();
+                if(this.state === 'opening') {
+                    this.timer += 0.016;
+                    let w = Math.max(0, 70 * (1 - this.timer/0.5));
+                    ctx.fillStyle = '#5d4037'; ctx.fillRect(this.doorX, this.y - 120, w, 120);
+                } else if(this.state === 'closed' || this.state === 'waiting') {
+                    ctx.fillStyle = '#5d4037'; ctx.fillRect(this.doorX, this.y - 120, 70, 120);
                 }
-
-                // Face Expressions
-                ctx.fillStyle = '#000';
-                if(this.wargaState === 'fainted') {
-                    // X eyes
-                    ctx.font = "14px Arial"; ctx.textAlign="center"; ctx.fillText("X X", 0, -80);
-                    ctx.beginPath(); ctx.ellipse(0, -75, 4, 6, 0, 0, Math.PI*2); ctx.fill(); // Open mouth
-                } else if(this.wargaState === 'scared' || this.wargaState === 'running') {
-                    // Scared 😱
-                    ctx.beginPath(); ctx.arc(-6, -88, 2, 0, Math.PI*2); ctx.arc(6, -88, 2, 0, Math.PI*2); ctx.fill();
-                    ctx.beginPath(); ctx.ellipse(0, -78, 6, 8, 0, 0, Math.PI*2); ctx.fill(); // Big mouth
-                } else {
-                    // Curious 🤔
-                    ctx.beginPath(); ctx.arc(-6, -86, 2, 0, Math.PI*2); ctx.arc(6, -86, 2, 0, Math.PI*2); ctx.fill();
-                    ctx.beginPath(); ctx.moveTo(-4, -78); ctx.lineTo(4, -78); ctx.stroke();
-                    ctx.font = "20px Arial"; ctx.fillText("?", 25, -90);
-                }
-
-                ctx.restore();
+                // (Warga is drawn in main loop sorted by Y, or just globally)
             }
         }
 
-        // Helpers
-        function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-
-        /* ==========================================================================
-           ACTION & GAME LOGIC
-           ========================================================================== */
+        // --- GAME LOGIC ---
         function handleAction() {
-            if(game.state !== 'playing' || player.state === 'knocking' || player.state === 'jumpscare') return;
-
-            // Check if near door
+            if(game.state !== 'playing' || player.state === 'jumpscare' || player.state === 'knocking') return;
+            
             let knocked = false;
             for(let h of houses) {
-                if(Math.abs(player.x - h.doorX) < 60 && h.state === 'closed') {
-                    player.state = 'knocking'; player.animTimer = 0; player.dir = (h.doorX > player.x) ? 1 : -1;
-                    h.knockCount++;
-                    SFX.knock();
-                    spawnText("TOK!", h.doorX, h.y - h.doorHeight - 20, "#fff");
+                if(Math.abs(player.x - h.doorX) < 100 && h.state === 'closed') {
+                    player.state = 'knocking'; player.animTime = 0; player.dir = (h.doorX > player.x) ? 1 : -1;
+                    h.knockCount++; SFX.knock();
+                    spawnText("TOK!", h.doorX + 35, h.y - 150, "#fff");
                     
-                    if(h.knockCount >= 3) {
-                        h.state = 'waiting'; h.timer = 1.0;
-                    }
-                    knocked = true;
-                    break;
+                    if(h.knockCount >= 3) { h.state = 'waiting'; h.timer = 1.0; }
+                    knocked = true; break;
                 }
             }
+            if(!knocked) { player.state = 'knocking'; player.animTime = 0; }
+        }
+
+        function addScore(pts) {
+            game.combo++; game.comboTime = 3.0;
+            let mult = Math.min(game.combo, 5);
+            game.score += pts * mult;
             
-            if(!knocked) {
-                // Just swing
-                player.state = 'knocking'; player.animTimer = 0;
+            const el = document.getElementById('ui-score');
+            el.innerText = game.score; el.style.transform = 'scale(1.5)';
+            setTimeout(() => el.style.transform = 'scale(1)', 200);
+
+            if(game.combo > 1) {
+                const cb = document.getElementById('ui-combo');
+                cb.style.display = 'block'; cb.innerText = `COMBO x${game.combo}!`;
+                cb.style.transform = 'scale(1.5)'; setTimeout(() => cb.style.transform = 'scale(1)', 200);
             }
         }
 
-        /* ==========================================================================
-           GAME LOOP & RENDERER
-           ========================================================================== */
-        function initWorld() {
-            player = new Pocong(200);
-            houses = []; floatTexts = []; particles = [];
-            
-            // Generate Houses
-            let currX = 500;
-            for(let i=0; i<8; i++) {
-                houses.push(new House(currX));
-                currX += 400 + Math.random()*200;
+        // --- VFX ---
+        function spawnText(txt, x, y, color) { texts.push({t: txt, x: x, y: y, c: color, life: 1.5}); }
+        function spawnStars(x, y) {
+            for(let i=0; i<6; i++) {
+                let a = (Math.PI*2/6)*i;
+                particles.push({x: x, y: y, vx: Math.cos(a)*200, vy: -200 - Math.random()*100, life: 1.5, type: 'star'});
             }
-            game.worldWidth = currX + 500;
+        }
+        function flashScreen() {
+            const f = document.getElementById('screen-flash');
+            f.style.opacity = 0.8; setTimeout(() => f.style.opacity = 0, 100);
+        }
+        function shakeScreen() {
+            const c = document.getElementById('game-container');
+            c.style.transform = `translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
+            setTimeout(() => c.style.transform = 'translate(0,0)', 50);
         }
 
+        // --- LOOP ---
         function loop(timestamp) {
             if (!lastTime) lastTime = timestamp;
-            const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
             lastTime = timestamp;
 
             if(game.state === 'playing') {
-                update(dt);
-                render();
-            } else if(game.state === 'tutorial') {
-                render(); // Just draw background and player
+                update(dt); render();
             }
 
             reqFrame = requestAnimationFrame(loop);
@@ -768,8 +595,9 @@
         function update(dt) {
             player.update(dt);
             houses.forEach(h => h.update(dt));
+            wargas.forEach(w => w.update(dt));
 
-            // Camera follow (Smooth)
+            // Smooth Camera Lerp
             let targetCamX = player.x - game.width / 2;
             targetCamX = Math.max(0, Math.min(game.worldWidth - game.width, targetCamX));
             game.camX += (targetCamX - game.camX) * dt * 5;
@@ -777,246 +605,135 @@
             // Particles
             for(let i=particles.length-1; i>=0; i--) {
                 let p = particles[i];
-                p.x += p.vx*dt; p.y += p.vy*dt;
-                p.vy += 200*dt; // Gravity
-                p.life -= dt;
-                if(p.life <= 0) particles.splice(i, 1);
+                p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 400*dt; p.life -= dt;
+                if(p.life <= 0) particles.splice(i,1);
             }
 
             // Texts
-            for(let i=floatTexts.length-1; i>=0; i--) {
-                let t = floatTexts[i];
-                t.y -= 40*dt; t.life -= dt;
-                if(t.life <= 0) floatTexts.splice(i, 1);
+            for(let i=texts.length-1; i>=0; i--) {
+                let t = texts[i];
+                t.y -= 50*dt; t.life -= dt;
+                if(t.life <= 0) texts.splice(i,1);
             }
 
-            // Combo timer
-            if(game.comboTimer > 0) {
-                game.comboTimer -= dt;
-                if(game.comboTimer <= 0) { game.combo = 0; document.getElementById('ui-combo').style.display='none'; }
+            if(game.comboTime > 0) {
+                game.comboTime -= dt;
+                if(game.comboTime <= 0) { game.combo = 0; document.getElementById('ui-combo').style.display='none'; }
             }
         }
 
         function render() {
-            // Background layers (Parallax)
-            ctx.fillStyle = varColor('--bg-night');
-            ctx.fillRect(0, 0, game.width, game.height);
+            // Sky
+            let grad = ctx.createLinearGradient(0, 0, 0, game.groundY);
+            grad.addColorStop(0, '#020510'); grad.addColorStop(1, '#0a1526');
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, game.width, game.height);
 
-            // Moon
-            ctx.fillStyle = varColor('--moon');
-            ctx.beginPath(); ctx.arc(game.width - 150, 150, 60, 0, Math.PI*2); ctx.fill();
-            ctx.shadowBlur = 50; ctx.shadowColor = '#fff'; ctx.fill(); ctx.shadowBlur = 0;
-
-            // Trees Back (Parallax 0.3)
-            ctx.fillStyle = '#0a0e14';
-            for(let i=0; i<game.worldWidth; i+=300) {
-                let px = i - game.camX * 0.3;
-                if(px > -100 && px < game.width+100) {
-                    ctx.beginPath(); ctx.moveTo(px, GROUND_Y); ctx.lineTo(px+20, GROUND_Y-300); ctx.lineTo(px+40, GROUND_Y); ctx.fill();
+            // Moon & Stars
+            ctx.fillStyle = '#fff';
+            for(let i=0; i<100; i++) {
+                let sx = (i * 123) % game.width; let sy = (i * 321) % (game.groundY - 200);
+                ctx.globalAlpha = 0.5 + Math.sin(performance.now()*0.005 + i)*0.5;
+                ctx.fillRect(sx, sy, 2, 2);
+            }
+            ctx.globalAlpha = 1.0;
+            ctx.fillStyle = '#f4f6f0'; ctx.shadowBlur = 40; ctx.shadowColor = '#fff';
+            ctx.beginPath(); ctx.arc(game.width - 200, 150, 80, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+            
+            // Parallax Trees
+            ctx.fillStyle = '#050a0f';
+            for(let i=0; i<game.worldWidth; i+=400) {
+                let px = i - game.camX * 0.2;
+                if(px > -200 && px < game.width+200) {
+                    ctx.fillRect(px, game.groundY-300, 20, 300); // Trunk
+                    ctx.beginPath(); ctx.arc(px+10, game.groundY-300, 80, 0, Math.PI*2); ctx.fill();
                 }
             }
 
             ctx.save();
             ctx.translate(-game.camX, 0);
 
-            // Ground
-            ctx.fillStyle = varColor('--dirt');
-            ctx.fillRect(0, GROUND_Y, game.worldWidth, game.height - GROUND_Y);
-            // Road line
-            ctx.strokeStyle = '#111'; ctx.lineWidth = 10;
-            ctx.beginPath(); ctx.moveTo(0, GROUND_Y+20); ctx.lineTo(game.worldWidth, GROUND_Y+20); ctx.stroke();
+            // Pavement & Road
+            ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, game.groundY, game.worldWidth, game.height - game.groundY); // Asphalt
+            ctx.fillStyle = '#c0392b'; ctx.fillRect(0, game.groundY, game.worldWidth, 30); // Brick sidewalk
+            ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 5; ctx.setLineDash([40, 40]);
+            ctx.beginPath(); ctx.moveTo(0, game.groundY + 100); ctx.lineTo(game.worldWidth, game.groundY + 100); ctx.stroke(); ctx.setLineDash([]);
 
-            // Trees Front
-            ctx.fillStyle = '#0f1411';
-            for(let i=150; i<game.worldWidth; i+=400) {
-                // Trunk
-                ctx.fillRect(i, GROUND_Y-200, 15, 200);
-                // Leaves (Kamboja shape)
-                ctx.beginPath(); ctx.arc(i+7, GROUND_Y-220, 60, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(i-30, GROUND_Y-190, 50, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(i+40, GROUND_Y-190, 50, 0, Math.PI*2); ctx.fill();
+            // Streetlights
+            for(let i=200; i<game.worldWidth; i+=600) {
+                ctx.fillStyle = '#333'; ctx.fillRect(i, game.groundY-350, 10, 350); // Pole
+                ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(i+5, game.groundY-350, 15, 0, Math.PI*2); ctx.fill(); // Light
+                // Glow cone
+                let cone = ctx.createLinearGradient(0, game.groundY-350, 0, game.groundY);
+                cone.addColorStop(0, 'rgba(241, 196, 15, 0.4)'); cone.addColorStop(1, 'rgba(241, 196, 15, 0)');
+                ctx.fillStyle = cone; ctx.beginPath(); ctx.moveTo(i+5, game.groundY-350); ctx.lineTo(i-150, game.groundY); ctx.lineTo(i+160, game.groundY); ctx.fill();
             }
 
             // Houses
             houses.forEach(h => h.draw(ctx));
 
-            // Particles
+            // Sort Wargas and Player by Y
+            let ents = [player, ...wargas.filter(w=>w.state!=='hidden')];
+            ents.sort((a,b) => a.y - b.y);
+            ents.forEach(e => e.draw(ctx));
+
+            // Particles (Stars)
             particles.forEach(p => {
-                ctx.fillStyle = p.color;
-                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size); ctx.restore();
+                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(performance.now()*0.01);
+                ctx.fillStyle = p.color; ctx.font = "20px Arial"; ctx.fillText("⭐", -10, 10);
+                ctx.restore();
             });
 
-            // Player
-            player.draw(ctx);
-
-            // Floating Texts
-            floatTexts.forEach(t => {
+            // Texts
+            texts.forEach(t => {
                 ctx.globalAlpha = Math.max(0, t.life);
-                ctx.fillStyle = t.color;
-                ctx.font = "bold 28px 'Creepster', cursive"; ctx.textAlign="center";
-                ctx.fillText(t.text, t.x, t.y);
-                ctx.lineWidth = 2; ctx.strokeStyle = '#000'; ctx.strokeText(t.text, t.x, t.y);
+                ctx.fillStyle = t.c; ctx.font = "bold 35px 'Creepster', cursive"; ctx.textAlign="center";
+                ctx.shadowBlur = 10; ctx.shadowColor = '#000';
+                ctx.fillText(t.t, t.x, t.y);
+                ctx.lineWidth = 2; ctx.strokeStyle = '#000'; ctx.strokeText(t.t, t.x, t.y);
+                ctx.shadowBlur = 0;
             });
             ctx.globalAlpha = 1.0;
 
-            // Ambient Fireflies
-            ctx.fillStyle = 'rgba(150, 255, 100, 0.8)';
-            for(let i=0; i<30; i++) {
-                let fx = (performance.now()*0.02 + i*200) % game.worldWidth;
-                let fy = GROUND_Y - 50 - Math.abs(Math.sin(performance.now()*0.001 + i)*150);
-                ctx.beginPath(); ctx.arc(fx, fy, 2, 0, Math.PI*2); ctx.fill();
-            }
-
             ctx.restore();
 
-            // Fog overlay
-            let grad = ctx.createLinearGradient(0, game.height, 0, GROUND_Y-150);
-            grad.addColorStop(0, 'rgba(200,220,210,0.4)');
-            grad.addColorStop(1, 'transparent');
-            ctx.fillStyle = grad; ctx.fillRect(0, 0, game.width, game.height);
-            
-            // Dark Vignette
-            let vig = ctx.createRadialGradient(game.width/2, game.height/2, game.height/2, game.width/2, game.height/2, game.width);
-            vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.9)');
-            ctx.fillStyle = vig; ctx.fillRect(0, 0, game.width, game.height);
+            // Fog Overlay
+            let fog = ctx.createLinearGradient(0, game.height, 0, game.groundY-200);
+            fog.addColorStop(0, 'rgba(200,220,220,0.5)'); fog.addColorStop(1, 'transparent');
+            ctx.fillStyle = fog; ctx.fillRect(0, 0, game.width, game.height);
         }
 
-        /* ==========================================================================
-           EFFECTS & UTILS
-           ========================================================================== */
-        function spawnText(txt, x, y, color) { floatTexts.push({text: txt, x: x, y: y, color: color, life: 2.0}); }
-        
-        function spawnStars(x, y) {
-            for(let i=0; i<5; i++) {
-                let angle = (Math.PI*2/5) * i;
-                particles.push({
-                    x: x, y: y, vx: Math.cos(angle)*150, vy: -150 - Math.random()*100,
-                    size: 8, color: 'var(--gold)', life: 1.0, r: Math.random()*Math.PI
-                });
+        // --- INIT ---
+        async function startGame() {
+            document.getElementById('screen-menu').classList.add('hidden');
+            await loadAssets();
+            SFX.playBGM();
+            
+            player = new Pocong(300);
+            houses = []; wargas = [];
+            let cx = 600;
+            for(let i=0; i<8; i++) {
+                houses.push(new House(cx, i%4));
+                cx += 500 + Math.random()*200;
             }
-        }
-
-        function triggerFlash() {
-            const f = document.getElementById('screen-flash');
-            f.style.opacity = 0.8; setTimeout(() => f.style.opacity = 0, 100);
-        }
-        function triggerShake() {
-            const c = document.getElementById('game-container');
-            c.style.transform = 'translate(10px, 10px)';
-            setTimeout(() => c.style.transform = 'translate(-10px, -10px)', 50);
-            setTimeout(() => c.style.transform = 'translate(5px, 5px)', 100);
-            setTimeout(() => c.style.transform = 'translate(0, 0)', 150);
-        }
-
-        function addScore(base) {
-            game.combo++; game.comboTimer = 3.0;
-            let mult = Math.min(game.combo, 5);
-            let finalPts = base * mult;
-            game.score += finalPts;
+            game.worldWidth = cx + 500;
             
-            document.getElementById('ui-score').innerText = game.score;
-            document.getElementById('ui-score').style.transform = 'scale(1.5)';
-            setTimeout(() => document.getElementById('ui-score').style.transform = 'scale(1)', 200);
+            game.state = 'playing';
+            game.time = 90; game.score = 0; game.combo = 0;
+            document.getElementById('ui-score').innerText = 0;
+            document.getElementById('screen-game').classList.remove('hidden');
 
-            if(game.combo > 1) {
-                const cb = document.getElementById('ui-combo');
-                cb.style.display = 'block'; cb.innerText = `COMBO x${game.combo}!`;
-                cb.style.transform = 'scale(1.5)'; setTimeout(() => cb.style.transform = 'scale(1)', 200);
-                SFX.combo(game.combo);
-            }
-        }
-
-        /* ==========================================================================
-           GAME FLOW
-           ========================================================================== */
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        // Fake loading -> Menu
-        setTimeout(() => { showScreen('screen-menu'); loadLeaderboard(); }, 2000);
-
-        function startGame() {
-            initAudio();
-            initWorld();
-            game.score = 0; game.time = 90; game.combo = 0;
-            document.getElementById('ui-score').innerText = '0';
-            document.getElementById('ui-time').innerText = '90';
-            document.getElementById('ui-combo').style.display = 'none';
-            
-            showScreen('screen-game');
-            game.state = 'tutorial';
-            const tut = document.getElementById('tutorial-overlay');
-            tut.style.display = 'block';
+            setInterval(() => {
+                if(game.state !== 'playing') return;
+                game.time--;
+                document.getElementById('ui-time').innerText = game.time;
+                if(game.time <= 0) {
+                    game.state = 'gameover';
+                    document.getElementById('screen-gameover').classList.remove('hidden');
+                    document.getElementById('final-score').innerText = game.score;
+                }
+            }, 1000);
 
             if(!reqFrame) reqFrame = requestAnimationFrame(loop);
-
-            // Phase 1 -> 2
-            setTimeout(() => {
-                tut.style.display = 'none';
-                game.state = 'playing';
-                SFX.playBGM();
-                
-                // Timer
-                if(game.timerId) clearInterval(game.timerId);
-                game.timerId = setInterval(() => {
-                    if(game.state !== 'playing') return;
-                    game.time--;
-                    document.getElementById('ui-time').innerText = game.time;
-                    if(game.time <= 0) gameOver();
-                }, 1000);
-            }, 5000); // 5 sec tutorial
-        }
-
-        function pauseGame() {
-            if(game.state === 'playing') {
-                game.state = 'paused';
-                showScreen('screen-pause');
-                document.getElementById('screen-game').classList.remove('hidden');
-            }
-        }
-
-        function resumeGame() {
-            game.state = 'playing';
-            showScreen('screen-game');
-            lastTime = performance.now();
-        }
-
-        function quitGame() {
-            game.state = 'menu';
-            SFX.stopBGM();
-            clearInterval(game.timerId);
-            showScreen('screen-menu');
-        }
-
-        function gameOver() {
-            game.state = 'gameover';
-            SFX.stopBGM();
-            clearInterval(game.timerId);
-            document.getElementById('final-score').innerText = game.score;
-            saveScore(game.score);
-
-            const shareMsg = `MALAM TERROR! Gua main Pocong DreadOut dapet skor ${game.score}! Berani coba teror warga? 👻🩸`;
-            document.getElementById('btn-share').onclick = () => {
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
-            };
-            showScreen('screen-gameover');
-        }
-
-        function saveScore(score) {
-            let lb = JSON.parse(localStorage.getItem('pvw_dreadout_lb') || '[]');
-            lb.push(score); lb.sort((a,b) => b - a); lb = lb.slice(0, 5);
-            localStorage.setItem('pvw_dreadout_lb', JSON.stringify(lb));
-            loadLeaderboard();
-        }
-
-        function loadLeaderboard() {
-            let lb = JSON.parse(localStorage.getItem('pvw_dreadout_lb') || '[]');
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '';
-            if(lb.length===0) list.innerHTML = "<li>Belum ada teror</li>";
-            lb.forEach((s, i) => list.innerHTML += `<li><span style="color:var(--gold)">#${i+1}</span> - ${s} Poin</li>`);
         }
 
     </script>
