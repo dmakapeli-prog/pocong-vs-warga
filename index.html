@@ -3,241 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocong vs Warga: Ultra HD</title>
+    <title>Pocong vs Warga: Teror Malam 2026</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Jolly+Lodger&family=Nunito:wght@400;700;900&display=swap');
-
+        
         :root {
             --bg-night: #050a14;
             --blood-red: #8a0303;
-            --gold: #f1c40f;
-            --ui-bg: rgba(0, 0, 0, 0.85);
+            --cctv-green: #2ecc71;
+            --wa-green: #25D366;
+            --ui-bg: rgba(0, 0, 0, 0.75);
+            --viral-gold: #f1c40f;
         }
 
-        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; font-family: 'Nunito', sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg-night); color: #fff; overflow: hidden; touch-action: none; }
+        
+        .horror-font { font-family: 'Creepster', cursive; }
+        .title-font { font-family: 'Jolly Lodger', cursive; }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-night); color: #fff;
-            font-family: 'Nunito', sans-serif; overflow: hidden;
-        }
-
-        .horror-font { font-family: 'Creepster', cursive; color: var(--blood-red); text-shadow: 2px 2px 5px #000, 0 0 15px var(--blood-red); }
-        .title-font { font-family: 'Jolly Lodger', cursive; color: #e3e8e5; text-shadow: 3px 3px 6px #000, 0 0 25px #555; }
-
-        .screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #0a1118 0%, var(--bg-night) 100%);
-            transition: opacity 0.5s ease; z-index: 20;
-        }
+        canvas { display: block; width: 100%; height: 100%; position: absolute; z-index: 1; }
+        
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(20,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%); transition: opacity 0.5s; }
         .hidden { opacity: 0; pointer-events: none; z-index: -1 !important; display: none !important; }
 
-        button {
-            background: linear-gradient(180deg, #4a0000 0%, #1a0000 100%);
-            color: #fff; border: 2px solid var(--blood-red);
-            padding: 15px 50px; font-size: 2rem; font-family: 'Creepster', cursive;
-            cursor: pointer; border-radius: 8px; margin: 15px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.3);
-            transition: all 0.2s; letter-spacing: 2px; text-transform: uppercase;
-        }
-        button:hover {
-            transform: translateY(-5px) scale(1.05);
-            background: linear-gradient(180deg, #6a0000 0%, #2a0000 100%);
-            box-shadow: 0 12px 25px rgba(138, 3, 3, 0.7), inset 0 0 20px rgba(255,0,0,0.5);
-        }
+        button { background: linear-gradient(180deg, #4a0000 0%, #1a0000 100%); color: #fff; border: 2px solid var(--blood-red); padding: 15px 40px; font-size: 2.5rem; border-radius: 10px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,0,0,0.3); transition: all 0.2s; text-transform: uppercase; letter-spacing: 2px; }
+        button:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 10px 20px rgba(255,0,0,0.4); }
 
-        #game-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+        #hud { position: absolute; top: 0; left: 0; width: 100%; z-index: 5; padding: 20px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; }
+        .hud-left { display: flex; flex-direction: column; gap: 5px; }
+        .score-box { font-size: 4rem; color: var(--viral-gold); text-shadow: 3px 3px 0 #000, 0 0 10px var(--viral-gold); line-height: 1; }
+        .lives-box { font-size: 2.5rem; display: flex; gap: 8px; filter: drop-shadow(2px 2px 2px #000); }
+        .lives-box span { transition: opacity 0.3s; }
+        .lives-box span.lost { opacity: 0.2; filter: grayscale(100%); }
         
-        .hud-top { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
-        .score-box { font-family: 'Creepster', cursive; font-size: 4rem; color: var(--blood-red); text-shadow: 3px 3px 0 #000, -1px -1px 0 #000; line-height: 1; }
-        .combo-box { font-family: 'Jolly Lodger', cursive; font-size: 3rem; color: var(--gold); text-shadow: 0 0 15px #f39c12, 2px 2px 5px #000; display: none; }
-        .timer-box { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 2.5rem; color: #fff; background: var(--ui-bg); padding: 5px 25px; border-radius: 12px; border: 2px solid #555; }
+        .timer-box { font-size: 3.5rem; font-weight: 900; background: var(--ui-bg); padding: 5px 25px; border-radius: 15px; border: 2px solid #444; text-shadow: 0 0 10px #fff; display: flex; align-items: center; gap: 10px; }
+        .timer-box.danger { color: #e74c3c; animation: pulse 1s infinite; text-shadow: 0 0 15px #e74c3c; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        .hud-bottom-left {
-            position: absolute; bottom: 20px; left: 20px; background: var(--ui-bg);
-            padding: 15px 25px; border-radius: 10px; border: 1px solid #444; font-size: 1.1rem; color: #ddd; line-height: 1.6;
-        }
-        .key { display: inline-block; background: #222; color: #fff; padding: 2px 10px; border-radius: 6px; border: 1px solid #666; font-family: monospace; font-weight: bold; box-shadow: 0 3px 0 #000; margin: 0 3px; }
+        #wa-container { position: absolute; top: 120px; right: 20px; width: 320px; z-index: 20; display: flex; flex-direction: column; gap: 15px; pointer-events: none; }
+        .wa-msg { background: #e5ddd5; color: #000; padding: 12px 18px; border-radius: 15px; border-top-right-radius: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.6); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .wa-msg::after { content: ''; position: absolute; top: 0; right: -10px; border: 10px solid transparent; border-top-color: #e5ddd5; border-left-color: #e5ddd5; }
+        .wa-msg.show { transform: translateX(0); }
+        .wa-sender { font-size: 0.9rem; font-weight: 900; color: var(--wa-green); margin-bottom: 5px; }
+        .wa-text { font-size: 1.1rem; line-height: 1.3; font-weight: bold; }
 
-        #screen-flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f00; opacity: 0; z-index: 15; pointer-events: none; transition: opacity 0.1s; }
-        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
-        canvas { display: block; width: 100%; height: 100%; }
+        #flash { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; opacity: 0; background: #e74c3c; transition: opacity 0.1s; }
+        .cctv-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; opacity: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(46, 204, 113, 0.1) 2px, rgba(46, 204, 113, 0.1) 4px); transition: opacity 0.3s; mix-blend-mode: screen; }
+        .cctv-overlay.active { opacity: 1; }
 
-        @media (max-width: 768px) {
-            .hud-bottom-left { display: none; }
-            .score-box { font-size: 3rem; }
-        }
+        #news-ticker { position: absolute; bottom: 0; left: 0; width: 100%; background: #c0392b; color: white; padding: 12px; font-weight: bold; font-size: 1.8rem; white-space: nowrap; overflow: hidden; z-index: 30; border-top: 4px solid #fff; display: none; box-shadow: 0 -5px 15px rgba(0,0,0,0.8); }
+        #news-ticker span { display: inline-block; animation: ticker 12s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+        #mobile-controls { position: absolute; bottom: 30px; left: 0; width: 100%; z-index: 25; display: flex; justify-content: space-between; padding: 0 30px; }
+        .btn-group { display: flex; gap: 20px; }
+        .control-btn { width: 80px; height: 80px; border-radius: 40px; background: rgba(0,0,0,0.5); border: 3px solid rgba(255,255,255,0.6); color: #fff; font-size: 2.5rem; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: background 0.1s; }
+        .control-btn:active { background: rgba(255,255,255,0.4); }
+        .action-btn { width: 120px; border-radius: 25px; font-size: 1.8rem; font-family: 'Creepster', cursive; background: rgba(138, 3, 3, 0.6); border-color: #ff4d4d; }
+        .action-btn:active { background: rgba(255, 0, 0, 0.7); }
+        @media (min-width: 1024px) { #mobile-controls { display: none; } }
+
     </style>
 </head>
 <body>
 
-    <div id="screen-menu" class="screen">
-        <h2 class="title-font" style="margin:0; font-size: 4rem;">TEROR MALAM</h2>
-        <h1 class="horror-font" style="font-size: 7rem;">POCONG VS WARGA</h1>
-        <p style="color: #ccc; max-width: 600px; text-align: center; margin: 20px 0 40px 0; font-size: 1.3rem;">
-            Menyelinap di kegelapan. Ketuk pintu warga, beri mereka mimpi buruk yang tak terlupakan.
-        </p>
-        <button onclick="startGame()">MULAI TEROR</button>
-    </div>
+    <div id="flash"></div>
+    <div class="cctv-overlay" id="cctv-fx"></div>
 
-    <div id="screen-game" class="screen hidden" style="background: transparent;">
-        <div id="screen-flash"></div>
-        <div id="game-container"><canvas id="gameCanvas"></canvas></div>
-        
-        <div id="game-ui">
-            <div class="hud-top">
-                <div>
-                    <div class="score-box" id="ui-score">0</div>
-                    <div class="combo-box" id="ui-combo">COMBO x2!</div>
-                </div>
-                <div class="timer-box" id="ui-time">90</div>
-            </div>
-            <div class="hud-bottom-left">
-                <span class="key">A</span> <span class="key">D</span> Bergerak<br><br>
-                <span class="key">SPACE</span> Ketuk Pintu<br><br>
-                <span class="key">SHIFT</span> Sprint
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="hud" class="hidden">
+        <div class="hud-left">
+            <div class="score-box horror-font" id="ui-score">0</div>
+            <div class="lives-box" id="ui-lives">
+                <span id="life-1">👻</span><span id="life-2">👻</span><span id="life-3">👻</span>
             </div>
         </div>
+        <div class="timer-box" id="ui-time">🕒 23:00</div>
+    </div>
+
+    <div id="wa-container"></div>
+    <div id="news-ticker"><span id="news-text">BREAKING: Pocong Teror Warga!</span></div>
+
+    <div id="mobile-controls" class="hidden">
+        <div class="btn-group">
+            <div class="control-btn" id="btn-left">◀</div>
+            <div class="control-btn" id="btn-right">▶</div>
+        </div>
+        <div class="control-btn action-btn" id="btn-action">KETUK</div>
+    </div>
+
+    <div id="screen-menu" class="screen">
+        <h2 class="title-font" style="margin:0; font-size: 4rem; color: #bdc3c7; text-shadow: 2px 2px 5px #000;">TEROR MALAM</h2>
+        <h1 class="horror-font" style="font-size: clamp(4rem, 15vw, 8rem); color: var(--blood-red); text-align: center; line-height: 1; margin-bottom: 10px; text-shadow: 0 0 20px red, 4px 4px 0 #000;">POCONG<br>VS WARGA</h1>
+        <p style="color: #ddd; max-width: 600px; text-align: center; margin-bottom: 40px; font-size: 1.2rem; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px;">
+            Jadilah teror viral 2026!<br>
+            Ketuk pintu warga, masuk CCTV biar viral, dan hindari patroli bapak-bapak serta polisi!<br><br>
+            <span style="color:#f1c40f">🎮 KONTROL:</span><br>
+            Kiri/Kanan (A/D) = Lompat<br>
+            Spasi = Ketuk Pintu
+        </p>
+        <button class="horror-font" onclick="startGame()">MULAI TEROR</button>
     </div>
 
     <div id="screen-gameover" class="screen hidden">
-        <h1 class="title-font" style="font-size: 5rem; color:var(--blood-red);">MALAM TELAH USAI</h1>
-        <div style="font-size: 2rem; margin-top: 10px;">Total Teror:</div>
-        <div id="final-score" class="horror-font" style="font-size: 6rem; line-height: 1;">0</div>
-        <button onclick="location.reload()" style="margin-top:40px;">KEMBALI</button>
+        <h1 class="horror-font" id="go-title" style="font-size: 6rem; color:var(--blood-red); text-align: center; text-shadow: 4px 4px 0 #000;">KETAHUAN!</h1>
+        <p id="go-desc" style="font-size: 1.8rem; text-align: center; margin: 10px 0 30px; color: #fff; font-weight: bold; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;">Ternyata cuma remaja iseng pakai kain putih!</p>
+        <div style="font-size: 2rem; color: #ccc;">Total Teror Poin:</div>
+        <div id="final-score" class="horror-font" style="font-size: 7rem; line-height: 1; color: var(--viral-gold); text-shadow: 3px 3px 0 #000, 0 0 20px var(--viral-gold);">0</div>
+        <button class="horror-font" onclick="location.reload()" style="margin-top:40px;">MAIN LAGI</button>
     </div>
 
     <script>
-        // --- UTILS & MATH ---
-        const lerp = (a, b, t) => a + (b - a) * t;
-        
-        // --- AUDIO ENGINE ---
+        // --- AUDIO SYSTEM ---
         const actx = new (window.AudioContext || window.webkitAudioContext)();
         const SFX = {
             playBGM: () => {
                 if(actx.state === 'suspended') actx.resume();
-                // Crickets
-                const bufferSize = actx.sampleRate * 2;
-                const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
-                const data = buffer.getChannelData(0);
+                // Wind & Crickets via noise + filters
+                let bufferSize = actx.sampleRate * 2;
+                let buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+                let data = buffer.getChannelData(0);
                 for (let i=0; i<bufferSize; i++) data[i] = Math.random()*2-1;
                 let noise = actx.createBufferSource(); noise.buffer = buffer; noise.loop = true;
-                let filter = actx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 4500; filter.Q.value = 15;
-                let lfo = actx.createOscillator(); lfo.frequency.value = 10;
-                let lfoGain = actx.createGain(); lfoGain.gain.value = 800;
+                
+                let filter = actx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 4000; filter.Q.value = 10;
+                let lfo = actx.createOscillator(); lfo.frequency.value = 5;
+                let lfoGain = actx.createGain(); lfoGain.gain.value = 1000;
                 lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
-                let noiseGain = actx.createGain(); noiseGain.gain.value = 0.03;
+                
+                let noiseGain = actx.createGain(); noiseGain.gain.value = 0.05;
                 noise.connect(filter); filter.connect(noiseGain); noiseGain.connect(actx.destination);
                 noise.start(); lfo.start();
 
-                // Drone
-                let drone = actx.createOscillator(); drone.type = 'triangle'; drone.frequency.value = 55;
-                let dGain = actx.createGain(); dGain.gain.value = 0.08;
-                drone.connect(dGain); dGain.connect(actx.destination);
-                drone.start();
+                // Dark Drone
+                let drone = actx.createOscillator(); drone.type = 'triangle'; drone.frequency.value = 50;
+                let dGain = actx.createGain(); dGain.gain.value = 0.1;
+                drone.connect(dGain); dGain.connect(actx.destination); drone.start();
+            },
+            jump: () => {
+                let osc = actx.createOscillator(); let g = actx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(150, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, actx.currentTime + 0.2);
+                g.gain.setValueAtTime(0.3, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.2);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + 0.2);
             },
             knock: () => {
                 let osc = actx.createOscillator(); let g = actx.createGain();
-                osc.type = 'square'; osc.frequency.setValueAtTime(80, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(30, actx.currentTime+0.1);
-                g.gain.setValueAtTime(0.6, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.1);
-                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime+0.1);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(80, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, actx.currentTime + 0.1);
+                g.gain.setValueAtTime(0.8, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.1);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + 0.1);
             },
-            jumpscare: () => {
+            scream: () => {
                 let osc = actx.createOscillator(); let g = actx.createGain();
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, actx.currentTime+0.2);
-                g.gain.setValueAtTime(0.5, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.5);
-                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime+0.5);
-                
-                let osc2 = actx.createOscillator(); let g2 = actx.createGain();
-                osc2.type = 'square'; osc2.frequency.setValueAtTime(900, actx.currentTime);
-                osc2.frequency.exponentialRampToValueAtTime(300, actx.currentTime+0.6);
-                g2.gain.setValueAtTime(0.4, actx.currentTime); g2.gain.exponentialRampToValueAtTime(0.01, actx.currentTime+0.6);
-                osc2.connect(g2); g2.connect(actx.destination); osc2.start(); osc2.stop(actx.currentTime+0.6);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(700, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, actx.currentTime + 0.4);
+                g.gain.setValueAtTime(0.4, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.4);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + 0.4);
+            },
+            wa: () => {
+                let osc = actx.createOscillator(); let g = actx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(900, actx.currentTime);
+                osc.frequency.setValueAtTime(1200, actx.currentTime + 0.1);
+                g.gain.setValueAtTime(0.3, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.3);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + 0.3);
+            },
+            siren: () => {
+                if(window.sirenPlaying) return;
+                window.sirenPlaying = true;
+                let osc = actx.createOscillator(); let g = actx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(700, actx.currentTime);
+                osc.frequency.linearRampToValueAtTime(1100, actx.currentTime + 0.5);
+                osc.frequency.linearRampToValueAtTime(700, actx.currentTime + 1.0);
+                g.gain.setValueAtTime(0.1, actx.currentTime); g.gain.linearRampToValueAtTime(0, actx.currentTime + 1.0);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + 1.0);
+                setTimeout(() => window.sirenPlaying = false, 1000);
+            },
+            caught: () => {
+                let osc = actx.createOscillator(); let g = actx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, actx.currentTime + 1.0);
+                g.gain.setValueAtTime(0.5, actx.currentTime); g.gain.linearRampToValueAtTime(0, actx.currentTime + 1.0);
+                osc.connect(g); g.connect(actx.destination); osc.start(); osc.stop(actx.currentTime + 1.0);
             }
         };
 
-        // --- SVG FACTORY (Generates offscreen canvases for performance) ---
-        function renderSVGToCanvas(svgString, width, height) {
-            const canvas = document.createElement('canvas');
-            canvas.width = width; canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            const svg = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
-            const url = URL.createObjectURL(svg);
-            return new Promise(res => {
-                img.onload = () => { ctx.drawImage(img, 0, 0); URL.revokeObjectURL(url); res(canvas); };
-                img.src = url;
-            });
-        }
-
-        const ASSETS = {};
-        
-        async function loadAssets() {
-            // 4 House Variations
-            const colors = ['#f1c40f', '#2ecc71', '#ecf0f1', '#3498db'];
-            for(let i=0; i<4; i++) {
-                let svg = `<svg width="400" height="350" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="noise${i}"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise"/><feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.1 0" in="noise" result="coloredNoise"/><feBlend in="SourceGraphic" in2="coloredNoise" mode="multiply"/></filter>
-                        <linearGradient id="roofGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8e44ad"/><stop offset="100%" stop-color="#2c3e50"/></linearGradient>
-                    </defs>
-                    <!-- Shadow -->
-                    <ellipse cx="200" cy="340" rx="180" ry="10" fill="rgba(0,0,0,0.5)" />
-                    <!-- Wall -->
-                    <rect x="50" y="150" width="300" height="190" fill="${colors[i]}" filter="url(#noise${i})" />
-                    <rect x="50" y="320" width="300" height="20" fill="#7f8c8d" /> <!-- Base board -->
-                    <!-- Roof -->
-                    <path d="M 30 150 L 200 20 L 370 150 Z" fill="#c0392b" />
-                    <path d="M 20 150 L 200 10 L 380 150 L 370 160 L 200 30 L 30 160 Z" fill="#7f8c8d" /> <!-- Fascia -->
-                    <!-- Door Frame & Door (Closed) -->
-                    <rect x="220" y="200" width="80" height="130" fill="#3e2723" />
-                    <rect x="225" y="205" width="70" height="125" fill="#5d4037" />
-                    <circle cx="285" cy="270" r="4" fill="#f1c40f" /> <!-- Knob -->
-                    <!-- Window -->
-                    <rect x="90" y="210" width="80" height="80" fill="#2c3e50" />
-                    <rect x="95" y="215" width="70" height="70" fill="#34495e" /> <!-- Glass -->
-                    <!-- Window Bars -->
-                    <line x1="130" y1="210" x2="130" y2="290" stroke="#7f8c8d" stroke-width="3" />
-                    <line x1="90" y1="250" x2="170" y2="250" stroke="#7f8c8d" stroke-width="3" />
-                    <!-- Curtains -->
-                    <path d="M 95 215 Q 110 240 95 285 L 115 285 Q 125 240 130 215 Z" fill="#e74c3c" opacity="0.8" />
-                    <path d="M 165 215 Q 150 240 165 285 L 145 285 Q 135 240 130 215 Z" fill="#e74c3c" opacity="0.8" />
-                    <!-- Porch Light -->
-                    <rect x="255" y="170" width="10" height="15" fill="#222" />
-                    <circle cx="260" cy="185" r="8" fill="#f1c40f" />
-                    <circle cx="260" cy="185" r="20" fill="rgba(241,196,15,0.3)" /> <!-- Glow -->
-                    <!-- Plant -->
-                    <rect x="60" y="310" width="30" height="30" fill="#e67e22" />
-                    <circle cx="75" cy="290" r="25" fill="#27ae60" />
-                    <circle cx="65" cy="300" r="15" fill="#2ecc71" />
-                    <circle cx="85" cy="300" r="15" fill="#2ecc71" />
-                </svg>`;
-                ASSETS[`house_${i}`] = await renderSVGToCanvas(svg, 400, 350);
-            }
-
-            // Sickle (Cerulit) SVG
-            const sickleSVG = `<svg width="60" height="100" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
-                <rect x="25" y="40" width="10" height="55" rx="3" fill="#5d4037" /> <!-- Handle -->
-                <path d="M 30 45 C 50 40, 60 10, 30 5 C 10 0, -10 20, 5 45 C 15 25, 20 25, 30 45 Z" fill="#95a5a6" /> <!-- Blade -->
-                <path d="M 30 45 C 50 40, 60 10, 30 5 C 20 15, 25 30, 30 45 Z" fill="#bdc3c7" /> <!-- Shine -->
-                <circle cx="20" cy="15" r="2" fill="#7f8c8d" /> <!-- Rust -->
-                <circle cx="10" cy="30" r="1.5" fill="#7f8c8d" />
-            </svg>`;
-            ASSETS.sickle = await renderSVGToCanvas(sickleSVG, 60, 100);
-        }
-
-        // --- ENGINE ---
+        // --- GAME ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let lastTime = 0, reqFrame;
         
         let game = {
-            state: 'menu', score: 0, time: 90, combo: 0, comboTime: 0,
+            state: 'menu', score: 0, lives: 3, timeMins: 23*60,
             width: window.innerWidth, height: window.innerHeight,
-            camX: 0, worldWidth: 5000, groundY: window.innerHeight * 0.8
+            camX: 0, worldWidth: 8000, groundY: window.innerHeight * 0.8,
+            entities: [], popups: []
         };
 
         window.addEventListener('resize', () => {
@@ -248,338 +210,463 @@
         window.dispatchEvent(new Event('resize'));
 
         // --- INPUT ---
-        const keys = { left:false, right:false, action:false, sprint:false };
+        const keys = { left:false, right:false, action:false };
+        
+        // Keyboard
         window.addEventListener('keydown', e => {
             if(e.code==='KeyA' || e.code==='ArrowLeft') keys.left = true;
             if(e.code==='KeyD' || e.code==='ArrowRight') keys.right = true;
             if(e.code==='Space' && !keys.action) { keys.action = true; handleAction(); }
-            if(e.code==='ShiftLeft' || e.code==='ShiftRight') keys.sprint = true;
         });
         window.addEventListener('keyup', e => {
             if(e.code==='KeyA' || e.code==='ArrowLeft') keys.left = false;
             if(e.code==='KeyD' || e.code==='ArrowRight') keys.right = false;
             if(e.code==='Space') keys.action = false;
-            if(e.code==='ShiftLeft' || e.code==='ShiftRight') keys.sprint = false;
         });
 
-        // --- ENTITIES ---
-        let player, houses = [], wargas = [], particles = [], texts = [];
+        // Mobile Touch
+        const btnL = document.getElementById('btn-left');
+        const btnR = document.getElementById('btn-right');
+        const btnA = document.getElementById('btn-action');
+        
+        const tStart = (btn, k) => btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[k] = true; if(k==='action') handleAction(); });
+        const tEnd = (btn, k) => { 
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[k] = false; }); 
+            btn.addEventListener('touchcancel', (e) => { e.preventDefault(); keys[k] = false; }); 
+        };
+        tStart(btnL, 'left'); tEnd(btnL, 'left');
+        tStart(btnR, 'right'); tEnd(btnR, 'right');
+        tStart(btnA, 'action'); tEnd(btnA, 'action');
 
-        class Pocong {
+        // --- UTILS ---
+        function addScore(pts, x, y, text) {
+            game.score += pts;
+            document.getElementById('ui-score').innerText = game.score;
+            document.getElementById('ui-score').style.transform = 'scale(1.5)';
+            setTimeout(() => document.getElementById('ui-score').style.transform = 'scale(1)', 200);
+            if(x && y && text) spawnPopup(text, x, y, pts > 0 ? '#f1c40f' : '#e74c3c');
+        }
+
+        function loseLife() {
+            if(game.state !== 'playing') return;
+            game.lives--;
+            SFX.caught();
+            document.getElementById('flash').style.opacity = 1;
+            setTimeout(() => document.getElementById('flash').style.opacity = 0, 200);
+            
+            document.getElementById('life-' + (game.lives+1)).classList.add('lost');
+            addScore(-50, player.x, player.y - 150, "-50 KETAHUAN!");
+            
+            player.x -= 200; // Bounce back
+            player.vx = 0; player.vy = 0;
+            
+            if(game.lives <= 0) gameOver("Ketahuan Polisi 3x!");
+        }
+
+        function spawnPopup(txt, x, y, color) {
+            game.popups.push({ txt, x, y, color, life: 1.5 });
+        }
+
+        function showWA(sender, msg) {
+            SFX.wa();
+            const c = document.getElementById('wa-container');
+            const el = document.createElement('div');
+            el.className = 'wa-msg';
+            el.innerHTML = '<div class="wa-sender">' + sender + '</div><div class="wa-text">' + msg + '</div>';
+            c.appendChild(el);
+            setTimeout(() => el.classList.add('show'), 50);
+            setTimeout(() => {
+                el.classList.remove('show');
+                setTimeout(() => el.remove(), 400);
+            }, 4000);
+        }
+
+        function gameOver(reason) {
+            game.state = 'gameover';
+            document.getElementById('screen-gameover').classList.remove('hidden');
+            document.getElementById('final-score').innerText = game.score;
+            document.getElementById('go-desc').innerText = reason;
+            
+            if(game.timeMins >= 4*60+30 && game.timeMins < 12*60) {
+                document.getElementById('go-title').innerText = "SUBUH!";
+                document.getElementById('go-title').style.color = "#f1c40f";
+                document.getElementById('go-desc').innerText = "Ayam sudah berkokok, waktunya pulang!";
+            }
+            
+            document.getElementById('news-ticker').style.display = 'block';
+            document.getElementById('news-text').innerText = 'BREAKING NEWS: ' + reason + ' Warga kini bisa tidur tenang.';
+        }
+
+        function formatTime(mins) {
+            let h = Math.floor(mins / 60) % 24;
+            let m = Math.floor(mins % 60);
+            return (h.toString().padStart(2,'0')) + ':' + (m.toString().padStart(2,'0'));
+        }
+
+        // --- CLASSES ---
+        class Player {
             constructor(x) {
                 this.x = x; this.y = game.groundY;
-                this.vx = 0; this.dir = 1;
-                this.jumpY = 0; this.animTime = 0;
-                this.state = 'idle'; // idle, moving, knocking, jumpscare
-                this.swingAngle = 0;
+                this.vx = 0; this.vy = 0; this.dir = 1;
+                this.isGrounded = true;
+                this.width = 40; this.height = 100;
+                this.knockAnim = 0;
             }
             update(dt) {
-                let targetVx = 0;
-                let acc = 1500;
-                let maxSpeed = keys.sprint ? 500 : 250;
-
-                if(this.state === 'jumpscare') {
-                    this.animTime += dt;
-                    this.x += this.dir * 800 * dt; // Leap
-                    this.jumpY = Math.sin((this.animTime/0.4)*Math.PI) * 120;
-                    this.swingAngle = Math.sin(this.animTime*10) * Math.PI/2;
-                    if(this.animTime > 0.4) { this.state = 'idle'; this.jumpY = 0; this.swingAngle = 0; }
-                    return;
-                }
-
-                if(this.state === 'knocking') {
-                    this.animTime += dt;
-                    this.swingAngle = -Math.abs(Math.sin(this.animTime*15)) * Math.PI/3;
-                    if(this.animTime > 0.3) { this.state = 'idle'; this.swingAngle = 0; }
-                } else {
-                    if(keys.left) targetVx = -maxSpeed;
-                    if(keys.right) targetVx = maxSpeed;
-                }
-
-                // Smooth Acceleration/Deceleration
-                if(targetVx !== 0) {
-                    this.dir = targetVx > 0 ? 1 : -1;
-                    this.vx += Math.sign(targetVx) * acc * dt;
-                    if(Math.abs(this.vx) > maxSpeed) this.vx = Math.sign(this.vx) * maxSpeed;
-                    this.state = 'moving';
-                    this.animTime += dt * (keys.sprint ? 12 : 8);
-                    this.jumpY = Math.abs(Math.sin(this.animTime)) * 40;
-                } else {
-                    // Friction
-                    if(Math.abs(this.vx) > 10) {
-                        this.vx -= Math.sign(this.vx) * acc * dt * 1.5;
-                        this.jumpY = Math.abs(Math.sin(this.animTime)) * 40; // Finish jump
-                    } else {
-                        this.vx = 0; this.state = 'idle';
-                        this.animTime += dt * 2;
-                        this.jumpY = Math.sin(this.animTime) * 5; // Sway slightly
+                // Physics (Jumping mechanic)
+                if(this.isGrounded) {
+                    this.vx = 0; // Friction
+                    if(keys.left || keys.right) {
+                        this.dir = keys.right ? 1 : -1;
+                        this.vy = -700; // Jump force
+                        this.vx = this.dir * 400; // Forward momentum
+                        this.isGrounded = false;
+                        SFX.jump();
                     }
+                } else {
+                    this.vy += 1800 * dt; // Gravity
                 }
 
                 this.x += this.vx * dt;
+                this.y += this.vy * dt;
+
+                if(this.y >= game.groundY) {
+                    this.y = game.groundY;
+                    this.vy = 0;
+                    this.isGrounded = true;
+                }
+                
                 this.x = Math.max(50, Math.min(game.worldWidth - 50, this.x));
+
+                if(this.knockAnim > 0) this.knockAnim -= dt;
             }
             draw(ctx) {
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 
                 // Shadow
-                ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                ctx.beginPath(); ctx.ellipse(0, 10, 35 - this.jumpY*0.2, 10, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                let sW = this.isGrounded ? 30 : 20;
+                ctx.beginPath(); ctx.ellipse(0, 10, sW, 8, 0, 0, Math.PI*2); ctx.fill();
 
-                ctx.translate(0, -this.jumpY);
                 ctx.scale(this.dir, 1);
+                
+                // Knock tilt
+                if(this.knockAnim > 0) ctx.rotate(Math.sin(this.knockAnim*20)*0.2);
+                // Jump stretch
+                if(!this.isGrounded) { ctx.scale(0.9, 1.1); ctx.translate(0, 10); }
 
-                // Sickle Arm
-                ctx.save();
-                ctx.translate(10, -80);
-                ctx.rotate(this.swingAngle);
-                if(ASSETS.sickle) ctx.drawImage(ASSETS.sickle, -10, -60, 40, 70);
-                ctx.restore();
-
-                // Body Shroud (SVG Path representation in Canvas)
+                // Body (Pocong shape)
                 ctx.fillStyle = '#ecf0f1';
                 ctx.beginPath();
-                ctx.moveTo(-15, -150); // Top knot
-                ctx.bezierCurveTo(0, -170, 15, -150, 10, -130);
-                ctx.bezierCurveTo(35, -100, 40, -30, 20, 0); // Front belly
-                ctx.quadraticCurveTo(0, 15, -20, 0); // Bottom knot
-                ctx.bezierCurveTo(-40, -30, -35, -100, -20, -130); // Back
+                ctx.moveTo(-15, -120); // Top knot
+                ctx.bezierCurveTo(0, -140, 15, -120, 10, -100);
+                ctx.bezierCurveTo(25, -80, 30, -20, 15, 0); // Belly
+                ctx.quadraticCurveTo(0, 10, -15, 0); // Bottom knot
+                ctx.bezierCurveTo(-30, -20, -25, -80, -15, -100); // Back
                 ctx.fill();
 
-                // Cloth folds (Texture)
-                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
-                ctx.beginPath(); ctx.moveTo(-10, -110); ctx.quadraticCurveTo(5, -80, -5, -40); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(5, -100); ctx.quadraticCurveTo(20, -70, 10, -30); ctx.stroke();
-
                 // Ties
-                ctx.strokeStyle = '#7f8c8d'; ctx.lineWidth = 4;
-                ctx.beginPath(); ctx.moveTo(-18, -140); ctx.lineTo(15, -140); ctx.stroke(); // Head
-                ctx.beginPath(); ctx.moveTo(-25, -110); ctx.lineTo(25, -110); ctx.stroke(); // Neck
-                ctx.beginPath(); ctx.moveTo(-15, -10); ctx.lineTo(15, -10); ctx.stroke(); // Feet
+                ctx.strokeStyle = '#7f8c8d'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(-12, -110); ctx.lineTo(12, -110); ctx.stroke(); // Head tie
+                ctx.beginPath(); ctx.moveTo(-18, -85); ctx.lineTo(18, -85); ctx.stroke(); // Neck tie
+                ctx.beginPath(); ctx.moveTo(-12, -10); ctx.lineTo(12, -10); ctx.stroke(); // Feet tie
 
-                // Blood Splatters
-                ctx.fillStyle = 'rgba(138, 3, 3, 0.8)';
-                ctx.beginPath(); ctx.arc(10, -70, 8, 0, Math.PI*2); ctx.arc(15, -75, 5, 0, Math.PI*2); ctx.arc(5, -60, 6, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(-10, -90, 7, 0, Math.PI*2); ctx.fill();
-
-                // Face Hole
+                // Face hole
                 ctx.fillStyle = '#111';
-                ctx.beginPath(); ctx.ellipse(12, -125, 12, 16, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(8, -98, 10, 12, 0, 0, Math.PI*2); ctx.fill();
 
-                // Face Skin
-                ctx.fillStyle = '#95a5a6'; // Pale
-                ctx.beginPath(); ctx.ellipse(12, -125, 10, 14, 0, 0, Math.PI*2); ctx.fill();
-
-                // Eyes
-                ctx.fillStyle = this.state === 'jumpscare' ? 'var(--blood-red)' : '#000';
-                ctx.beginPath(); ctx.ellipse(15, -130, 3, 4, 0, 0, Math.PI*2); ctx.ellipse(7, -130, 3, 4, 0, 0, Math.PI*2); ctx.fill();
-                
-                // Open Mouth
-                ctx.fillStyle = '#000';
-                ctx.beginPath(); ctx.ellipse(12, -118, 4, this.state==='jumpscare'?8:4, 0, 0, Math.PI*2); ctx.fill();
-
-                // Trailing cloth when sprinting
-                if(this.state === 'moving' && Math.abs(this.vx) > 300) {
-                    ctx.fillStyle = 'rgba(236, 240, 241, 0.5)';
-                    ctx.beginPath(); ctx.moveTo(-20, -100); ctx.lineTo(-60, -90 + Math.sin(this.animTime)*20); ctx.lineTo(-20, -60); ctx.fill();
-                }
-
-                ctx.restore();
-            }
-        }
-
-        class Warga {
-            constructor(x) {
-                this.x = x; this.y = game.groundY;
-                this.vx = 0; this.dir = 1;
-                this.state = 'hidden'; // hidden, curious, scared, running, fainted
-                this.animTime = 0;
-                this.shirtColor = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'][Math.floor(Math.random()*4)];
-            }
-            update(dt) {
-                if(this.state === 'running') {
-                    this.animTime += dt * 15;
-                    this.vx = 350; // Sprint
-                    this.x += this.vx * dt;
-                } else if(this.state === 'fainted') {
-                    this.vx = 0;
-                } else if(this.state === 'curious' || this.state === 'scared') {
-                    this.vx = 0;
-                    this.animTime += dt * 2;
-                }
-            }
-            draw(ctx) {
-                if(this.state === 'hidden') return;
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                
-                if(this.state === 'fainted') {
-                    ctx.translate(0, 10); ctx.rotate(Math.PI/2); // Fall over
-                } else {
-                    ctx.translate(0, -Math.abs(Math.sin(this.animTime))*15); // Run bounce
-                }
-
-                // Legs
-                ctx.fillStyle = '#2c3e50';
-                let legSwing = this.state === 'running' ? Math.sin(this.animTime)*20 : 0;
-                ctx.beginPath(); ctx.roundRect(-15 + legSwing, -40, 12, 40, 5); ctx.fill(); // Back leg
-                ctx.beginPath(); ctx.roundRect(5 - legSwing, -40, 12, 40, 5); ctx.fill(); // Front leg
-
-                // Back Arm
-                ctx.fillStyle = '#d35400'; // Skin
-                ctx.beginPath(); ctx.roundRect(-10 - legSwing, -90, 10, 35, 5); ctx.fill();
-
-                // Torso
-                ctx.fillStyle = this.shirtColor;
-                ctx.beginPath(); ctx.roundRect(-18, -100, 36, 60, 8); ctx.fill();
-
-                // Front Arm
-                ctx.fillStyle = '#d35400';
-                ctx.beginPath(); ctx.roundRect(0 + legSwing, -90, 10, 35, 5); ctx.fill();
-
-                // Head
-                ctx.fillStyle = '#d35400'; // Sawo matang
-                ctx.beginPath(); ctx.arc(0, -115, 20, 0, Math.PI*2); ctx.fill();
-
-                // Hair
-                ctx.fillStyle = '#111';
-                ctx.beginPath(); ctx.arc(0, -118, 20, Math.PI, 0); ctx.fill();
-                ctx.fillRect(-20, -118, 5, 10);
-
-                // Face Expressions
-                ctx.fillStyle = '#000';
-                if(this.state === 'fainted') {
-                    ctx.font = "16px Arial"; ctx.textAlign="center"; ctx.fillText("X X", 0, -115);
-                    ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.ellipse(0, -105, 4, 8, 0, 0, Math.PI*2); ctx.fill(); // Tongue
-                } else if(this.state === 'scared' || this.state === 'running') {
-                    ctx.beginPath(); ctx.arc(-7, -118, 3, 0, Math.PI*2); ctx.arc(7, -118, 3, 0, Math.PI*2); ctx.fill(); // Big eyes
-                    ctx.beginPath(); ctx.ellipse(0, -108, 6, 10, 0, 0, Math.PI*2); ctx.fill(); // Scream
-                    // Sweat
-                    ctx.fillStyle = '#3498db'; ctx.beginPath(); ctx.arc(15, -125, 3, 0, Math.PI*2); ctx.fill();
-                } else { // Curious
-                    ctx.beginPath(); ctx.arc(-7, -118, 2, 0, Math.PI*2); ctx.arc(7, -118, 2, 0, Math.PI*2); ctx.fill();
-                    ctx.beginPath(); ctx.moveTo(-10, -125); ctx.lineTo(-4, -122); ctx.stroke(); // Raised eyebrow
-                    ctx.beginPath(); ctx.moveTo(-5, -108); ctx.lineTo(5, -108); ctx.stroke(); // Mouth
-                }
+                // Eyes (Red glow if jumping, white if grounded)
+                ctx.fillStyle = this.isGrounded ? '#fff' : '#8a0303';
+                ctx.beginPath(); ctx.arc(12, -100, 2, 0, Math.PI*2); ctx.arc(6, -100, 2, 0, Math.PI*2); ctx.fill();
 
                 ctx.restore();
             }
         }
 
         class House {
-            constructor(x, type) {
+            constructor(x) {
                 this.x = x; this.y = game.groundY;
-                this.type = type;
-                this.doorX = this.x + 220;
-                this.knockCount = 0;
-                this.state = 'closed'; // closed, waiting, opening
-                this.timer = 0;
-                this.warga = new Warga(this.doorX + 35);
-                wargas.push(this.warga);
+                this.doorX = this.x + 150;
+                this.color = ['#34495e', '#2c3e50', '#7f8c8d', '#95a5a6'][Math.floor(Math.random()*4)];
+                this.doorColor = '#5d4037';
+                this.knocked = 0;
+                this.wargaSpawned = false;
+            }
+            update(dt) {}
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y - 200, 250, 200); // Main block
+                ctx.fillStyle = '#1a252f';
+                ctx.beginPath(); ctx.moveTo(this.x-20, this.y-200); ctx.lineTo(this.x+125, this.y-300); ctx.lineTo(this.x+270, this.y-200); ctx.fill(); // Roof
+                
+                // Door
+                ctx.fillStyle = '#222'; ctx.fillRect(this.doorX, this.y - 100, 60, 100); // Inner
+                if(this.wargaSpawned) {
+                    ctx.fillStyle = this.doorColor; ctx.fillRect(this.doorX + 50, this.y - 100, 10, 100); // Open door
+                    ctx.fillStyle = '#e74c3c'; ctx.fillRect(this.doorX+10, this.y-80, 40, 80); // Light inside
+                } else {
+                    ctx.fillStyle = this.doorColor; ctx.fillRect(this.doorX, this.y - 100, 60, 100); // Closed door
+                    ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(this.doorX+50, this.y-50, 4, 0, Math.PI*2); ctx.fill(); // Knob
+                }
+
+                // Window
+                ctx.fillStyle = '#111'; ctx.fillRect(this.x + 30, this.y - 120, 60, 60);
+                if(this.knocked > 0 && !this.wargaSpawned) {
+                    ctx.fillStyle = '#f1c40f'; ctx.fillRect(this.x + 30, this.y - 120, 60, 60); // Light turns on
+                    ctx.fillStyle = '#111'; ctx.fillRect(this.x + 58, this.y - 120, 4, 60); ctx.fillRect(this.x + 30, this.y - 92, 60, 4); // Bars
+                }
+            }
+        }
+
+        class Warga {
+            constructor(x) {
+                this.x = x; this.y = game.groundY;
+                this.vx = 400 + Math.random()*200;
+                this.dir = Math.random() > 0.5 ? 1 : -1;
+                this.anim = 0;
             }
             update(dt) {
-                if(this.state === 'waiting') {
-                    this.timer -= dt;
-                    if(this.timer <= 0) {
-                        this.state = 'opening'; this.timer = 0;
-                        this.warga.state = 'curious';
-                        
-                        setTimeout(() => {
-                            if(Math.random() < 0.3) {
-                                this.warga.state = 'running';
-                                spawnText("KABUUUR!", this.warga.x, this.y - 160, "#fff");
-                                addScore(50);
-                            } else {
-                                if(Math.abs(player.x - this.doorX) < 200) {
-                                    player.state = 'jumpscare'; player.animTime = 0; player.dir = (this.doorX > player.x) ? 1 : -1;
-                                    SFX.jumpscare();
-                                    setTimeout(() => {
-                                        this.warga.state = 'fainted';
-                                        flashScreen(); shakeScreen();
-                                        spawnText("+100 PINGSAN!", this.warga.x, this.y - 150, "var(--gold)");
-                                        spawnStars(this.warga.x, this.y - 150);
-                                        addScore(100);
-                                    }, 200);
-                                }
-                            }
-                        }, 800);
+                this.x += this.vx * this.dir * dt;
+                this.anim += dt * 20;
+                if(this.x < 0 || this.x > game.worldWidth) this.dead = true;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y - Math.abs(Math.sin(this.anim))*20);
+                ctx.scale(this.dir, 1);
+                
+                // Body
+                ctx.fillStyle = '#3498db'; ctx.fillRect(-10, -70, 20, 40);
+                // Head
+                ctx.fillStyle = '#e67e22'; ctx.beginPath(); ctx.arc(0, -85, 15, 0, Math.PI*2); ctx.fill();
+                // Face (Panicked)
+                ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(5, -90, 3, 0, Math.PI*2); ctx.arc(12, -90, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(8, -80, 5, 8, 0, 0, Math.PI*2); ctx.fill(); // Scream mouth
+                
+                // Arms flailing
+                ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 6;
+                ctx.beginPath(); ctx.moveTo(0, -60); ctx.lineTo(20, -90 + Math.sin(this.anim)*20); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, -60); ctx.lineTo(-20, -90 - Math.sin(this.anim)*20); ctx.stroke();
+                
+                // Legs
+                ctx.strokeStyle = '#111';
+                ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(-15 + Math.sin(this.anim)*20, 0); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(15 - Math.sin(this.anim)*20, 0); ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        class BapakSenter {
+            constructor(x) {
+                this.x = x; this.y = game.groundY;
+                this.startX = x;
+                this.dir = 1; this.vx = 100;
+                this.anim = 0;
+                this.alertCooldown = 0;
+            }
+            update(dt) {
+                this.x += this.vx * this.dir * dt;
+                this.anim += dt * 10;
+                if(Math.abs(this.x - this.startX) > 400) this.dir *= -1;
+                
+                if(this.alertCooldown > 0) this.alertCooldown -= dt;
+
+                // Vision cone check
+                let dist = player.x - this.x;
+                if(Math.sign(dist) === this.dir && Math.abs(dist) < 250) {
+                    if(!player.isGrounded && this.alertCooldown <= 0) {
+                        this.alertCooldown = 5.0; // Prevent spam
+                        spawnPopup("HEI SIAPA ITU!", this.x, this.y - 150, "#e74c3c");
+                        addScore(-15, this.x, this.y - 180, "-15 KETAHUAN RONDA");
+                        spawnPolice();
                     }
                 }
             }
             draw(ctx) {
-                if(ASSETS[`house_${this.type}`]) {
-                    ctx.drawImage(ASSETS[`house_${this.type}`], this.x, this.y - 330);
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.scale(this.dir, 1);
+                
+                // Flashlight Cone
+                let g = ctx.createLinearGradient(10, -50, 250, -10);
+                g.addColorStop(0, 'rgba(241, 196, 15, 0.6)'); g.addColorStop(1, 'rgba(241, 196, 15, 0)');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.moveTo(10, -50); ctx.lineTo(250, -100); ctx.lineTo(250, 0); ctx.fill();
+
+                ctx.translate(0, -Math.abs(Math.sin(this.anim))*5); // walk bounce
+                
+                // Body
+                ctx.fillStyle = '#27ae60'; ctx.fillRect(-15, -80, 30, 45); // Sarung/Shirt
+                ctx.fillStyle = '#7f8c8d'; ctx.fillRect(-15, -35, 30, 20); // Sarung bottom
+                // Head
+                ctx.fillStyle = '#d35400'; ctx.beginPath(); ctx.arc(0, -95, 15, 0, Math.PI*2); ctx.fill();
+                // Peci (Hat)
+                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.ellipse(0, -105, 16, 8, 0, 0, Math.PI*2); ctx.fill(); ctx.fillRect(-16, -110, 32, 10);
+                // Flashlight Arm
+                ctx.strokeStyle = '#d35400'; ctx.lineWidth = 8;
+                ctx.beginPath(); ctx.moveTo(0, -70); ctx.lineTo(20, -50); ctx.stroke();
+                ctx.fillStyle = '#333'; ctx.fillRect(15, -55, 15, 10); // Flashlight body
+                
+                // Legs
+                ctx.strokeStyle = '#d35400'; ctx.lineWidth = 6;
+                ctx.beginPath(); ctx.moveTo(-5, -15); ctx.lineTo(-10 + Math.sin(this.anim)*15, 0); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(5, -15); ctx.lineTo(10 - Math.sin(this.anim)*15, 0); ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        class CCTV {
+            constructor(x) {
+                this.x = x; this.y = game.groundY - 300;
+                this.angle = Math.PI/4;
+                this.swing = 0;
+                this.cooldown = 0;
+            }
+            update(dt) {
+                this.swing += dt;
+                this.angle = Math.PI/4 + Math.sin(this.swing)*0.5;
+                if(this.cooldown > 0) this.cooldown -= dt;
+
+                // Vision check
+                let dx = player.x - this.x;
+                let dy = player.y - this.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                let a = Math.atan2(dy, dx);
+                
+                if(dist < 350 && Math.abs(a - this.angle) < 0.3 && this.cooldown <= 0) {
+                    this.cooldown = 10.0;
+                    document.getElementById('cctv-fx').classList.add('active');
+                    setTimeout(() => document.getElementById('cctv-fx').classList.remove('active'), 1000);
+                    spawnPopup("TEREKAM CCTV! VIRAL x3", player.x, player.y - 150, "var(--cctv-green)");
+                    addScore(50 * 3, player.x, player.y - 180, "+150 VIRAL!");
+                    showWA("IG Gosip", "CCTV Warga rekam pocong loncat di gang! 😱");
+                }
+            }
+            draw(ctx) {
+                ctx.fillStyle = '#444'; ctx.fillRect(this.x-5, this.y, 10, 300); // Pole
+                
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                
+                // Cone
+                let g = ctx.createLinearGradient(0, 0, 300, 0);
+                g.addColorStop(0, 'rgba(46, 204, 113, 0.4)'); g.addColorStop(1, 'rgba(46, 204, 113, 0)');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(350, -100); ctx.lineTo(350, 100); ctx.fill();
+
+                // Camera body
+                ctx.fillStyle = '#222'; ctx.fillRect(-10, -10, 30, 20);
+                ctx.fillStyle = '#e74c3c'; ctx.beginPath(); ctx.arc(20, 0, 5, 0, Math.PI*2); ctx.fill(); // Red dot
+
+                ctx.restore();
+            }
+        }
+
+        class Police {
+            constructor() {
+                this.dir = Math.random() > 0.5 ? 1 : -1;
+                this.x = this.dir === 1 ? player.x - 1000 : player.x + 1000;
+                this.y = game.groundY;
+                this.vx = 800; // Fast!
+                this.anim = 0;
+                SFX.siren();
+            }
+            update(dt) {
+                this.x += this.vx * this.dir * dt;
+                this.anim += dt * 25;
+                
+                if(Math.abs(player.x - this.x) < 50 && !this.dead) {
+                    loseLife();
+                    this.dead = true;
                 }
                 
-                // Door Interaction logic
-                ctx.fillStyle = '#222';
-                ctx.fillRect(this.doorX, this.y - 120, 70, 120); // Inner darkness
-
-                if(this.state === 'opening') {
-                    this.timer += 0.016;
-                    let w = Math.max(0, 70 * (1 - this.timer/0.5));
-                    ctx.fillStyle = '#5d4037'; ctx.fillRect(this.doorX, this.y - 120, w, 120);
-                } else if(this.state === 'closed' || this.state === 'waiting') {
-                    ctx.fillStyle = '#5d4037'; ctx.fillRect(this.doorX, this.y - 120, 70, 120);
+                if(Math.abs(this.x - player.x) > 1500) {
+                    this.dead = true;
+                    if(game.state === 'playing') addScore(15, player.x, player.y - 150, "+15 LOLOS DARI POLISI!");
                 }
-                // (Warga is drawn in main loop sorted by Y, or just globally)
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y - Math.abs(Math.sin(this.anim))*15);
+                ctx.scale(this.dir, 1);
+                
+                // Body
+                ctx.fillStyle = '#2c3e50'; ctx.fillRect(-15, -80, 30, 45);
+                ctx.fillStyle = '#f1c40f'; ctx.fillRect(-15, -55, 30, 5); // Belt
+                // Head
+                ctx.fillStyle = '#d35400'; ctx.beginPath(); ctx.arc(0, -95, 15, 0, Math.PI*2); ctx.fill();
+                // Hat
+                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.ellipse(0, -110, 18, 5, 0, 0, Math.PI*2); ctx.fill(); ctx.fillRect(-12, -125, 24, 15);
+                ctx.fillStyle = '#f1c40f'; ctx.fillRect(-12, -115, 24, 3); // Badge line
+                
+                // Siren light on head
+                ctx.fillStyle = (Math.floor(this.anim)%2===0) ? '#e74c3c' : '#3498db';
+                ctx.beginPath(); ctx.arc(0, -125, 5, 0, Math.PI*2); ctx.fill();
+
+                // Legs
+                ctx.strokeStyle = '#111'; ctx.lineWidth = 8;
+                ctx.beginPath(); ctx.moveTo(-5, -35); ctx.lineTo(-15 + Math.sin(this.anim)*30, 0); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(5, -35); ctx.lineTo(15 - Math.sin(this.anim)*30, 0); ctx.stroke();
+
+                // Baton arm
+                ctx.strokeStyle = '#d35400'; ctx.lineWidth = 6;
+                ctx.beginPath(); ctx.moveTo(0, -70); ctx.lineTo(20, -50 + Math.sin(this.anim)*20); ctx.stroke();
+                ctx.fillStyle = '#111'; ctx.fillRect(15, -50 + Math.sin(this.anim)*20, 5, 30); // Baton
+
+                ctx.restore();
             }
         }
 
-        // --- GAME LOGIC ---
+        let player;
+
         function handleAction() {
-            if(game.state !== 'playing' || player.state === 'jumpscare' || player.state === 'knocking') return;
+            if(game.state !== 'playing') return;
             
+            // Find nearby house to knock
             let knocked = false;
-            for(let h of houses) {
-                if(Math.abs(player.x - h.doorX) < 100 && h.state === 'closed') {
-                    player.state = 'knocking'; player.animTime = 0; player.dir = (h.doorX > player.x) ? 1 : -1;
-                    h.knockCount++; SFX.knock();
-                    spawnText("TOK!", h.doorX + 35, h.y - 150, "#fff");
+            for(let e of game.entities) {
+                if(e instanceof House && Math.abs(player.x - e.doorX) < 80) {
+                    player.knockAnim = 0.5;
+                    SFX.knock();
+                    spawnPopup("TOK TOK!", e.doorX, e.y - 120, "#fff");
+                    e.knocked++;
                     
-                    if(h.knockCount >= 3) { h.state = 'waiting'; h.timer = 1.0; }
-                    knocked = true; break;
+                    if(e.knocked === 1) addScore(10, e.doorX, e.y - 150, "+10 Usil");
+                    
+                    if(e.knocked >= 3 && !e.wargaSpawned) {
+                        e.wargaSpawned = true;
+                        SFX.scream();
+                        spawnPopup("AAAAAA POCONG!!!", e.doorX, e.y - 180, "#e74c3c");
+                        addScore(25, e.doorX, e.y - 210, "+25 PANIK!");
+                        game.entities.push(new Warga(e.doorX));
+                        
+                        // 50% chance to trigger WA viral
+                        if(Math.random() > 0.5) {
+                            setTimeout(() => {
+                                addScore(50, player.x, player.y - 150, "+50 MASUK GRUP WA!");
+                                showWA("Ibu RT", "Bapak/Ibu, tolong kunci pintu! Ada pocong lompat-lompat di gang depan!");
+                            }, 1500);
+                        }
+                    }
+                    knocked = true;
+                    break;
                 }
             }
-            if(!knocked) { player.state = 'knocking'; player.animTime = 0; }
-        }
-
-        function addScore(pts) {
-            game.combo++; game.comboTime = 3.0;
-            let mult = Math.min(game.combo, 5);
-            game.score += pts * mult;
-            
-            const el = document.getElementById('ui-score');
-            el.innerText = game.score; el.style.transform = 'scale(1.5)';
-            setTimeout(() => el.style.transform = 'scale(1)', 200);
-
-            if(game.combo > 1) {
-                const cb = document.getElementById('ui-combo');
-                cb.style.display = 'block'; cb.innerText = `COMBO x${game.combo}!`;
-                cb.style.transform = 'scale(1.5)'; setTimeout(() => cb.style.transform = 'scale(1)', 200);
+            if(!knocked) {
+                player.knockAnim = 0.5; // Swing anyway
             }
         }
 
-        // --- VFX ---
-        function spawnText(txt, x, y, color) { texts.push({t: txt, x: x, y: y, c: color, life: 1.5}); }
-        function spawnStars(x, y) {
-            for(let i=0; i<6; i++) {
-                let a = (Math.PI*2/6)*i;
-                particles.push({x: x, y: y, vx: Math.cos(a)*200, vy: -200 - Math.random()*100, life: 1.5, type: 'star'});
-            }
-        }
-        function flashScreen() {
-            const f = document.getElementById('screen-flash');
-            f.style.opacity = 0.8; setTimeout(() => f.style.opacity = 0, 100);
-        }
-        function shakeScreen() {
-            const c = document.getElementById('game-container');
-            c.style.transform = `translate(${Math.random()*20-10}px, ${Math.random()*20-10}px)`;
-            setTimeout(() => c.style.transform = 'translate(0,0)', 50);
+        function spawnPolice() {
+            game.entities.push(new Police());
         }
 
-        // --- LOOP ---
+        // --- LOOP & RENDER ---
+        let lastTime = 0;
         function loop(timestamp) {
             if (!lastTime) lastTime = timestamp;
             const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
@@ -588,154 +675,136 @@
             if(game.state === 'playing') {
                 update(dt); render();
             }
-
-            reqFrame = requestAnimationFrame(loop);
+            requestAnimationFrame(loop);
         }
 
         function update(dt) {
             player.update(dt);
-            houses.forEach(h => h.update(dt));
-            wargas.forEach(w => w.update(dt));
+            
+            // Time logic (1s real = 1m game)
+            game.timeMins += dt * 60;
+            if(game.timeMins >= 24*60) game.timeMins -= 24*60;
+            document.getElementById('ui-time').innerText = '🕒 ' + formatTime(game.timeMins);
+            
+            // Subuh = 04:30 = 270 mins
+            if(game.timeMins >= 4*60+30 && game.timeMins < 12*60) {
+                gameOver("SUBUH TELAH TIBA!");
+            }
 
-            // Smooth Camera Lerp
+            // Camera follow
             let targetCamX = player.x - game.width / 2;
             targetCamX = Math.max(0, Math.min(game.worldWidth - game.width, targetCamX));
             game.camX += (targetCamX - game.camX) * dt * 5;
 
-            // Particles
-            for(let i=particles.length-1; i>=0; i--) {
-                let p = particles[i];
-                p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 400*dt; p.life -= dt;
-                if(p.life <= 0) particles.splice(i,1);
+            // Entities
+            for(let i=game.entities.length-1; i>=0; i--) {
+                let e = game.entities[i];
+                e.update(dt);
+                if(e.dead) game.entities.splice(i, 1);
             }
 
-            // Texts
-            for(let i=texts.length-1; i>=0; i--) {
-                let t = texts[i];
-                t.y -= 50*dt; t.life -= dt;
-                if(t.life <= 0) texts.splice(i,1);
-            }
-
-            if(game.comboTime > 0) {
-                game.comboTime -= dt;
-                if(game.comboTime <= 0) { game.combo = 0; document.getElementById('ui-combo').style.display='none'; }
+            // Popups
+            for(let i=game.popups.length-1; i>=0; i--) {
+                let p = game.popups[i];
+                p.y -= 50 * dt;
+                p.life -= dt;
+                if(p.life <= 0) game.popups.splice(i, 1);
             }
         }
 
         function render() {
-            // Sky
-            let grad = ctx.createLinearGradient(0, 0, 0, game.groundY);
-            grad.addColorStop(0, '#020510'); grad.addColorStop(1, '#0a1526');
-            ctx.fillStyle = grad; ctx.fillRect(0, 0, game.width, game.height);
+            // Sky based on time
+            let skyGrad = ctx.createLinearGradient(0, 0, 0, game.groundY);
+            if(game.timeMins > 4*60 && game.timeMins < 5*60) {
+                skyGrad.addColorStop(0, '#1a1a2e'); skyGrad.addColorStop(1, '#16213e');
+                document.getElementById('ui-time').classList.add('danger');
+            } else {
+                skyGrad.addColorStop(0, '#020510'); skyGrad.addColorStop(1, '#0a101a');
+            }
+            ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, game.width, game.height);
 
-            // Moon & Stars
+            // Stars
             ctx.fillStyle = '#fff';
             for(let i=0; i<100; i++) {
-                let sx = (i * 123) % game.width; let sy = (i * 321) % (game.groundY - 200);
+                let sx = (i * 997) % game.width; let sy = (i * 321) % (game.groundY - 100);
                 ctx.globalAlpha = 0.5 + Math.sin(performance.now()*0.005 + i)*0.5;
                 ctx.fillRect(sx, sy, 2, 2);
             }
             ctx.globalAlpha = 1.0;
-            ctx.fillStyle = '#f4f6f0'; ctx.shadowBlur = 40; ctx.shadowColor = '#fff';
-            ctx.beginPath(); ctx.arc(game.width - 200, 150, 80, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
-            
-            // Parallax Trees
-            ctx.fillStyle = '#050a0f';
-            for(let i=0; i<game.worldWidth; i+=400) {
-                let px = i - game.camX * 0.2;
-                if(px > -200 && px < game.width+200) {
-                    ctx.fillRect(px, game.groundY-300, 20, 300); // Trunk
-                    ctx.beginPath(); ctx.arc(px+10, game.groundY-300, 80, 0, Math.PI*2); ctx.fill();
-                }
-            }
 
             ctx.save();
             ctx.translate(-game.camX, 0);
 
-            // Pavement & Road
-            ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, game.groundY, game.worldWidth, game.height - game.groundY); // Asphalt
-            ctx.fillStyle = '#c0392b'; ctx.fillRect(0, game.groundY, game.worldWidth, 30); // Brick sidewalk
-            ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 5; ctx.setLineDash([40, 40]);
-            ctx.beginPath(); ctx.moveTo(0, game.groundY + 100); ctx.lineTo(game.worldWidth, game.groundY + 100); ctx.stroke(); ctx.setLineDash([]);
-
-            // Streetlights
-            for(let i=200; i<game.worldWidth; i+=600) {
-                ctx.fillStyle = '#333'; ctx.fillRect(i, game.groundY-350, 10, 350); // Pole
-                ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(i+5, game.groundY-350, 15, 0, Math.PI*2); ctx.fill(); // Light
-                // Glow cone
-                let cone = ctx.createLinearGradient(0, game.groundY-350, 0, game.groundY);
-                cone.addColorStop(0, 'rgba(241, 196, 15, 0.4)'); cone.addColorStop(1, 'rgba(241, 196, 15, 0)');
-                ctx.fillStyle = cone; ctx.beginPath(); ctx.moveTo(i+5, game.groundY-350); ctx.lineTo(i-150, game.groundY); ctx.lineTo(i+160, game.groundY); ctx.fill();
+            // Background Parallax Trees
+            ctx.fillStyle = '#05080c';
+            for(let i=0; i<game.worldWidth; i+=300) {
+                let px = i + game.camX * 0.5; // Parallax
+                if(px > game.camX - 200 && px < game.camX + game.width + 200) {
+                    ctx.fillRect(px, game.groundY-250, 20, 250);
+                    ctx.beginPath(); ctx.arc(px+10, game.groundY-250, 80, 0, Math.PI*2); ctx.fill();
+                }
             }
 
-            // Houses
-            houses.forEach(h => h.draw(ctx));
+            // Road
+            ctx.fillStyle = '#1c2833'; ctx.fillRect(0, game.groundY, game.worldWidth, game.height - game.groundY);
+            ctx.fillStyle = '#34495e'; ctx.fillRect(0, game.groundY, game.worldWidth, 20); // Sidewalk edge
 
-            // Sort Wargas and Player by Y
-            let ents = [player, ...wargas.filter(w=>w.state!=='hidden')];
-            ents.sort((a,b) => a.y - b.y);
-            ents.forEach(e => e.draw(ctx));
+            // Draw Entities
+            game.entities.filter(e => e instanceof House || e instanceof CCTV).forEach(e => e.draw(ctx));
+            game.entities.filter(e => !(e instanceof House) && !(e instanceof CCTV)).forEach(e => e.draw(ctx));
+            
+            player.draw(ctx);
 
-            // Particles (Stars)
-            particles.forEach(p => {
-                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(performance.now()*0.01);
-                ctx.fillStyle = p.color; ctx.font = "20px Arial"; ctx.fillText("⭐", -10, 10);
-                ctx.restore();
-            });
-
-            // Texts
-            texts.forEach(t => {
-                ctx.globalAlpha = Math.max(0, t.life);
-                ctx.fillStyle = t.c; ctx.font = "bold 35px 'Creepster', cursive"; ctx.textAlign="center";
-                ctx.shadowBlur = 10; ctx.shadowColor = '#000';
-                ctx.fillText(t.t, t.x, t.y);
-                ctx.lineWidth = 2; ctx.strokeStyle = '#000'; ctx.strokeText(t.t, t.x, t.y);
+            // Popups
+            game.popups.forEach(p => {
+                ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
+                ctx.font = "bold 35px 'Creepster', cursive"; ctx.textAlign = "center";
+                ctx.shadowBlur = 5; ctx.shadowColor = '#000';
+                ctx.fillStyle = p.color; ctx.fillText(p.txt, p.x, p.y);
+                ctx.lineWidth = 2; ctx.strokeStyle = '#000'; ctx.strokeText(p.txt, p.x, p.y);
                 ctx.shadowBlur = 0;
             });
             ctx.globalAlpha = 1.0;
 
             ctx.restore();
 
-            // Fog Overlay
-            let fog = ctx.createLinearGradient(0, game.height, 0, game.groundY-200);
-            fog.addColorStop(0, 'rgba(200,220,220,0.5)'); fog.addColorStop(1, 'transparent');
-            ctx.fillStyle = fog; ctx.fillRect(0, 0, game.width, game.height);
+            // Screen Vignette
+            let vig = ctx.createRadialGradient(game.width/2, game.height/2, game.height*0.3, game.width/2, game.height/2, game.height);
+            vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.8)');
+            ctx.fillStyle = vig; ctx.fillRect(0,0,game.width, game.height);
         }
 
         // --- INIT ---
-        async function startGame() {
+        function startGame() {
             document.getElementById('screen-menu').classList.add('hidden');
-            await loadAssets();
+            document.getElementById('hud').classList.remove('hidden');
+            if(window.innerWidth < 1024) document.getElementById('mobile-controls').classList.remove('hidden');
+            
             SFX.playBGM();
             
-            player = new Pocong(300);
-            houses = []; wargas = [];
-            let cx = 600;
-            for(let i=0; i<8; i++) {
-                houses.push(new House(cx, i%4));
-                cx += 500 + Math.random()*200;
+            player = new Player(300);
+            game.entities = [];
+            
+            // Generate Map
+            let cx = 800;
+            for(let i=0; i<15; i++) {
+                game.entities.push(new House(cx));
+                if(i % 3 === 0) game.entities.push(new CCTV(cx - 300));
+                if(i % 4 === 2) game.entities.push(new BapakSenter(cx + 400));
+                cx += 600 + Math.random()*300;
             }
             game.worldWidth = cx + 500;
             
             game.state = 'playing';
-            game.time = 90; game.score = 0; game.combo = 0;
+            game.timeMins = 23*60; game.score = 0; game.lives = 3;
             document.getElementById('ui-score').innerText = 0;
-            document.getElementById('screen-game').classList.remove('hidden');
+            document.getElementById('life-1').classList.remove('lost');
+            document.getElementById('life-2').classList.remove('lost');
+            document.getElementById('life-3').classList.remove('lost');
+            document.getElementById('news-ticker').style.display = 'none';
 
-            setInterval(() => {
-                if(game.state !== 'playing') return;
-                game.time--;
-                document.getElementById('ui-time').innerText = game.time;
-                if(game.time <= 0) {
-                    game.state = 'gameover';
-                    document.getElementById('screen-gameover').classList.remove('hidden');
-                    document.getElementById('final-score').innerText = game.score;
-                }
-            }, 1000);
-
-            if(!reqFrame) reqFrame = requestAnimationFrame(loop);
+            requestAnimationFrame(loop);
         }
-
     </script>
 </body>
 </html>
